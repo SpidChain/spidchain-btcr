@@ -11,7 +11,7 @@
     "bitcoinjs-lib": "^3.1.0",
     "bootstrap": "^4.0.0-alpha.6",
     "buffer": "^5.0.6",
-    "coinselect": "^3.1.10",
+    "coinselect": "^3.1.11",
     "create-react-class": "^15.6.0",
     "meteor-node-stubs": "~0.2.4",
     "react": "^15.6.1",

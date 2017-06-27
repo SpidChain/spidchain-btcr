@@ -26,49 +26,48 @@ if (Meteor.isClient) {
   describe('sendRawTransaction', function () {
     it('should send a raw transaction', async function (done) {
       const utxos = await Meteor.callPromise('bitcoin', 'listUnspent')
-      utxos.forEach((u) => {
-        u.value = sb.toSatoshi(u.amount)
-      })
-//      const utxos1 = utxos.map(({amount, txid, vout}) => ({
-//        txId: txid,
-//        value: amount * 100000000,
-//        vout: vout
-//      }))
+      const utxos1 = utxos.map(({address, amount, scriptPubKey, txid, vout}) => ({
+        address,  // necessary to recover private key later
+        scriptPubKey: Buffer.from(scriptPubKey, 'hex'),
+        txid,
+        value: sb.toSatoshi(amount),
+        vout
+      }))
       const feeRate = 55
       const targets = [
         {
-          address: '1EHNa6Q4Jz2uvNExL497mE43ikXhwF6kZm',
+          address: 'mny3VE8H8BSq2jACeum6yMov4RN1LhFQdX',
           value: 5000
         }
       ]
-      console.log('utxos:', utxos)
-      console.log('coin', coinSelect(utxos, targets, feeRate));
-      const {inputs, outputs} = coinSelect(utxos, targets, feeRate)
-      console.log('inputs:', inputs);
-      console.log('outputs:', outputs);
+      const {inputs, outputs} = coinSelect(utxos1, targets, feeRate)
       if (!inputs || !outputs) {
         done(new Error('There were no inputs or outputs returned'))
       }
-      const network = bitcoin.networks.regtest
+      const network = bitcoin.networks.testnet
       const tx = new bitcoin.TransactionBuilder(network)
-      inputs.forEach((input) => tx.addInput(input.txid, input.vout))
-      outputs.forEach(async (output) => {
+      inputs.forEach((input) => tx.addInput(input.txid, input.vout, undefined, input.scriptPubKey))
+      const outputs1 = await Promise.all(outputs.map(async ({address, value}) => {
         // watch out, outputs may have been added that you need to provide
         // an output address/script for
-        if (!output.address) {
-          const changeAddr = await Meteor.callPromise('bitcoin', 'getNewAddress')
-          output.address = changeAddr
+        if (!address) {
+          address = await Meteor.callPromise('bitcoin', 'getNewAddress')
         }
 
-        tx.addOutput(output.address, output.value)
-      })
-      inputs.forEach(async (input, i) => {
-        const priv = await Meteor.callPromise('bitcoin', 'dumpPrivKey', input.address)
-        tx.sign(i, priv)
-      })
+        return {address, value}
+      }))
+      outputs1.forEach(({address, value}) => tx.addOutput(address, value))
 
-      const txId = await sendRawTransaction(tx)
+      const keyPairs = await Promise.all(inputs.map(async ({address}) => {
+        const priv = await Meteor.callPromise('bitcoin', 'dumpPrivKey', address)
+        return bitcoin.ECPair.fromWIF(priv, network)
+      }))
+
+      inputs.forEach((o, i) => tx.sign(i, keyPairs[i]))
+      const serialized = tx.build().toHex()
+      const txId = await sendRawTransaction(serialized)
       if (txId) {
+        console.log('TxId:', txId)
         done()
       } else {
         done(new Error('sendRawTransaction failed'))
