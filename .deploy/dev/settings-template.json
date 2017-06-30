@@ -1,0 +1,6 @@
+{
+  "public": {
+    "feeRate": 360,
+    "network": "testnet"
+  }
+}
