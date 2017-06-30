@@ -12,19 +12,13 @@ const bitcoin = require('bitcoinjs-lib')
 
 if (Meteor.isClient) {
   describe('sendRawTransaction (node running)', function () {
-    it('should connect to the remote node', function (done) {
-      Meteor.call('bitcoin', 'getInfo', (err, res) => {
-        if (err) {
-          done(err)
-          return
-        }
-        done()
-      })
+    it('should connect to the remote node', async function () {
+      await Meteor.callPromise('bitcoin', 'getInfo')
     })
   })
 
   describe('sendRawTransaction', function () {
-    it('should send a raw transaction', async function (done) {
+    it('should send a raw transaction', async function () {
       const utxos = await Meteor.callPromise('bitcoin', 'listUnspent')
       const utxos1 = utxos.map(({address, amount, scriptPubKey, txid, vout}) => ({
         address,  // necessary to recover private key later
@@ -42,7 +36,7 @@ if (Meteor.isClient) {
       ]
       const {inputs, outputs} = coinSelect(utxos1, targets, feeRate)
       if (!inputs || !outputs) {
-        done(new Error('There were no inputs or outputs returned'))
+        throw new Error('There were no inputs or outputs returned')
       }
       const network = bitcoin.networks.testnet
       const tx = new bitcoin.TransactionBuilder(network)
@@ -66,11 +60,7 @@ if (Meteor.isClient) {
       inputs.forEach((o, i) => tx.sign(i, keyPairs[i]))
       const serialized = tx.build().toHex()
       const txId = await sendRawTransaction(serialized)
-      if (txId) {
-        done()
-      } else {
-        done(new Error('sendRawTransaction failed'))
-      }
+      return txId
     })
   })
 }

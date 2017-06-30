@@ -22,7 +22,7 @@ const createTestKeypair = async () => {
 
 if (Meteor.isClient) {
   describe('createDID', function () {
-    it('it should create a new DID', async function (done) {
+    it('it should create a new DID', async function () {
       const mnemonic = 'praise you muffin lion enable neck grocery crumble super myself license ghost'
       const seed = bip39.mnemonicToSeed(mnemonic)
       const walletRoot = bitcoin.HDNode.fromSeedBuffer(seed, network)
@@ -55,7 +55,6 @@ if (Meteor.isClient) {
       assert.equal(sigAddress, signatureAddress)
       const recAddress = bitcoin.address.fromOutputScript(recScript, network)
       assert.equal(recAddress, recoveryAddress)
-      done()
     })
   })
 }
