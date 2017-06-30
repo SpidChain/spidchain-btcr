@@ -10,5 +10,5 @@ Tests:
 
 ```
 $ bitcoind -regtest -rpcuser=foo -rpcpassword=bar -server -daemon
-$ meteor test --setttings .deploy/dev/settings.json --driver-package practicalmeteor:mocha
+$ meteor test --settings .deploy/dev/settings.json --driver-package practicalmeteor:mocha
 ```
