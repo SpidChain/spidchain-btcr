@@ -67,7 +67,6 @@ if (Meteor.isClient) {
       const serialized = tx.build().toHex()
       const txId = await sendRawTransaction(serialized)
       if (txId) {
-        console.log('TxId:', txId)
         done()
       } else {
         done(new Error('sendRawTransaction failed'))
