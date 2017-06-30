@@ -1,1 +1,3 @@
 node_modules/
+.deploy/dev/settings.json
+.deploy/prod/settings.json
