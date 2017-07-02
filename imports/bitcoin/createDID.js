@@ -7,6 +7,7 @@ const bitcoin = require('bitcoinjs-lib')
 
 export default async ({
   controlAccount,
+  ddoHash,
   walletRoot,
   fundingKeypair,
   amount,
@@ -57,12 +58,19 @@ export default async ({
   _.each(inputs, input => {
     didTx.addInput(input.txid, input.vout)
   })
+
+  // Write DDO IPFS anchor in OP_RETURN
+  const data = Buffer.from(ddoHash)
+  const dataScript = bitcoin.script.nullData.output.encode(data)
+  didTx.addOutput(dataScript, 0)
+
   _.each(outputs, output => {
     if (!output.address) {
       output.address = changeKeypair.getAddress()
     }
     didTx.addOutput(output.address, output.value)
   })
+
   _.each(inputs, (input, i) => {
     didTx.sign(i, fundingKeypair)
   })

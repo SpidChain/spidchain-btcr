@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor'
 
 import createDID from './createDID'
+import ddo from '/imports/bitcoin/ddo'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bip39 = require('bip39')
@@ -42,8 +43,17 @@ export const createTestDID = async ({network, walletRoot, recoveryAddress}) => {
   const amount = 1000
   const utxos = await Meteor.callPromise('bitcoin', 'listUnspent', 0, 9999999,
     [fundingAddress])
+  const ownerRoot = walletRoot.derivePath("m/44'/0'")
+    .deriveHardened(2)
+    .derive(0)
+  const ownerKeyPair = ownerRoot.derive(0)
+  const ownerPubKey = ownerKeyPair.getPublicKeyBuffer().toString('hex')
+  const ddoData = ddo({pubKeys: [ownerPubKey]})
+  const ddoJSON = JSON.stringify(ddoData)
+  const [{hash: ddoHash}] = await Meteor.callPromise('ipfs.add', ddoJSON)
   const didTx = await createDID({
     controlAccount: 1,
+    ddoHash,
     walletRoot,
     fundingKeypair,
     amount,
@@ -54,18 +64,24 @@ export const createTestDID = async ({network, walletRoot, recoveryAddress}) => {
 
 /** Return the first keypair from a HDWallet */
 
-export const getFirstSignatureAddress = (walletRoot) => {
-  const identityRoot = walletRoot.derivePath("m/44'/0'/1'/0")
-  const signatureKeyPair = identityRoot.derive(0)
-  const signatureAddress = signatureKeyPair.getAddress()
-  return signatureAddress
+export const getFirstOwnerPubKey = (walletRoot) => {
+  const ownerRoot = walletRoot.derivePath("m/44'/0'/2'/0")
+  const ownerKeyPair = ownerRoot.derive(0)
+  return ownerKeyPair.getPublicKeyBuffer().toString('hex')
+}
+
+export const getFirstControlAddress = (walletRoot) => {
+  const controlRoot = walletRoot.derivePath("m/44'/0'/1'/0")
+  const controlKeyPair = controlRoot.derive(0)
+  const controlAddress = controlKeyPair.getAddress()
+  return controlAddress
 }
 
 /** Return a partial DDO for given DID, should be refactored once we write getDDO */
 
 export const getTestDDO = ({didTx, network}) => {
-  const [{script: sigScript}, {script: recScript}] = didTx.outs
-  const sigAddress = bitcoin.address.fromOutputScript(sigScript, network)
+  const [{script: nulldata}, {script: conScript}, {script: recScript}] = didTx.outs
+  const conAddress = bitcoin.address.fromOutputScript(conScript, network)
   const recAddress = bitcoin.address.fromOutputScript(recScript, network)
-  return {sigAddress, recAddress}
+  return {nulldata, conAddress, recAddress}
 }

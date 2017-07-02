@@ -6,7 +6,8 @@ import {Meteor} from 'meteor/meteor'
 import {
   createTestDID,
   createTestHDWallet,
-  getFirstSignatureAddress,
+  getFirstOwnerPubKey,
+  getFirstControlAddress,
   getTestDDO,
   testNetwork,
   testRecoveryAddress
@@ -24,10 +25,16 @@ if (Meteor.isClient) {
       const didTx = await createTestDID({walletRoot, network, recoveryAddress})
       assert.isObject(didTx, 'DID is an object')
       assert.instanceOf(didTx, bitcoin.Transaction, 'DID is instance of Transaction')
-      assert.equal(didTx.outs.length, 3, 'DID has two outputs')
-      const {sigAddress, recAddress} = getTestDDO({didTx, network})
-      const signatureAddress = getFirstSignatureAddress(walletRoot)
-      assert.equal(sigAddress, signatureAddress,
+      assert.equal(didTx.outs.length, 4, 'DID has four outputs')
+      const {nulldata, conAddress, recAddress} = getTestDDO({didTx, network})
+      const ddoHash = bitcoin.script.nullData.output.decode(nulldata).toString()
+      const ddoJSON = await Meteor.callPromise('ipfs.get', ddoHash)
+      const ddo = JSON.parse(ddoJSON)
+      const ownerPubKey = getFirstOwnerPubKey(walletRoot)
+      assert.equal(ddo.owner[0].publicKey, ownerPubKey,
+        'the owner key in the transaction must be equal to the one provided')
+      const controlAddress = getFirstControlAddress(walletRoot)
+      assert.equal(conAddress, controlAddress,
         'the control address in the transaction must be equal to the one provided')
       assert.equal(recAddress, recoveryAddress,
         'the recovery address in the transaction must be equal to the one provided')
