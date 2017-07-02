@@ -3,7 +3,10 @@
   "private": true,
   "scripts": {
     "lint": "standard",
-    "start": "meteor run"
+    "start": "meteor run",
+    "test": "TEST_SERVER=0 meteor test --driver-package dispatch:mocha",
+    "test-chrome": "TEST_BROWSER_DRIVER=chrome meteor test --once --driver-package dispatch:mocha",
+    "test-watch": "TEST_BROWSER_DRIVER=chrome TEST_WATCH=1 meteor test --driver-package dispatch:mocha"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
@@ -26,6 +29,8 @@
   },
   "devDependencies": {
     "chai": "^4.0.2",
+    "chromedriver": "^2.30.1",
+    "selenium-webdriver": "3.0.0-beta-2",
     "standard": "*"
   }
 }
