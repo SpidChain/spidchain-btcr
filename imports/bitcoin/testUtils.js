@@ -43,7 +43,7 @@ export const createTestDID = async ({network, walletRoot, recoveryAddress}) => {
   const utxos = await Meteor.callPromise('bitcoin', 'listUnspent', 0, 9999999,
     [fundingAddress])
   const didTx = await createDID({
-    identityAccount: 1,
+    controlAccount: 1,
     walletRoot,
     fundingKeypair,
     amount,

@@ -6,20 +6,20 @@ global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')
 
 export default async ({
-  identityAccount,
+  controlAccount,
   walletRoot,
   fundingKeypair,
   amount,
   recoveryAddress,
   utxos
 }) => {
-  const identityRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(identityAccount)
+  const controlRoot = walletRoot.derivePath("m/44'/0'")
+    .deriveHardened(controlAccount)
     .derive(0)
   const changeKeypair = fundingKeypair
   const feeRate = Meteor.settings.public.feeRate
-  const signatureKeyPair = identityRoot.derive(0)
-  const signatureAddress = signatureKeyPair.getAddress()
+  const controlKeyPair = controlRoot.derive(0)
+  const controlAddress = controlKeyPair.getAddress()
   const network = bitcoin.networks[Meteor.settings.public.network]
   /*
   let utxos
@@ -33,7 +33,7 @@ export default async ({
   */
   const targets = [
     {
-      address: signatureAddress,
+      address: controlAddress,
       value: amount
     },
     {
