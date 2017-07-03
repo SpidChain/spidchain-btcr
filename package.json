@@ -4,9 +4,9 @@
   "scripts": {
     "lint": "standard",
     "start": "meteor run",
-    "test": "TEST_SERVER=0 meteor test --driver-package dispatch:mocha",
-    "test-chrome": "TEST_BROWSER_DRIVER=chrome meteor test --once --driver-package dispatch:mocha",
-    "test-watch": "TEST_BROWSER_DRIVER=chrome TEST_WATCH=1 meteor test --driver-package dispatch:mocha"
+    "test": "TEST_SERVER=0 meteor test --settings .deploy/dev/settings.json --driver-package dispatch:mocha",
+    "test-chrome": "TEST_BROWSER_DRIVER=chrome meteor test --once --settings .deploy/dev/settings.json --driver-package dispatch:mocha",
+    "test-watch": "TEST_BROWSER_DRIVER=chrome TEST_WATCH=1 meteor test --settings .deploy/dev/settings.json --driver-package dispatch:mocha"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
