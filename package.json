@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "lint": "standard",
-    "start": "meteor run",
+    "pretest": "npm run lint --silent",
+    "start": "meteor run --settings .deploy/dev/settings.json",
     "test": "TEST_SERVER=0 meteor test --settings .deploy/dev/settings.json --driver-package dispatch:mocha",
     "test-chrome": "TEST_BROWSER_DRIVER=chrome meteor test --once --settings .deploy/dev/settings.json --driver-package dispatch:mocha",
     "test-watch": "TEST_BROWSER_DRIVER=chrome TEST_WATCH=1 meteor test --settings .deploy/dev/settings.json --driver-package dispatch:mocha"
