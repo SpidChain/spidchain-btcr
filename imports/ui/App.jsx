@@ -2,6 +2,10 @@ import createReactClass from 'create-react-class'
 import React from 'react'
 
 import GenerateWallet from './GenerateWallet'
+import ReceivePayment from '/imports/ui/ReceivePayment'
+
+global.Buffer = global.Buffer || require('buffer').Buffer
+const bitcoin = require('bitcoinjs-lib')
 
 export default createReactClass({
   displayName: 'App',
@@ -19,12 +23,11 @@ export default createReactClass({
 
   render () {
     const wallet = this.state.wallet
-
+    const walletRoot = bitcoin.HDNode.fromBase58(wallet)
+    const receivingAddress = walletRoot.derivePath("m/44'/0'/0'/0/0").getAddress()
     return wallet
       ? (
-        <p>
-          Hello {wallet}
-        </p>
+        <ReceivePayment address={receivingAddress} />
       )
       : (
         <GenerateWallet onWallet={this.onWallet} />
