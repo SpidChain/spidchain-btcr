@@ -26,7 +26,7 @@ export default createReactClass({
   },
 
   checkWords (words) {
-    if (this.state.mnemonic === words.join(' ')) {
+    if (this.state.mnemonic !== words.join(' ')) {
       this.setState({mismatch: true})
       return
     }
