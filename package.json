@@ -20,6 +20,7 @@
     "create-react-class": "^15.6.0",
     "ipfs-api": "^14.0.4",
     "meteor-node-stubs": "~0.2.4",
+    "qrcode.react": "^0.7.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.1.1",
