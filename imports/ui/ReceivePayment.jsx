@@ -1,3 +1,4 @@
+import QRCode from 'qrcode.react'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import {Button, Modal, ModalBody, ModalHeader} from 'reactstrap'
@@ -17,9 +18,11 @@ const ReceivePayment = createReactClass({
       <div>
         <Button color='primary' onClick={this.toggle}> Receive </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
-          <ModalBody>
+          <ModalHeader toggle={this.toggle}>
             {this.props.address}
+          </ModalHeader>
+          <ModalBody>
+            <QRCode value={this.props.address} size={256} />
           </ModalBody>
         </Modal>
       </div>
