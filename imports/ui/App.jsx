@@ -81,8 +81,7 @@ export default createReactClass({
               <ReceivePayment address={receivingAddress} />
             </Col>
           </Row>
-          <br />
-          <Row>
+          <Row className='mt-3'>
             <Col xs='12'>
               {
                 !did && !unconfirmedDID
