@@ -5,6 +5,7 @@ import React from 'react'
 import CreateIdentity from './CreateIdentity'
 import GenerateWallet from './GenerateWallet'
 import ReceivePayment from '/imports/ui/ReceivePayment'
+import ShowDID from './ShowDID'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')
@@ -86,7 +87,7 @@ export default createReactClass({
                 recoveryAddress={recoveryAddress}
               />
             )
-            : null
+            : <ShowDID did={did || unconfirmedDID} />
           }
           {
             unconfirmedDID
