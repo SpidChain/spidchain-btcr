@@ -22,7 +22,9 @@ const ReceivePayment = createReactClass({
             {this.props.address}
           </ModalHeader>
           <ModalBody>
-            <QRCode value={this.props.address} size={256} />
+            <div className='d-flex justify-content-center'>
+              <QRCode value={this.props.address} size={256} />
+            </div>
           </ModalBody>
         </Modal>
       </div>
