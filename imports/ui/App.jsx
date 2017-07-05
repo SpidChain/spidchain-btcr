@@ -76,7 +76,8 @@ export default createReactClass({
 
       return (
         <Container fluid>
-          <Row>
+          <img src='/icona_logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
+          <Row className='mt-3'>
             <Col xs='12'>
               <ReceivePayment address={receivingAddress} />
             </Col>
