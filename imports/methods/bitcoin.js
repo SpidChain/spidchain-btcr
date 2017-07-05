@@ -3,7 +3,7 @@ import {Meteor} from 'meteor/meteor'
 
 const client = new Client({
   password: 'bar',
-  network: 'regtest',
+  network: Meteor.settings.public.network,
   username: 'foo'
 })
 
