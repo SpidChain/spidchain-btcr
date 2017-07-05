@@ -1,6 +1,7 @@
 import createReactClass from 'create-react-class'
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
+import {Col, Container, Row} from 'reactstrap'
 
 import CreateIdentity from './CreateIdentity'
 import GenerateWallet from './GenerateWallet'
@@ -74,29 +75,38 @@ export default createReactClass({
       const recoveryAddress = recoveryKeyPair.getAddress()
 
       return (
-        <div>
-          <ReceivePayment address={receivingAddress} />
-          {
-            !did && !unconfirmedDID
-            ? (
-              <CreateIdentity
-                onDID={this.onDID}
-                walletRoot={walletRoot}
-                fundingKeypair={fundingKeypair}
-                ownerPubKey={ownerPubKey}
-                recoveryAddress={recoveryAddress}
-              />
-            )
-            : <ShowDID did={did || unconfirmedDID} />
-          }
-          {
-            unconfirmedDID
-            ? (
-              <p>Waiting {confirmations} confirmations</p>
-            )
-            : null
-          }
-        </div>
+        <Container fluid>
+          <Row>
+            <Col xs='12'>
+              <ReceivePayment address={receivingAddress} />
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col xs='12'>
+              {
+                !did && !unconfirmedDID
+                ? (
+                  <CreateIdentity
+                    onDID={this.onDID}
+                    walletRoot={walletRoot}
+                    fundingKeypair={fundingKeypair}
+                    ownerPubKey={ownerPubKey}
+                    recoveryAddress={recoveryAddress}
+                    />
+                )
+                : <ShowDID did={did || unconfirmedDID} />
+              }
+              {
+                unconfirmedDID
+                ? (
+                  <p>Waiting {confirmations} confirmations</p>
+                )
+                : null
+              }
+            </Col>
+          </Row>
+        </Container>
       )
     }
 

@@ -17,7 +17,7 @@ const ShowDID = createReactClass({
     const did = `did:btcr:${this.props.did}`
     return (
       <div>
-        <Button color='primary' onClick={this.toggle}> Show DID </Button>
+        <Button color='primary' onClick={this.toggle} block> Show DID </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
             {did}
