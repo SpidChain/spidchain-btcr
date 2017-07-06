@@ -34,7 +34,7 @@ const create = async ({
 }
 
 const CreateIdentity = (props) => (
-  <Button color='primary' onClick={() => create(props)}>
+  <Button color='primary' block onClick={() => create(props)}>
     Create identity
   </Button>
 )
