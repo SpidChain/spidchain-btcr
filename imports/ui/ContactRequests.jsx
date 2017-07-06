@@ -1,8 +1,10 @@
 import React from 'react'
-import {Container, Jumbotron} from 'reactstrap'
+import {Container, Jumbotron, ListGroup} from 'reactstrap'
 import Spinner from 'react-spinkit'
 
-const ContactRequests = ({loading, requests}) => {
+import RequestItem from '/imports/ui/RequestItem'
+
+const ContactRequests = ({loading, requests, did, wallet}) => {
   if (loading) {
     return <Spinner name='double-bounce' />
   }
@@ -14,9 +16,15 @@ const ContactRequests = ({loading, requests}) => {
           Here you can cryptographically confirm your contact requests
         </p>
       </Jumbotron>
-      <ul>
-        {requests.map(({_id, senderDid}) => <li key={_id}> {senderDid} </li>)}
-      </ul>
+      <ListGroup>
+        {requests.map(({_id, nonce, senderDid}) => <RequestItem
+          key={_id}
+          did={did}
+          nonce={nonce}
+          senderDid={senderDid}
+          wallet={wallet}
+        />)}
+      </ListGroup>
     </Container>
   )
 }

@@ -69,7 +69,8 @@ export default createReactClass({
             <NavBar />
             <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
             <Route exact path='/addContact' render={() => <AddContact did={did} />} />
-            <Route exact path='/contactRequests' render={() => <ContactRequestsContainer did={did} />} />
+            <Route exact path='/contactRequests'
+              render={() => <ContactRequestsContainer did={did} wallet={wallet} />} />
           </div>
         </BrowserRouter>
       )
