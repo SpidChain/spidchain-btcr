@@ -1,6 +1,6 @@
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
-import {Button, Form, Input} from 'reactstrap'
+import {Button, Container, Form, FormGroup, Input, Jumbotron} from 'reactstrap'
 
 const getSecureRandom = () => {
   const array = new Uint32Array(1)
@@ -26,13 +26,23 @@ const onSubmit = senderDid => async e => {
 
 const AddContact = ({did}) => {
   return (
+    <Container fluid>
+ <Jumbotron>
+        <h1 className="display-3">Add a contact</h1>
+        <p className="lead">
+          Insert a friends's DID here, he will receive a confirmation request
+        </p>
+      </Jumbotron>
     <Form onSubmit={onSubmit(did)}>
+      <FormGroup>
       <Input
         type='text'
         name='did'
-        placeholder='did' />
-      <Button type='submit'> Send Request </Button>
+        placeholder='DID' />
+    </FormGroup>
+      <Button type='submit' block color='primary'> Send Request </Button>
     </Form>
+  </Container>
   )
 }
 
