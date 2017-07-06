@@ -1,6 +1,7 @@
 import React from 'react'
 import createReactClass from 'create-react-class'
 import {Button, Col, Container, Jumbotron, Row} from 'reactstrap'
+import {NotificationManager} from 'react-notifications'
 
 import createHDWallet from '/imports/bitcoin/createHDWallet'
 import InputMnemonic from './InputMnemonic'
@@ -28,6 +29,7 @@ export default createReactClass({
   checkWords (words) {
     if (this.state.mnemonic !== words.join(' ')) {
       this.setState({mismatch: true})
+      NotificationManager.error('Words do not match', 'Error!', 5000)
       return
     }
 
@@ -101,7 +103,6 @@ export default createReactClass({
             <Row>
               <Col xs='12'>
                 <InputMnemonic onBack={this.generateWallet} onWords={this.checkWords} />
-                {this.state.mismatch ? <p>Words mismatch</p> : null}
               </Col>
             </Row>
           </Container>

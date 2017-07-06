@@ -2,6 +2,8 @@ import createReactClass from 'create-react-class'
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
+import 'react-notifications/dist/react-notifications.css'
+import {NotificationContainer} from 'react-notifications'
 
 import ActivationFlow from './ActivationFlow'
 import AddContact from './AddContact.jsx'
@@ -73,18 +75,22 @@ export default createReactClass({
             <Route exact path='/contactRequests'
               render={() => <ContactRequestsContainer did={did} wallet={wallet} />} />
             <Route exact path='/contacts' render={() => <Contacts did={did} />} />
+            <NotificationContainer />
           </div>
         </BrowserRouter>
       )
     }
 
     return (
-      <ActivationFlow
-        unconfirmedDID={unconfirmedDID}
-        wallet={wallet}
-        onWallet={this.onWallet}
-        onDID={this.onDID}
-      />
+      <div>
+        <ActivationFlow
+          unconfirmedDID={unconfirmedDID}
+          wallet={wallet}
+          onWallet={this.onWallet}
+          onDID={this.onDID}
+        />
+        <NotificationContainer />
+      </div>
     )
   }
 })
