@@ -37,8 +37,7 @@ const Contacts = createReactClass({
       contact.verified = false
       return contact
     }
-
-    const res = await verify({did: receiverDid, msg: nonce, sig: contact.signature, keyIx: 0})
+    const res = await verify({did: receiverDid, msg: nonce, sig: signature, keyIx: 0})
     contact.verified = res
     window.localStorage.setItem(contact.did, JSON.stringify({
       nonce,
