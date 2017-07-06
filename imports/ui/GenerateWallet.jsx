@@ -1,6 +1,6 @@
 import React from 'react'
 import createReactClass from 'create-react-class'
-import {Button, Col, Row} from 'reactstrap'
+import {Button, Col, Container, Row} from 'reactstrap'
 
 import createHDWallet from '/imports/bitcoin/createHDWallet'
 import InputMnemonic from './InputMnemonic'
@@ -42,9 +42,20 @@ export default createReactClass({
     switch (state.step) {
       case 'start':
         return (
-          <Button color='primary' onClick={this.generateWallet}>
-            Generate Bitcoin wallet
-          </Button>
+          <Container fluid>
+            <Row className='mt-3'>
+              <Col xs='12'>
+                <img src='/icona_logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
+              </Col>
+            </Row>
+            <Row className='mt-3'>
+              <Col xs='12'>
+                <Button color='primary' block onClick={this.generateWallet}>
+                  Generate Bitcoin wallet
+                </Button>
+              </Col>
+            </Row>
+          </Container>
         )
       case 'generate':
         return (
