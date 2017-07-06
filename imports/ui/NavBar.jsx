@@ -30,10 +30,10 @@ export default createReactClass({
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar className='ml-auto'>
             <NavItem>
-              <NavLink tag={RNavLink} to='/' onClick={this.close}>Home</NavLink>
+              <NavLink tag={RNavLink} exact to='/' onClick={this.close}>Home</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink tag={RNavLink} to='/addContact' onClick={this.close}>AddContact</NavLink>
+              <NavLink tag={RNavLink} exact to='/addContact' onClick={this.close}>AddContact</NavLink>
             </NavItem>
           </Nav>
         </Collapse>
