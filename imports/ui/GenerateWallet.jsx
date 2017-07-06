@@ -1,6 +1,6 @@
 import React from 'react'
 import createReactClass from 'create-react-class'
-import {Button, Col, Container, Row} from 'reactstrap'
+import {Button, Col, Container, Jumbotron, Row} from 'reactstrap'
 
 import createHDWallet from '/imports/bitcoin/createHDWallet'
 import InputMnemonic from './InputMnemonic'
@@ -59,19 +59,31 @@ export default createReactClass({
         )
       case 'generate':
         return (
-          <div>
-            <Row>
+          <Container fluid>
+            <Row className='mt-3'>
               <Col xs='12'>
-                <p>
-                  Back up the 12 words below in a safe place, then click <code>Next</code>.
-                </p>
+                <Jumbotron>
+                  <h1 className='display-3'> Wallet mnemonic </h1>
+                  <p className='lead'>
+                    Back up the 12 words below in a safe place, you will need to
+                    confirm them in the next screen
+                  </p>
+                </Jumbotron>
               </Col>
             </Row>
-            <ShowMnemonic words={state.mnemonic.split(' ')} />
-            <Button color='primary' onClick={() => this.setState({step: 'confirm'})}>
-              Next
-            </Button>
-          </div>
+            <Row>
+              <Col xs='12'>
+                <ShowMnemonic words={state.mnemonic.split(' ')} />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs='12'>
+                <Button color='primary' block onClick={() => this.setState({step: 'confirm'})}>
+                  Next
+                </Button>
+              </Col>
+            </Row>
+          </Container>
         )
       case 'confirm':
         return (
