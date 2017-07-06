@@ -6,6 +6,7 @@ import {BrowserRouter, Route} from 'react-router-dom'
 import ActivationFlow from './ActivationFlow'
 import AddContact from './AddContact.jsx'
 import Home from './Home'
+import NavBar from './NavBar'
 
 const confirmations = 1
 
@@ -64,6 +65,7 @@ export default createReactClass({
       return (
         <BrowserRouter>
           <div>
+            <NavBar />
             <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
             <Route exact path='/AddContact' render={() => <AddContact did={did} />} />
           </div>
