@@ -2,10 +2,16 @@ import {Meteor} from 'meteor/meteor'
 import React from 'react'
 import {Button, Form, Input} from 'reactstrap'
 
+const getSecureRandom = () => {
+  const array = new Uint32Array(1)
+  window.crypto.getRandomValues(array)
+  return array[0]
+}
+
 const onSubmit = senderDid => async e => {
   e.preventDefault()
   const receiverDid = e.target.did.value
-  const nonce = 999480349809348503
+  const nonce = getSecureRandom()
   if (receiverDid === '') {
     return
   }
