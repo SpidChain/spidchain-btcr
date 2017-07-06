@@ -10,18 +10,20 @@ const getSecureRandom = () => {
 
 const onSubmit = senderDid => async e => {
   e.preventDefault()
-  const receiverDid = e.target.did.value
+  const form = e.target
+  const receiverDid = form.did.value
   const nonce = getSecureRandom()
   if (receiverDid === '') {
     return
   }
   try {
-    await Meteor.callPromise('sendChallenge', {senderDid, receiverDid, nonce})
+    await Meteor.callPromise('messaging.sendChallenge', {senderDid, receiverDid, nonce})
   } catch (e) {
     console.error(e)
     return
   }
-  window.localStorage(receiverDid, JSON.stringify({nonce, verified: false}))
+  window.localStorage.setItem(receiverDid, JSON.stringify({nonce, verified: false}))
+  form.reset()
 }
 
 const AddContact = ({did}) => {
