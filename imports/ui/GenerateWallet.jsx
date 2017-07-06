@@ -87,10 +87,24 @@ export default createReactClass({
         )
       case 'confirm':
         return (
-          <div>
-            <InputMnemonic onBack={this.generateWallet} onWords={this.checkWords} />
-            {this.state.mismatch ? <p>Words mismatch</p> : null}
-          </div>
+          <Container fluid>
+            <Row className='mt-3'>
+              <Col xs='12'>
+                <Jumbotron>
+                  <h1 className='display-3'> Mnemonic confirmation</h1>
+                  <p className='lead'>
+                    Please confirm the words from the previous screen
+                  </p>
+                </Jumbotron>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs='12'>
+                <InputMnemonic onBack={this.generateWallet} onWords={this.checkWords} />
+                {this.state.mismatch ? <p>Words mismatch</p> : null}
+              </Col>
+            </Row>
+          </Container>
         )
       case 'done':
         return <p>Done!</p>

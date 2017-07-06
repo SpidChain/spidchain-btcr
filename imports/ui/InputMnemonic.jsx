@@ -13,16 +13,16 @@ const wordsHandler = (onWords) => (e) => {
 const Row = ({num}) => (
   <FormGroup row>
     <Col xs='3'>
-      <Input type='text' name={'w' + (4 * num)} />
+      <Input type='text' name={'w' + (4 * num)} placeholder={'word ' + (4 * num)} />
     </Col>
     <Col xs='3'>
-      <Input type='text' name={'w' + (4 * num + 1)} />
+      <Input type='text' name={'w' + (4 * num + 1)} placeholder={'word ' + (4 * num + 1)} />
     </Col>
     <Col xs='3'>
-      <Input type='text' name={'w' + (4 * num + 2)} />
+      <Input type='text' name={'w' + (4 * num + 2)} placeholder={'word ' + (4 * num + 2)} />
     </Col>
     <Col xs='3'>
-      <Input type='text' name={'w' + (4 * num + 3)} />
+      <Input type='text' name={'w' + (4 * num + 3)} placeholder={'word ' + (4 * num + 3)} />
     </Col>
   </FormGroup>
 )
@@ -32,10 +32,10 @@ const InputMnemonic = ({onBack, onWords}) => (
     <Row num={0} />
     <Row num={1} />
     <Row num={2} />
-    <Button type='button' onClick={onBack}>
+    <Button color='primary' type='button' onClick={onBack}>
       Back
     </Button>
-    <Button type='submit' className='pull-right'>
+    <Button color='primary' type='submit' className='pull-right'>
       Confirm
     </Button>
   </Form>
