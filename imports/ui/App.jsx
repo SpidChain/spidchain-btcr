@@ -4,6 +4,7 @@ import React from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
 
 import ActivationFlow from './ActivationFlow'
+import AddContact from './AddContact.jsx'
 import Home from './Home'
 
 const confirmations = 1
@@ -62,7 +63,10 @@ export default createReactClass({
     if (did) {
       return (
         <BrowserRouter>
-          <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
+          <div>
+            <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
+            <Route exact path='/AddContact' render={() => <AddContact did={did} />} />
+          </div>
         </BrowserRouter>
       )
     }
