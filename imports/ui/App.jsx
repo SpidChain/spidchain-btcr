@@ -1,18 +1,12 @@
 import createReactClass from 'create-react-class'
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
-import {Col, Container, Row} from 'reactstrap'
+import {BrowserRouter, Route} from 'react-router-dom'
 
-import CreateIdentity from './CreateIdentity'
-import GenerateWallet from './GenerateWallet'
-import ReceivePayment from '/imports/ui/ReceivePayment'
-import ShowDID from './ShowDID'
-
-global.Buffer = global.Buffer || require('buffer').Buffer
-const bitcoin = require('bitcoinjs-lib')
+import ActivationFlow from './ActivationFlow'
+import Home from './Home'
 
 const confirmations = 1
-const network = bitcoin.networks[Meteor.settings.public.network]
 
 export default createReactClass({
   displayName: 'App',
@@ -65,51 +59,21 @@ export default createReactClass({
   render () {
     const {did, unconfirmedDID, wallet} = this.state
 
-    if (wallet) {
-      const walletRoot = bitcoin.HDNode.fromBase58(wallet, network)
-      const fundingKeypair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
-      const receivingAddress = fundingKeypair.getAddress()
-      const ownerKeyPair = walletRoot.derivePath("m/44'/0'/2'/0/0")
-      const ownerPubKey = ownerKeyPair.getPublicKeyBuffer().toString('hex')
-      const recoveryKeyPair = walletRoot.derivePath("m/44'/0'/3'/0/0")
-      const recoveryAddress = recoveryKeyPair.getAddress()
-
+    if (did) {
       return (
-        <Container fluid>
-          <img src='/icona_logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
-          <Row className='mt-3'>
-            <Col xs='12'>
-              <ReceivePayment address={receivingAddress} />
-            </Col>
-          </Row>
-          <Row className='mt-3'>
-            <Col xs='12'>
-              {
-                !did && !unconfirmedDID
-                ? (
-                  <CreateIdentity
-                    onDID={this.onDID}
-                    walletRoot={walletRoot}
-                    fundingKeypair={fundingKeypair}
-                    ownerPubKey={ownerPubKey}
-                    recoveryAddress={recoveryAddress}
-                    />
-                )
-                : <ShowDID did={did || unconfirmedDID} />
-              }
-              {
-                unconfirmedDID
-                ? (
-                  <p>Waiting {confirmations} confirmations</p>
-                )
-                : null
-              }
-            </Col>
-          </Row>
-        </Container>
+        <BrowserRouter>
+          <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
+        </BrowserRouter>
       )
     }
 
-    return <GenerateWallet onWallet={this.onWallet} />
+    return (
+      <ActivationFlow
+        unconfirmedDID={unconfirmedDID}
+        wallet={wallet}
+        onWallet={this.onWallet}
+        onDID={this.onDID}
+      />
+    )
   }
 })
