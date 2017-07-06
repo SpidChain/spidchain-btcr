@@ -7,6 +7,7 @@ import ActivationFlow from './ActivationFlow'
 import AddContact from './AddContact.jsx'
 import Home from './Home'
 import NavBar from './NavBar'
+import Contacts from '/imports/ui/Contacts'
 import ContactRequestsContainer from '/imports/ui/ContactRequestsContainer'
 
 const confirmations = 1
@@ -71,6 +72,7 @@ export default createReactClass({
             <Route exact path='/addContact' render={() => <AddContact did={did} />} />
             <Route exact path='/contactRequests'
               render={() => <ContactRequestsContainer did={did} wallet={wallet} />} />
+            <Route exact path='/contacts' render={() => <Contacts did={did} />} />
           </div>
         </BrowserRouter>
       )

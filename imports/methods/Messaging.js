@@ -8,5 +8,9 @@ Meteor.methods({
 
   'messaging.sendChallengeResponse': ({senderDid, receiverDid, nonce, signature}) => {
     Messaging.update({senderDid, receiverDid, nonce}, {$set: {signature}}, {multi: true})
+  },
+
+  'messaging.challengeVerify': ({senderDid, receiverDid, nonce}) => {
+    return Messaging.findOne({senderDid, receiverDid, nonce})
   }
 })
