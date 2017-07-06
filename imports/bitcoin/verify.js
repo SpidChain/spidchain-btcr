@@ -1,9 +1,11 @@
 import resolveDID from '/imports/bitcoin/resolveDID'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
-const {ECPair, ECSignature} = require('bitcoinjs-lib')
+const {ECPair, ECSignature, crypto} = require('bitcoinjs-lib')
 
-export default async ({did, msgHash, sig, keyIx}) => {
+const sha256 = msg => crypto.sha256(msg)
+
+const verify = hashFunction => async ({did, msg, sig, keyIx}) => {
   const ddo = await resolveDID(did)
   const owner = ddo.owner[keyIx]
 
@@ -14,7 +16,11 @@ export default async ({did, msgHash, sig, keyIx}) => {
   const pubKey = owner.publicKey
   const keyPair = ECPair.fromPublicKeyBuffer(Buffer.from(pubKey, 'hex'))
   return keyPair.verify(
-    Buffer.from(msgHash, 'hex'),
+    hashFunction(msg),
     ECSignature.fromDER(Buffer.from(sig, 'hex'))
   )
 }
+
+const verify256 = verify(sha256)
+
+export default verify256
