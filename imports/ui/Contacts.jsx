@@ -65,7 +65,7 @@ const Contacts = createReactClass({
         <Jumbotron>
           <h1 className='display-3'>My Contacts</h1>
           <p className='lead'>
-            Bla bla
+            This is a list of your DID contacts
           </p>
         </Jumbotron>
         <ListGroup>
