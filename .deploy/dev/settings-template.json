@@ -1,6 +1,7 @@
 {
   "public": {
     "feeRate": 360,
+    "bitcoinHost": "95.85.40.97",
     "network": "testnet"
   }
 }

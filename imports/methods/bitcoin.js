@@ -2,6 +2,7 @@ import Client from 'bitcoin-core'
 import {Meteor} from 'meteor/meteor'
 
 const client = new Client({
+  host: Meteor.settings.public.bitcoinHost,
   password: 'bar',
   network: Meteor.settings.public.network,
   username: 'foo'
