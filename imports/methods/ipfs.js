@@ -16,10 +16,12 @@ const streamToPromise = (stream) => {
   })
 }
 
+const host = Meteor.settings.public.ipfsHost
+
 Meteor.methods({
   'ipfs.add': async (text) => {
     if (Meteor.isServer) {
-      const ipfs = ipfsApi('localhost', '5001', {protocol: 'http'})
+      const ipfs = ipfsApi(host, '5001', {protocol: 'http'})
       const buffer = Buffer.from(text)
       const hash = await ipfs.files.add(buffer)
       return hash
@@ -28,7 +30,7 @@ Meteor.methods({
 
   'ipfs.get': async (hash) => {
     if (Meteor.isServer) {
-      const ipfs = ipfsApi('localhost', '5001', {protocol: 'http'})
+      const ipfs = ipfsApi(host, '5001', {protocol: 'http'})
       const stream = await ipfs.cat(hash)
       return streamToPromise(stream)
     }
