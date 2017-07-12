@@ -47,7 +47,7 @@ export default createReactClass({
           <Container fluid>
             <Row className='mt-3'>
               <Col xs='12'>
-                <img src='/icona_logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
+                <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
               </Col>
             </Row>
             <Row className='mt-3'>

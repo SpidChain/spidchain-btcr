@@ -17,7 +17,7 @@ const Home = ({did, wallet}) => {
 
   return (
     <Container fluid>
-      <img src='/icona_logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
+      <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
       <Row className='mt-3'>
         <Col xs='12'>
           <ReceivePayment address={receivingAddress} />
