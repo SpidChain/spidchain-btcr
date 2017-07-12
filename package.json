@@ -1,5 +1,16 @@
 {
   "name": "spidchain-btcr",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Federico Squartini",
+      "email": "federico.squartini@gmail.com"
+    },
+    {
+      "name": "Nicola Squartini",
+      "email": "tensor5@gmail.com"
+    }
+  ],
   "private": true,
   "scripts": {
     "lint": "standard",
