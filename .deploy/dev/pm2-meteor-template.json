@@ -15,10 +15,14 @@
   "server": {
     "host": "xxx.xxx.xxx.xxx",
     "username": "root",
-    "password": "",
-    "deploymentDir": "/opt/btcr-js",
+    "password": "xxxxxxxxxxxx",
+    "deploymentDir": "/opt/",
     "exec_mode": "cluster_mode",
-    "instances": 1
+    "instances": 1,
+    "nvm": {
+      "bin": "~/.nvm/nvm.sh",
+      "use": "v4.8.3"
+    }
   }
 }
 
