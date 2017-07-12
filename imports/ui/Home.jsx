@@ -3,7 +3,8 @@ import React from 'react'
 import {Col, Container, Row} from 'reactstrap'
 
 import ReceivePayment from './ReceivePayment'
-import ShowDID from './ShowDID'
+import ShowDID from '/imports/ui/ShowDID'
+import ShowDDO from '/imports/ui/ShowDDO'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const {HDNode, networks} = require('bitcoinjs-lib')
@@ -26,6 +27,11 @@ const Home = ({did, wallet}) => {
       <Row className='mt-3'>
         <Col xs='12'>
           <ShowDID did={did} />
+        </Col>
+      </Row>
+      <Row className='mt-3'>
+        <Col xs='12'>
+          <ShowDDO did={did} />
         </Col>
       </Row>
     </Container>
