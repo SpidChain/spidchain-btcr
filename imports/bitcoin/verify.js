@@ -1,4 +1,4 @@
-import resolveDID from '/imports/bitcoin/resolveDID'
+import {resolveDID} from '/imports/bitcoin/resolveDID'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const {ECPair, ECSignature, crypto} = require('bitcoinjs-lib')

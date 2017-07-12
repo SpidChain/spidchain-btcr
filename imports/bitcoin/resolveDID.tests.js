@@ -9,7 +9,7 @@ import {
   getFirstOwnerPubKey,
   testRecoveryAddress
 } from '/imports/bitcoin/testUtils'
-import resolveDID from './resolveDID'
+import {resolveDID} from './resolveDID'
 import sendRawTransaction from '/imports/bitcoin/sendRawTransaction'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
