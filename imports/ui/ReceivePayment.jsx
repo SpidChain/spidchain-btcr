@@ -16,7 +16,7 @@ const ReceivePayment = createReactClass({
   render: function () {
     return (
       <div>
-        <Button color='primary' onClick={this.toggle} block> Receive </Button>
+        <Button color='primary' onClick={this.toggle} block> Fund Wallet </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
             {this.props.address}
