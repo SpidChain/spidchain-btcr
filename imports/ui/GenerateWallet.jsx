@@ -53,7 +53,7 @@ export default createReactClass({
             <Row className='mt-3'>
               <Col xs='12'>
                 <Button color='primary' block onClick={this.generateWallet}>
-                  Generate Bitcoin wallet
+                  Generate Bitcoin Wallet
                 </Button>
               </Col>
             </Row>
@@ -65,9 +65,8 @@ export default createReactClass({
             <Row className='mt-3'>
               <Col xs='12'>
                 <Jumbotron>
-                  <h1 className='display-3'> Wallet mnemonic </h1>
                   <p className='lead'>
-                    Back up the 12 words below in a safe place, you will need to
+                    Write down the 12 words below in a safe place, you will need to
                     confirm them in the next screen
                   </p>
                 </Jumbotron>
@@ -93,7 +92,6 @@ export default createReactClass({
             <Row className='mt-3'>
               <Col xs='12'>
                 <Jumbotron>
-                  <h1 className='display-3'> Mnemonic confirmation</h1>
                   <p className='lead'>
                     Please confirm the words from the previous screen
                   </p>
