@@ -5,6 +5,7 @@ import Spinner from 'react-spinkit'
 import {Button, Modal, ModalBody, ModalHeader} from 'reactstrap'
 
 import {getDDOUri} from '/imports/bitcoin/resolveDID'
+import ShowTruncatedText from '/imports/ui/ShowTruncatedText'
 
 const ShowDDO = createReactClass({
 
@@ -42,7 +43,7 @@ const ShowDDO = createReactClass({
           <ModalHeader toggle={this.toggle}>
             {this.state.ddoLoading
               ? null
-              : '/ipfs/' + this.state.ddo
+              : <ShowTruncatedText text={'/ipfs/' + this.state.ddo} />
             }
           </ModalHeader>
           <ModalBody>
