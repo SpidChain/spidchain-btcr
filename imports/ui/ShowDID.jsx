@@ -2,6 +2,7 @@ import createReactClass from 'create-react-class'
 import QRCode from 'qrcode.react'
 import React from 'react'
 import {Button, Modal, ModalBody, ModalHeader} from 'reactstrap'
+import ShowTruncatedText from '/imports/ui/ShowTruncatedText'
 
 const ShowDID = createReactClass({
 
@@ -20,7 +21,7 @@ const ShowDID = createReactClass({
         <Button color='primary' onClick={this.toggle} block> Show DID </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
-            {did}
+            <ShowTruncatedText text={did} />
           </ModalHeader>
           <ModalBody>
             <div className='d-flex justify-content-center'>
