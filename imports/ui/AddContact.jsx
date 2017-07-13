@@ -30,7 +30,6 @@ const AddContact = ({did}) => {
   return (
     <Container fluid>
       <Jumbotron>
-        <h1 className='display-3'>Add a contact</h1>
         <p className='lead'>
           Insert a friends's DID here, he will receive a confirmation request
         </p>

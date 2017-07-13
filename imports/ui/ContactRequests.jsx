@@ -11,9 +11,8 @@ const ContactRequests = ({loading, requests, did, wallet}) => {
   return (
     <Container fluid>
       <Jumbotron>
-        <h1 className='display-3'> Your contact requests</h1>
         <p className='lead'>
-          Here you can cryptographically confirm your contact requests
+          Here you can confirm your contact requests
         </p>
       </Jumbotron>
       <ListGroup>
