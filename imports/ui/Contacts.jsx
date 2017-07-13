@@ -67,9 +67,12 @@ const Contacts = createReactClass({
             A list of your DID contacts
           </p>
         </Jumbotron>
-        <ListGroup>
-          {this.state.contacts.map(({did, verified}) => <Contact key={did} did={did} verified={verified} />)}
-        </ListGroup>
+        {this.state.contacts.length === 0
+            ? <p> Your addressbook is empty </p>
+            : <ListGroup>
+              {this.state.contacts.map(({did, verified}) => <Contact key={did} did={did} verified={verified} />)}
+            </ListGroup>
+        }
       </Container>
     )
   }
