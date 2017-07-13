@@ -46,12 +46,12 @@ export default createReactClass({
         return (
           <Container fluid>
             <Row className='mt-3'>
-              <Col xs='12'>
+              <Col md='6' className='mx-auto'>
                 <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
               </Col>
             </Row>
             <Row className='mt-3'>
-              <Col xs='12'>
+              <Col md='6' className='mx-auto'>
                 <Button color='primary' block onClick={this.generateWallet}>
                   Generate Bitcoin Wallet
                 </Button>
@@ -63,7 +63,7 @@ export default createReactClass({
         return (
           <Container fluid>
             <Row className='mt-3'>
-              <Col xs='12'>
+              <Col md='6' className='mx-auto'>
                 <Jumbotron>
                   <p className='lead'>
                     Write down the 12 words below in a safe place, you will need to
@@ -72,13 +72,13 @@ export default createReactClass({
                 </Jumbotron>
               </Col>
             </Row>
-            <Row>
-              <Col xs='12'>
+            <Row className='mt-3'>
+              <Col md='6' className='mx-auto'>
                 <ShowMnemonic words={state.mnemonic.split(' ')} />
               </Col>
             </Row>
-            <Row>
-              <Col xs='12'>
+            <Row className='mt-3'>
+              <Col md='6' className='mx-auto'>
                 <Button color='primary' block onClick={() => this.setState({step: 'confirm'})}>
                   Next
                 </Button>
@@ -90,7 +90,7 @@ export default createReactClass({
         return (
           <Container fluid>
             <Row className='mt-3'>
-              <Col xs='12'>
+              <Col md='6' className='mx-auto'>
                 <Jumbotron>
                   <p className='lead'>
                     Please confirm the words from the previous screen
@@ -99,7 +99,7 @@ export default createReactClass({
               </Col>
             </Row>
             <Row>
-              <Col xs='12'>
+              <Col md='6' className='mx-auto'>
                 <InputMnemonic onBack={this.generateWallet} onWords={this.checkWords} />
               </Col>
             </Row>

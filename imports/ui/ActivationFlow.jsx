@@ -28,33 +28,37 @@ const ActivationFlow = ({unconfirmedDID, wallet, onWallet, onDID}) => {
 
   return (
     <Container fluid>
-      <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
       <Row className='mt-3'>
-        <Col xs='12'>
+        <Col md='6' className='mx-auto'>
+          <img src='/spidchain-logo.png' className='w-75 d-block mx-auto mt-3' alt='SpidChain logo' />
+        </Col>
+      </Row>
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
           <ReceivePayment address={receivingAddress} />
         </Col>
       </Row>
       <Row className='mt-3'>
-        <Col xs='12'>
+        <Col md='6' className='mx-auto'>
           {
             !unconfirmedDID
-            ? (
-              <CreateIdentity
-                onDID={onDID}
-                walletRoot={walletRoot}
-                fundingKeypair={fundingKeypair}
-                ownerPubKey={ownerPubKey}
-                recoveryAddress={recoveryAddress}
+              ? (
+                <CreateIdentity
+                  onDID={onDID}
+                  walletRoot={walletRoot}
+                  fundingKeypair={fundingKeypair}
+                  ownerPubKey={ownerPubKey}
+                  recoveryAddress={recoveryAddress}
                 />
-            )
-            : <ShowDID did={unconfirmedDID} />
+              )
+              : <ShowDID did={unconfirmedDID} />
           }
           {
             unconfirmedDID
-            ? (
-              <p>Waiting {confirmations} confirmations</p>
-            )
-            : null
+              ? (
+                <p>Waiting {confirmations} confirmations</p>
+              )
+              : null
           }
         </Col>
       </Row>

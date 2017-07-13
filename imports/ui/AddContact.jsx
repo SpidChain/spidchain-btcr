@@ -1,6 +1,8 @@
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
-import {Button, Container, Form, FormGroup, Input, Jumbotron} from 'reactstrap'
+import {
+  Button, Container, Col, Form,
+  FormGroup, Input, Jumbotron, Row} from 'reactstrap'
 
 const getSecureRandom = () => {
   const array = new Uint32Array(1)
@@ -29,24 +31,32 @@ const onSubmit = senderDid => async e => {
 const AddContact = ({did}) => {
   return (
     <Container fluid>
-      <Jumbotron>
-        <p className='lead'>
-          Insert a friends's DID here, he will receive a confirmation request
-        </p>
-      </Jumbotron>
-      <Form
-        autoCorrect='off'
-        autoComplete='off'
-        onSubmit={onSubmit(did)}>
-        <FormGroup>
-          <Input
-            type='text'
-            name='did'
-            placeholder='DID'
-            autoCapitalize='none' />
-        </FormGroup>
-        <Button type='submit' block color='primary'> Send Request </Button>
-      </Form>
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
+          <Jumbotron>
+            <p className='lead'>
+              Insert a friends's DID here, he will receive a confirmation request
+            </p>
+          </Jumbotron>
+        </Col>
+      </Row>
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
+          <Form
+            autoCorrect='off'
+            autoComplete='off'
+            onSubmit={onSubmit(did)}>
+            <FormGroup>
+              <Input
+                type='text'
+                name='did'
+                placeholder='DID'
+                autoCapitalize='none' />
+            </FormGroup>
+            <Button type='submit' block color='primary'> Send Request </Button>
+          </Form>
+        </Col>
+      </Row>
     </Container>
   )
 }

@@ -18,19 +18,23 @@ const Home = ({did, wallet}) => {
 
   return (
     <Container fluid>
-      <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
       <Row className='mt-3'>
-        <Col xs='12'>
+        <Col md='6' className='mx-auto'>
+          <img src='/spidchain-logo.png' className='w-75 d-block mx-auto mt-3' alt='SpidChain logo' />
+        </Col>
+      </Row>
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
           <ReceivePayment address={receivingAddress} />
         </Col>
       </Row>
       <Row className='mt-3'>
-        <Col xs='12'>
+        <Col md='6' className='mx-auto'>
           <ShowDID did={did} />
         </Col>
       </Row>
       <Row className='mt-3'>
-        <Col xs='12'>
+        <Col md='6' className='mx-auto'>
           <ShowDDO did={did} />
         </Col>
       </Row>

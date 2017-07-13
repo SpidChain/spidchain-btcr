@@ -1,7 +1,7 @@
 import createReactClass from 'create-react-class'
 import {Meteor} from 'meteor/meteor'
 import React from 'react'
-import {Container, Jumbotron, ListGroup} from 'reactstrap'
+import {Container, Jumbotron, ListGroup, Row, Col} from 'reactstrap'
 
 import Contact from '/imports/ui/Contact'
 import verify from '/imports/bitcoin/verify'
@@ -62,17 +62,25 @@ const Contacts = createReactClass({
   render () {
     return (
       <Container fluid>
-        <Jumbotron>
-          <p className='lead'>
-            A list of your DID contacts
-          </p>
-        </Jumbotron>
-        {this.state.contacts.length === 0
-            ? <p> Your addressbook is empty </p>
-            : <ListGroup>
-              {this.state.contacts.map(({did, verified}) => <Contact key={did} did={did} verified={verified} />)}
-            </ListGroup>
-        }
+        <Row className='mt-3'>
+          <Col md='6' className='mx-auto'>
+            <Jumbotron>
+              <p className='lead'>
+                A list of your DID contacts
+              </p>
+            </Jumbotron>
+          </Col>
+        </Row>
+        <Row className='mt-3'>
+          <Col md='6' className='mx-auto'>
+            {this.state.contacts.length === 0
+                ? <p> Your addressbook is empty </p>
+                : <ListGroup>
+                  {this.state.contacts.map(({did, verified}) => <Contact key={did} did={did} verified={verified} />)}
+                </ListGroup>
+            }
+          </Col>
+        </Row>
       </Container>
     )
   }
