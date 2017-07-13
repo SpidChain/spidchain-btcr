@@ -34,12 +34,16 @@ const AddContact = ({did}) => {
           Insert a friends's DID here, he will receive a confirmation request
         </p>
       </Jumbotron>
-      <Form onSubmit={onSubmit(did)}>
+      <Form
+        autoCorrect='off'
+        autoComplete='off'
+        onSubmit={onSubmit(did)}>
         <FormGroup>
           <Input
             type='text'
             name='did'
-            placeholder='DID' />
+            placeholder='DID'
+            autoCapitalize='none' />
         </FormGroup>
         <Button type='submit' block color='primary'> Send Request </Button>
       </Form>
