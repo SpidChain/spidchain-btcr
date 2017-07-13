@@ -33,6 +33,7 @@
     "meteor-node-stubs": "~0.2.4",
     "qrcode.react": "^0.7.1",
     "react": "^15.6.1",
+    "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "^15.6.1",
     "react-notifications": "^1.4.3",
     "react-router-dom": "^4.1.1",
