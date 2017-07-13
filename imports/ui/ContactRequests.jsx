@@ -15,15 +15,18 @@ const ContactRequests = ({loading, requests, did, wallet}) => {
           Here you can confirm your contact requests
         </p>
       </Jumbotron>
-      <ListGroup>
-        {requests.map(({_id, nonce, senderDid}) => <RequestItem
-          key={_id}
-          did={did}
-          nonce={nonce}
-          senderDid={senderDid}
-          wallet={wallet}
-        />)}
-      </ListGroup>
+      {requests.length === 0
+          ? <p> You have no requests </p>
+          : <ListGroup>
+            {requests.map(({_id, nonce, senderDid}) => <RequestItem
+              key={_id}
+              did={did}
+              nonce={nonce}
+              senderDid={senderDid}
+              wallet={wallet}
+            />)}
+          </ListGroup>
+      }
     </Container>
   )
 }
