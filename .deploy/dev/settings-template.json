@@ -1,5 +1,7 @@
 {
   "public": {
+    "controlAccount": 1,
+    "claimsAccount": 2,
     "feeRate": 360,
     "bitcoinHost": "95.85.40.97",
     "ipfsHost": "95.85.40.97",
