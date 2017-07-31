@@ -21,6 +21,7 @@
     "test-watch": "TEST_BROWSER_DRIVER=chrome TEST_WATCH=1 meteor test --settings .deploy/dev/settings.json --driver-package dispatch:mocha"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "babel-runtime": "^6.20.0",
     "bip39": "^2.3.1",
     "bitcoin-core": "^1.2.0",
