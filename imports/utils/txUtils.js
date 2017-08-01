@@ -1,30 +1,35 @@
-import {HTTP} from 'meteor/http'
+import axios from 'axios'
 
-const url = (network) => network === 'testnet'
-    ? 'https://api.blockcypher.com/v1/bcy/test/txs/'
+const blockcypherApi = Meteor.settings.public.network === 'testnet'
+    ? 'https://api.blockcypher.com/v1/btc/test3/txs/'
     : 'https://api.blockcypher.com/v1/btc/main/txs/'
 
-export const getSpendingTx = (txId, ix, network) => {
-  const res = HTTP.get(url(network) + txId)
-  const output = res.data.outputs[ix]
-  const spendingTx = output.spent_by
-  return spendingTx || null
+export const getSpendingTx = async (txId, ix) => {
+  const {data} = await axios.get(blockcypherApi + txId)
+  const {spent_by} = data.outputs[ix]
+  return spent_by || null
 }
 
-export const followFirstOut = (txId, network) => {
-  const nextTx = getSpendingTx(txId, 0, network)
-  if (nextTx) {
-    return followFirstOut(nextTx, network)
+export const followFirstOut = async (txId) => {
+  debugger
+  let tip = txId
+  debugger
+  let thisTx
+  debugger
+  while(thisTx = await getSpendingTx(tip, 0)) {
+    tip = thisTx
+    debugger
   }
-  return txId
+  return tip
 }
 
-export const getTxInfo = (txId, network) => {
-  const {block_height, block_index, hex} = HTTP.get(url(network) + txId, {
-    params: {
-      includeHex: true
-    }
-  }).data
+export const getTxInfo = async (txId) => {
+  const {data: {block_height, block_index, hex}} = await
+    axios.get(blockcypherApi + txId, {
+      params: {
+        includeHex: true
+      }
+    })
   return {
     height: block_height,
     ix: block_index,
@@ -32,15 +37,12 @@ export const getTxInfo = (txId, network) => {
   }
 }
 
-export const getPath = (txId, network) => {
+export const getPath = async (txId) => {
   const path = []
-  let nextTx = txId
-  let thisTx
-
-  while (nextTx) {
-    thisTx = nextTx
-    path.push(getTxInfo(thisTx, network))
-    nextTx = getSpendingTx(thisTx, 0, network)
-  }
+  let thisTx = txId
+  do {
+    const txInfo = await getTxInfo(thisTx)
+    path.push(txInfo)
+  } while(thisTx = await getSpendingTx(thisTx, 0))
   return path
 }
