@@ -4,6 +4,7 @@ import React from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
 import 'react-notifications/dist/react-notifications.css'
 import {NotificationContainer} from 'react-notifications'
+import {txrefEncode} from 'txref-conversion-js'
 
 import ActivationFlow from './ActivationFlow'
 import AddContact from './AddContact.jsx'
@@ -11,6 +12,7 @@ import Home from './Home'
 import NavBar from './NavBar'
 import Contacts from '/imports/ui/Contacts'
 import ContactRequestsContainer from '/imports/ui/ContactRequestsContainer'
+import {getTxInfo} from '/imports/utils/txUtils'
 
 const confirmations = 1
 
@@ -19,6 +21,7 @@ export default createReactClass({
 
   getInitialState: () => ({
     did: window.localStorage.getItem('did'),
+    didTxId: window.localStorage.getItem('didTxId'),
     unconfirmedDID: window.localStorage.getItem('unconfirmedDID'),
     wallet: window.localStorage.getItem('wallet')
   }),
@@ -42,12 +45,16 @@ export default createReactClass({
     const handle = setInterval(async () => {
       const tx = await Meteor.callPromise('bitcoin', 'getRawTransaction', txId, 1)
       if (tx.confirmations >= confirmations) {
+        const {height, ix} = await getTxInfo(txId)
+        const txRef = txrefEncode(Meteor.settings.public.network, height, ix)
         this.setState({
-          did: txId,
+          did: txRef,
+          didTxId: txId,
           unconfirmedDID: null
         })
         window.localStorage.removeItem('unconfirmedDID')
-        window.localStorage.setItem('did', txId)
+        window.localStorage.setItem('did', txRef)
+        window.localStorage.setItem('didTxId', txId)
         clearInterval(handle)
       }
     }, interval)
