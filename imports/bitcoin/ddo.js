@@ -12,8 +12,6 @@ export const getDDO = async (DID) => {
   const tx = bitcoin.Transaction.fromHex(lastTx.tx)
   const deterministicDDO = getDeterministicDDO(tx)
   const {extendedDDOUrl} = deterministicDDO
-  debugger
   const extendedDDO = await getExtendedDDO(extendedDDOUrl)
-  debugger
   return {deterministicDDO, extendedDDO}
 }

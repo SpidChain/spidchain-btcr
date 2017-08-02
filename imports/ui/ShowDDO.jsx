@@ -30,8 +30,6 @@ const ShowDDO = createReactClass({
       ddoLoading: true
     })
     const DDO = await getDDO(this.props.did)
-    debugger
-    debugger
     this.setState({
       ddoLoading: false,
       DDO
@@ -53,7 +51,14 @@ const ShowDDO = createReactClass({
             <div className='d-flex justify-content-center'>
               {this.state.ddoLoading
                   ? <Spinner name='double-bounce' />
-                  : this.state.DDO ? <div><p> {JSON.stringify(this.state.DDO.extendedDDO,null,2)} </p><p> {JSON.stringify(this.state.DDO.deterministicDDO,null,2)}</p></div> : null
+                  : this.state.DDO ? (<div>
+                    <pre>
+                      {JSON.stringify(this.state.DDO.extendedDDO, null, 2)}
+                    </pre>
+                    <pre>
+                      {JSON.stringify(this.state.DDO.deterministicDDO, null, 2)}
+                    </pre>
+                  </div>) : null
               }
             </div>
           </ModalBody>

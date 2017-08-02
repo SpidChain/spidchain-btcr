@@ -65,7 +65,6 @@ const createSecondTransaction = ({
   // TODO: this is a hack
   const estimatedTransactionSize = 300
   const newControlAmount = controlBond - (feeRate * estimatedTransactionSize) - recoveryAmount
-  debugger
   txBuilder.addOutput(newControlAddress, newControlAmount)
   // 2nd: Write DDO IPFS anchor in OP_RETURN
   const data = Buffer.from(extendedDDOUrl)
