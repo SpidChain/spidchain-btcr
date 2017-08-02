@@ -33,11 +33,6 @@ const Home = ({did, wallet}) => {
           <ShowDID did={did} />
         </Col>
       </Row>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          <ShowDDO did={did} />
-        </Col>
-      </Row>
     </Container>
   )
 }

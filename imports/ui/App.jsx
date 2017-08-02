@@ -10,6 +10,7 @@ import ActivationFlow from './ActivationFlow'
 import AddContact from './AddContact.jsx'
 import Home from './Home'
 import NavBar from './NavBar'
+import Developer from './Developer'
 import Contacts from '/imports/ui/Contacts'
 import ContactRequestsContainer from '/imports/ui/ContactRequestsContainer'
 import {getTxInfo} from '/imports/utils/txUtils'
@@ -81,6 +82,7 @@ export default createReactClass({
             <Route exact path='/contactRequests'
               render={() => <ContactRequestsContainer did={did} wallet={wallet} />} />
             <Route exact path='/contacts' render={() => <Contacts did={did} />} />
+            <Route exact path='/developer' render={() => <Developer did={did} />} />
             <NotificationContainer />
           </div>
         </BrowserRouter>
