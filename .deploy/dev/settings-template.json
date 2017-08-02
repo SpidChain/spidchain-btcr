@@ -1,10 +1,13 @@
 {
   "public": {
-    "controlAccount": 1,
-    "claimsAccount": 2,
-    "feeRate": 360,
     "bitcoinHost": "95.85.40.97",
+    "claimsAccount": 2,
+    "controlAccount": 1,
+    "controlBond": 10000,
+    "corsProxyUrl": "https://cors-anywhere.herokuapp.com/",
+    "feeRate": 360,
     "ipfsHost": "95.85.40.97",
-    "network": "testnet"
+    "network": "testnet",
+    "recoveryAmount": 10
   }
 }
