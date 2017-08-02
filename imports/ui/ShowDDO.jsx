@@ -4,7 +4,8 @@ import React from 'react'
 import Spinner from 'react-spinkit'
 import {Button, Modal, ModalBody, ModalHeader} from 'reactstrap'
 
-import {getDDOUri} from '/imports/bitcoin/resolveDID'
+// import {getDDOUri} from '/imports/bitcoin/resolveDID'
+import {getDDO} from '/imports/bitcoin/DDO'
 import ShowTruncatedText from '/imports/ui/ShowTruncatedText'
 
 const ShowDDO = createReactClass({
@@ -12,7 +13,7 @@ const ShowDDO = createReactClass({
   getInitialState: () => ({
     modal: false,
     ddoLoading: false,
-    ddo: null
+    DDO: null
   }),
 
   toggle: function () {
@@ -28,10 +29,12 @@ const ShowDDO = createReactClass({
     this.setState({
       ddoLoading: true
     })
-    const ddo = await getDDOUri(this.props.did)
+    const DDO = await getDDO(this.props.did)
+    debugger
+    debugger
     this.setState({
       ddoLoading: false,
-      ddo
+      DDO
     })
   },
 
@@ -43,16 +46,14 @@ const ShowDDO = createReactClass({
           <ModalHeader toggle={this.toggle}>
             {this.state.ddoLoading
               ? null
-              : <ShowTruncatedText text={'/ipfs/' + this.state.ddo} />
+              : this.state.DDO ? <ShowTruncatedText text={'/ipfs/' + this.state.DDO.deterministicDDO.extendedDDOUrl} />  :null
             }
           </ModalHeader>
           <ModalBody>
             <div className='d-flex justify-content-center'>
               {this.state.ddoLoading
                   ? <Spinner name='double-bounce' />
-                  : this.state.ddo
-                  ? <QRCode value={'/ipfs/' + this.state.ddo} size={256} className='mx-auto' />
-                    : null
+                  : this.state.DDO ? <div><p> {JSON.stringify(this.state.DDO.extendedDDO,null,2)} </p><p> {JSON.stringify(this.state.DDO.deterministicDDO,null,2)}</p></div> : null
               }
             </div>
           </ModalBody>

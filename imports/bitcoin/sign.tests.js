@@ -7,19 +7,17 @@ import {createTestHDWallet} from '/imports/bitcoin/testUtils'
 import sign256 from './sign'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
-const {ECSignature, crypto, networks} = require('bitcoinjs-lib')
-
-const network = networks[Meteor.settings.public.network]
+const {ECSignature, crypto} = require('bitcoinjs-lib')
 
 if (Meteor.isClient) {
   describe('sign', function () {
     it('it signs a message with my current signing key', function () {
-      const walletRoot = createTestHDWallet(network)
-      const ownerAccount = 1
+      this.timeout(150000)
+      const walletRoot = createTestHDWallet()
       const msg = 'Hello World!'
-      const sig = sign256({walletRoot, ownerAccount, msg, rotationIx: 0})
+      const sig = sign256({walletRoot, msg, rotationIx: 0})
       const owner = walletRoot.derivePath("m/44'/0'")
-        .deriveHardened(ownerAccount)
+        .deriveHardened(Meteor.settings.public.controlAccount)
         .derive(0)
         .derive(0)
       const msgHash = crypto.sha256(msg)

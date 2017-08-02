@@ -1,7 +1,8 @@
 import coinSelect from '/imports/bitcoin/coinSelect'
 import {Meteor} from 'meteor/meteor'
 import _ from 'underscore'
-import makeExtendedDDO from '/imports/bitcoin/ddo'
+import {makeExtendedDDO} from '/imports/bitcoin/ExtendedDDO'
+import sendRawTransaction from '/imports/bitcoin/sendRawTransaction'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')
@@ -11,7 +12,7 @@ const createFirstTransaction = ({
   controlAddress,
   controlBond,
   feeRate,
-  fundingKeypair,
+  fundingKeyPair,
   network,
   utxos
 }) => {
@@ -23,7 +24,7 @@ const createFirstTransaction = ({
   ]
   const {inputs, outputs} = coinSelect(utxos, targets, feeRate)
   if (!inputs || !outputs) {
-    throw new Meteor.Error('createDID', 'No funds in the address')
+    throw new Meteor.Error('makeDIDTxs', 'No funds in the address')
   }
   const txBuilder = new bitcoin.TransactionBuilder(network)
   // outputs of listUnspent
@@ -38,7 +39,7 @@ const createFirstTransaction = ({
   })
 
   _.each(inputs, (input, i) => {
-    txBuilder.sign(i, fundingKeypair)
+    txBuilder.sign(i, fundingKeyPair)
   })
   const tx = txBuilder.build()
   return tx
@@ -47,107 +48,101 @@ const createFirstTransaction = ({
 const createSecondTransaction = ({
   controlBond,
   controlKeyPair,
-  extendedDdoHash,
+  extendedDDOUrl,
   feeRate,
-  firstTxId,
+  txId1,
   network,
   newControlAddress,
   recoveryAddress,
   recoveryAmount
 }) => {
- // const oldControlKeypair = controlRoot.derive(0)
- // const controlKeyPair = controlRoot.derive(1)
- // const controlAddress = controlKeyPair.getAddress()
+  // const oldControlKeypair = controlRoot.derive(0)
+  // const controlKeyPair = controlRoot.derive(1)
+  // const controlAddress = controlKeyPair.getAddress()
   const txBuilder = new bitcoin.TransactionBuilder(network)
-  txBuilder.addInput(firstTxId, 0)
-  console.log(txBuilder)
+  txBuilder.addInput(txId1, 0)
   // 1st: Control key
-  txBuilder.addOutput(newControlAddress, controlBond - feeRate - recoveryAmount)
+  // TODO: this is a hack
+  const estimatedTransactionSize = 300
+  const newControlAmount = controlBond - (feeRate * estimatedTransactionSize) - recoveryAmount
+  debugger
+  txBuilder.addOutput(newControlAddress, newControlAmount)
   // 2nd: Write DDO IPFS anchor in OP_RETURN
-  const data = Buffer.from(extendedDdoHash)
+  const data = Buffer.from(extendedDDOUrl)
   const dataScript = bitcoin.script.nullData.output.encode(data)
   txBuilder.addOutput(dataScript, 0)
   // 3rd: Recovery key
   txBuilder.addOutput(recoveryAddress, recoveryAmount)
   txBuilder.sign(0, controlKeyPair)
   const tx = txBuilder.build()
+  console.log('transaction 2: ', tx.getId())
   return tx
 }
 
-const makeFirstExtendedDDO = async ({txId, claimsKeyPair, ownerKeyPair}) => {
-  // const controlKeyPair = controlRoot.derive(0)
-  // const claimsKeyPair = claimsRoot.derive(0)
-  // const claimsPubKeys = [claimsKeyPair.getPublicKeyBuffer().toString('hex')]
-  const ddo = makeExtendedDDO({txId, ownerKeyPair, claimsKeyPair})
-  const ddoJSON = JSON.stringify(ddo)
-  const [{hash}] = await Meteor.callPromise('ipfs.add', ddoJSON)
-  return hash
-}
-
 /*
- * Creates a new DID
+ * Creates a new DID transaction
  *
  * @async
- * @function createDID
+ * @function makeDIDTxs
  * @param {number} controlBond - The amount of bitcoins in the control address
- * @param {address} fundingKeypair
+ * @param {address} fundingKeyPair
  */
 
-const createDID = async ({
+export const makeDIDTxs = async ({
   claimsRoot,
   controlBond,
   controlRoot,
-  fundingKeypair,
+  fundingKeyPair,
   recoveryAddress,
   recoveryAmount,
   utxos
- // claimsAccount,
- // controlAccount,
- // walletRoot,
 }) => {
-  /*
-  const controlRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(controlAccount)
-    .derive(0)
-  const claimsRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(claimsAccount)
-    .derive(0)
-    */
   const controlKeyPair = controlRoot.derive(0).keyPair
   const controlAddress = controlKeyPair.getAddress()
   const claimsKeyPair = claimsRoot.derive(0).keyPair
-  const changeAddress = fundingKeypair.getAddress()
+  const changeAddress = fundingKeyPair.getAddress()
   const feeRate = Meteor.settings.public.feeRate
   const network = bitcoin.networks[Meteor.settings.public.network]
-  const firstTx = createFirstTransaction({
+  const tx1 = createFirstTransaction({
     changeAddress,
     controlBond,
     controlAddress,
     feeRate,
-    fundingKeypair,
+    fundingKeyPair,
     network,
     utxos
   })
-  const firstTxId = firstTx.getId()
+  const txId1 = tx1.getId()
   // It would be great if we could remove this impure part
-  const extendedDdoHash = await makeFirstExtendedDDO({
-    txId: firstTxId,
+  const extendedDDOUrl = await makeExtendedDDO({
+    DID: txId1,
     claimsKeyPair,
     ownerKeyPair: controlKeyPair
   })
   const newControlAddress = controlRoot.derive(1).getAddress()
-  const secondTx = createSecondTransaction({
+  const tx2 = createSecondTransaction({
     controlBond,
     controlKeyPair,
     newControlAddress,
-    extendedDdoHash,
+    extendedDDOUrl,
     feeRate,
-    firstTxId,
+    txId1,
     network,
     recoveryAddress,
     recoveryAmount
   })
-  return ({firstTx, secondTx})
+  return ({tx1, tx2})
 }
 
-export default createDID
+export const makeDID = async (args) => {
+  const {fundingKeyPair} = args
+  const fundingAddress = fundingKeyPair.getAddress()
+  const utxos = await Meteor.callPromise('blockexplorer.utxo', fundingAddress)
+  let {tx1, tx2} = await makeDIDTxs({
+    ...args,
+    utxos
+  })
+  await sendRawTransaction(tx1.toHex())
+  await sendRawTransaction(tx2.toHex())
+  return {txId1: tx1.getId(), txId2: tx2.getId()}
+}

@@ -1,5 +1,4 @@
-/* global describe, it */
-
+/*
 import {assert} from 'chai'
 import {Meteor} from 'meteor/meteor'
 
@@ -35,3 +34,4 @@ if (Meteor.isClient) {
     })
   })
 }
+*/

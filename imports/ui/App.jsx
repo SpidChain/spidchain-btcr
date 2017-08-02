@@ -53,13 +53,12 @@ export default createReactClass({
     }, interval)
   },
 
-  onDID (didTx) {
-    const txId = didTx.getId()
+  setDID: function ({txId1, txId2}) {
     this.setState({
-      unconfirmedDID: txId
+      unconfirmedDID: txId1
     })
-    window.localStorage.setItem('unconfirmedDID', txId)
-    this.watchUnconfirmed(txId)
+    window.localStorage.setItem('unconfirmedDID', txId1)
+    this.watchUnconfirmed(txId1)
   },
 
   render () {
@@ -87,7 +86,7 @@ export default createReactClass({
           unconfirmedDID={unconfirmedDID}
           wallet={wallet}
           onWallet={this.onWallet}
-          onDID={this.onDID}
+          setDID={this.setDID}
         />
         <NotificationContainer />
       </div>

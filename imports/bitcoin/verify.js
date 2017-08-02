@@ -1,26 +1,19 @@
-import {resolveDID} from '/imports/bitcoin/resolveDID'
+import {getDDO} from '/imports/bitcoin/DDO'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const {ECPair, ECSignature, crypto} = require('bitcoinjs-lib')
 
 const sha256 = msg => crypto.sha256(msg)
 
-const verify = hashFunction => async ({did, msg, sig, keyIx}) => {
-  const ddo = await resolveDID(did)
-  const owner = ddo.owner[keyIx]
-
-  if (!owner) {
-    return false
-  }
-
-  const pubKey = owner.publicKey
-  const keyPair = ECPair.fromPublicKeyBuffer(Buffer.from(pubKey, 'hex'))
+const verifyWithOwnerKey = hashFunction => async ({DID, msg, sig}) => {
+  const {deterministicDDO: {ownerPubKey}} = await getDDO(DID)
+  const keyPair = ECPair.fromPublicKeyBuffer(Buffer.from(ownerPubKey, 'hex'))
   return keyPair.verify(
     hashFunction(msg),
     ECSignature.fromDER(Buffer.from(sig, 'hex'))
   )
 }
 
-const verify256 = verify(sha256)
+const verifyWithOwnerKey256 = verifyWithOwnerKey(sha256)
 
-export default verify256
+export default verifyWithOwnerKey256

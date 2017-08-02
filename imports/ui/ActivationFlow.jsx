@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor'
 import React from 'react'
 import {Col, Container, Row} from 'reactstrap'
 
-import CreateIdentity from './CreateIdentity'
+import CreateDID from './CreateDID'
 import GenerateWallet from './GenerateWallet'
 import ReceivePayment from './ReceivePayment'
 import ShowDID from './ShowDID'
@@ -13,14 +13,14 @@ const {HDNode, networks} = require('bitcoinjs-lib')
 const confirmations = 1
 const network = networks[Meteor.settings.public.network]
 
-const ActivationFlow = ({unconfirmedDID, wallet, onWallet, onDID}) => {
+const ActivationFlow = ({unconfirmedDID, wallet, onWallet, setDID}) => {
   if (!wallet) {
     return <GenerateWallet onWallet={onWallet} />
   }
 
   const walletRoot = HDNode.fromBase58(wallet, network)
-  const fundingKeypair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
-  const receivingAddress = fundingKeypair.getAddress()
+  const fundingKeyPair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
+  const receivingAddress = fundingKeyPair.getAddress()
   const ownerKeyPair = walletRoot.derivePath("m/44'/0'/2'/0/0")
   const ownerPubKey = ownerKeyPair.getPublicKeyBuffer().toString('hex')
   const recoveryKeyPair = walletRoot.derivePath("m/44'/0'/3'/0/0")
@@ -43,10 +43,10 @@ const ActivationFlow = ({unconfirmedDID, wallet, onWallet, onDID}) => {
           {
             !unconfirmedDID
               ? (
-                <CreateIdentity
-                  onDID={onDID}
+                <CreateDID
+                  setDID={setDID}
                   walletRoot={walletRoot}
-                  fundingKeypair={fundingKeypair}
+                  fundingKeyPair={fundingKeyPair}
                   ownerPubKey={ownerPubKey}
                   recoveryAddress={recoveryAddress}
                 />

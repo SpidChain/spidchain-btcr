@@ -1,6 +1,6 @@
 import {Meteor} from 'meteor/meteor'
 
-import createDID from './createDID'
+import {makeDIDTxs} from '/imports/bitcoin/DID'
 // import ddo from '/imports/bitcoin/ddo'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
@@ -47,31 +47,21 @@ export const createTestDID = async ({walletRoot, recoveryAddress}) => {
   const claimsRoot = walletRoot.derivePath("m/44'/0'")
     .deriveHardened(claimsAccount)
     .derive(0)
-  const fundingKeypair = await createTestKeypair()
-  const fundingAddress = fundingKeypair.getAddress()
-  const controlBond = 1000
-  const recoveryAmount = 10
+  const fundingKeyPair = await createTestKeypair()
+  const fundingAddress = fundingKeyPair.getAddress()
+  const controlBond = Meteor.settings.public.controlBond
+  const recoveryAmount = Meteor.settings.public.recoveryAmount
   const utxos = await Meteor.callPromise('bitcoin', 'listUnspent', 0, 9999999,
     [fundingAddress])
-  /*
-  const claimsKeyPair = claimsRoot.derive(0)
-  const claimsPubKey = claimsKeyPair.getPublicKeyBuffer().toString('hex')
-  const ddoData = ddo({pubKeys: [claimsPubKey]})
-  const ddoJSON = JSON.stringify(ddoData)
-  const [{hash: ddoHash}] = await Meteor.callPromise('ipfs.add', ddoJSON)
-  */
-  const didTx = await createDID({
-    // walletRoot
+  return makeDIDTxs({
     claimsRoot,
     controlBond,
     controlRoot,
-    fundingKeypair,
+    fundingKeyPair,
     recoveryAddress,
     recoveryAmount,
     utxos
-    // ddoHash,
   })
-  return didTx
 }
 
 /** Return the first keypair from a HDWallet */

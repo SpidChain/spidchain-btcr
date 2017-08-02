@@ -55,20 +55,22 @@
     }
 }
 */
-
+import {Meteor} from 'meteor/meteor'
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')
 
-const getDeterministicDDOComplete = async ({tx, network}) => {
+// getDeterministicDDO
 
-}
-const getDeterministicDDO = ({tx, network}) => {
-  const [{script: conScript}, {script: nullData}, {script: recScript}] = tx.outs
+// TxToDDO
+const getDeterministicDDO = (tx) => {
+  const network = bitcoin.networks[Meteor.settings.public.network]
   const inputScript = tx.ins[0].script
+  const [{script: conScript}, {script: nullData}, {script: recScript}] = tx.outs
   const ownerPubKey = bitcoin.script.pubKeyHash.input.decode(inputScript).pubKey
   const conAddress = bitcoin.address.fromOutputScript(conScript, network)
   const recAddress = bitcoin.address.fromOutputScript(recScript, network)
-  return {ownerPubKey, conAddress, nullData, recAddress}
+  const extendedDDOUrl = bitcoin.script.nullData.output.decode(nullData).toString()
+  return {ownerPubKey, conAddress, extendedDDOUrl, recAddress}
   /*
   return {
     '@context':

@@ -13,8 +13,8 @@ const network = networks[Meteor.settings.public.network]
 
 const Home = ({did, wallet}) => {
   const walletRoot = HDNode.fromBase58(wallet, network)
-  const fundingKeypair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
-  const receivingAddress = fundingKeypair.getAddress()
+  const fundingKeyPair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
+  const receivingAddress = fundingKeyPair.getAddress()
 
   return (
     <Container fluid>
