@@ -4,10 +4,10 @@ import {Button} from 'reactstrap'
 
 const ShowTruncatedText = ({text}) => {
   const truncateWithEllipsis = {
-    'width': '270px',
-    'white-space': 'nowrap',
-    'overflow': 'hidden',
-    'text-overflow': 'ellipsis'
+    width: '270px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   }
   return <p style={truncateWithEllipsis}>
     <CopyToClipboard text={text}>
