@@ -6,8 +6,9 @@ import {getDDO} from '/imports/bitcoin/DDO'
 const printDDO = (did) => async () => {
   console.log('Fetching the DDO from the blockchain...')
   const DDO = await getDDO(did)
+  const prettyDDO = JSON.stringify(DDO, null, 2)
   console.log('DDO is:')
-  console.log(DDO)
+  console.log(prettyDDO)
 }
 
 const Developer = ({did}) => (
