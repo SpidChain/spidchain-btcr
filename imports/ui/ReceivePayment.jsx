@@ -1,9 +1,9 @@
 import QRCode from 'qrcode.react'
 import React from 'react'
 import createReactClass from 'create-react-class'
-import {Button, Modal, ModalBody, ModalHeader} from 'reactstrap'
+import {Button, Modal, ModalBody} from 'reactstrap'
 
-import ShowTruncatedText from '/imports/ui/ShowTruncatedText'
+import TruncatedModalHeader from '/imports/ui/TruncatedModalHeader'
 
 const ReceivePayment = createReactClass({
 
@@ -20,9 +20,7 @@ const ReceivePayment = createReactClass({
       <div>
         <Button color='primary' onClick={this.toggle} block> Fund Wallet </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>
-            <ShowTruncatedText text={this.props.address} />
-          </ModalHeader>
+          <TruncatedModalHeader toggle={this.toggle} text={this.props.address} />
           <ModalBody>
             <div className='d-flex justify-content-center'>
               <QRCode value={this.props.address} size={256} />

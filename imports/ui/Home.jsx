@@ -4,7 +4,6 @@ import {Col, Container, Row} from 'reactstrap'
 
 import ReceivePayment from './ReceivePayment'
 import ShowDID from '/imports/ui/ShowDID'
-import ShowDDO from '/imports/ui/ShowDDO'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const {HDNode, networks} = require('bitcoinjs-lib')
