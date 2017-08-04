@@ -66,7 +66,7 @@ const getDeterministicDDO = (tx) => {
   const network = bitcoin.networks[Meteor.settings.public.network]
   const inputScript = tx.ins[0].script
   const [{script: conScript}, {script: nullData}, {script: recScript}] = tx.outs
-  const ownerPubKey = bitcoin.script.pubKeyHash.input.decode(inputScript).pubKey
+  const ownerPubKey = bitcoin.script.pubKeyHash.input.decode(inputScript).pubKey.toString('hex')
   const conAddress = bitcoin.address.fromOutputScript(conScript, network)
   const recAddress = bitcoin.address.fromOutputScript(recScript, network)
   const extendedDDOUrl = bitcoin.script.nullData.output.decode(nullData).toString()
