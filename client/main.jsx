@@ -1,23 +1,33 @@
-import {Meteor} from 'meteor/meteor'
 import React from 'react'
 import ReactDOM from 'react-dom'
-// import {getSpendingTx, followFirstOut, getPath} from '/imports/utils/txUtils'
-import App from '/imports/ui/App'
+import {ApolloClient, createNetworkInterface, ApolloProvider} from 'react-apollo'
+import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 
-  /*
-window.getSpendingTx = getSpendingTx
-const tx ='ed8d8ca1954ae639b9f9fcd70f0ce9d46ec9cc781454000540b17266af0935f0'
-getSpendingTx(tx,0)
-  .then(res => {console.log('getSpendingTx: ',res)})
-  .catch(err => {console.error(err)})
-followFirstOut(tx)
-  .then(res => {console.log('followFirstOut: ',res)})
-  .catch(err => {console.error(err)})
-getPath(tx)
-  .then(res => {console.log('getPath: ',res)})
-  .catch(err => {console.error(err)})
-  */
+import 'styles'
+import App from 'ui/App'
 
-Meteor.startup(() => {
-  ReactDOM.render(<App />, document.getElementById('app'))
+const client = new ApolloClient({
+  networkInterface: createNetworkInterface({uri: 'http://localhost:3000/graphql'})
 })
+
+const store = createStore(
+  combineReducers({
+    apollo: client.reducer()
+  }),
+  {}, // initial state
+  compose(
+    applyMiddleware(client.middleware()),
+    // If you are using the devToolsExtension, you can add it here also
+    (typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined')
+    ? window.__REDUX_DEVTOOLS_EXTENSION__()
+    : f => f)
+)
+
+const render = () => {
+  ReactDOM.render(
+    <ApolloProvider store={store} client={client}>
+      <App />
+    </ApolloProvider>
+    , document.getElementById('app'))
+}
+document.addEventListener('DOMContentLoaded', () => render())

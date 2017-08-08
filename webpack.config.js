@@ -1,8 +1,9 @@
+const Dotenv = require('dotenv-webpack')
+const {getIfUtils, removeEmpty} = require('webpack-config-utils')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
-const {getIfUtils, removeEmpty} = require('webpack-config-utils')
 const path = require('path')
 const webpack = require('webpack')
 
@@ -22,6 +23,7 @@ module.exports = {
   },
   plugins: removeEmpty([
     new ProgressBarPlugin(),
+    new Dotenv(),
     new HtmlWebpackPlugin({
       inject: 'head',
       template: path.join(__dirname, 'client/index.html')
@@ -66,6 +68,10 @@ module.exports = {
           fallback: 'style-loader',
           use: ['css-loader', 'sass-loader']
         })
+      },
+      {
+        test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+        use: 'file-loader?name=fonts/[name].[ext]'
       }
     ]
   }
