@@ -36,9 +36,7 @@ const ipfsRpcRoute = (app) => {
     try {
       const ipfs = ipfsApi(host, '5001', {protocol: 'http'})
       const stream = await ipfs.cat(hash)
-    debugger
       const result = await streamToPromise(stream)
-    debugger
       return res.status(200).json(result)
     } catch (e) {
       return res.status(500).json(e)
