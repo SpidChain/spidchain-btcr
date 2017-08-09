@@ -2,7 +2,9 @@ import _ from 'lodash'
 
 import coinSelect from 'bitcoin/coinSelect'
 import {makeExtendedDDO} from 'bitcoin/ExtendedDDO'
-import sendRawTransaction from 'bitcoin/sendRawTransaction'
+//import sendRawTransaction from 'bitcoin/sendRawTransaction'
+import bitcoinRpc from 'bitcoin/bitcoinRpc'
+import {listUtxos} from 'bitcoin/blockexplorerRpc'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')
@@ -61,6 +63,7 @@ const createSecondTransaction = ({
   // const controlKeyPair = controlRoot.derive(1)
   // const controlAddress = controlKeyPair.getAddress()
 
+  /*
   const targets = [
     {
       address: controlAddress,
@@ -72,6 +75,7 @@ const createSecondTransaction = ({
     // throw new Meteor.Error('makeDIDTxs', 'No funds in the address')
     throw new Error('makeDIDTxs', 'No funds in the address')
   }
+  */
 
   const txBuilder = new bitcoin.TransactionBuilder(network)
   txBuilder.addInput(txId1, 0)
@@ -114,7 +118,7 @@ export const makeDIDTxs = async ({
   const controlAddress = controlKeyPair.getAddress()
   const claimsKeyPair = claimsRoot.derive(0).keyPair
   const changeAddress = fundingKeyPair.getAddress()
-  const feeRate = process.env.feeRate
+  const feeRate = Number(process.env.feeRate)
   const network = bitcoin.networks[process.env.network]
   const tx1 = createFirstTransaction({
     changeAddress,
@@ -150,13 +154,12 @@ export const makeDIDTxs = async ({
 export const makeDID = async (args) => {
   const {fundingKeyPair} = args
   const fundingAddress = fundingKeyPair.getAddress()
- // const utxos = await Meteor.callPromise('blockexplorer.utxo', fundingAddress)
-  const utxos = await blockexplorerRpc(fundingAddress)
+  const utxos = await listUtxos(fundingAddress)
   let {tx1, tx2} = await makeDIDTxs({
     ...args,
     utxos
   })
-  await sendRawTransaction(tx1.toHex())
-  await sendRawTransaction(tx2.toHex())
+  await bitcoinRpc('sendRawTransaction', tx1.toHex())
+  await bitcoinRpc('sendRawTransaction', tx2.toHex())
   return {txId1: tx1.getId(), txId2: tx2.getId()}
 }

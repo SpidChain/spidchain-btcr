@@ -3,19 +3,18 @@ import {Button} from 'reactstrap'
 // import {NotificationManager} from 'react-notifications'
 
 import {makeDID} from 'bitcoin/DID'
-import blockexplorerRpc from 'bitcoin/blockexplorerRpc'
 // import ddo from '/imports/bitcoin/ddo'
 // import sendRawTransaction from '/imports/bitcoin/sendRawTransaction'
 
 const handleDIDCreation = async ({walletRoot, fundingKeyPair, recoveryAddress, setDID}) => {
   const controlRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(process.env.controlAccount)
+    .deriveHardened(Number(process.env.controlAccount))
     .derive(0)
   const claimsRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(process.env.claimsAccount)
+    .deriveHardened(Number(process.env.claimsAccount))
     .derive(0)
-  const controlBond = process.env.controlBond
-  const recoveryAmount = process.env.recoveryAmount
+  const controlBond = Number(process.env.controlBond)
+  const recoveryAmount = Number(process.env.recoveryAmount)
   const {txId1, txId2} = await makeDID({
     claimsRoot,
     controlBond,
