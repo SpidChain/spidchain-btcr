@@ -33,12 +33,12 @@ const InputMnemonic = ({onBack, onWords}) => (
     <Row num={1} />
     <Row num={2} />
     <Button color='danger' type='button' onClick={onBack}>
-      <span className='fa fa-arrow-left' style={{'margin-right': '5px'}} />
+      <span className='fa fa-arrow-left' style={{marginRight: '5px'}} />
       Back
     </Button>
     <Button color='primary' type='submit' className='pull-right'>
       Confirm
-      <span className='fa fa-arrow-right' style={{'margin-left': '5px'}} />
+      <span className='fa fa-arrow-right' style={{marginLeft: '5px'}} />
     </Button>
   </Form>
 )
