@@ -13,10 +13,9 @@ const bitcoinRpcRoute = (app) => {
     const {body: {method, rpcArgs}} = req
     try {
       const result = await client[method](...rpcArgs)
-      const value = JSON.stringify(result)
-      return res.status(200).send(value)
+      return res.status(200).json(result)
     } catch (e) {
-      return res.status(500).send(JSON.stringify(e))
+      return res.status(500).json(e)
     }
   })
 }
