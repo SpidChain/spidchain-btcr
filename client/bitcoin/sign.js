@@ -4,8 +4,9 @@ const {crypto} = require('bitcoinjs-lib')
 // hashFunction must return a Buffer
 
 const signWithOwnerKey = hashFunction => ({walletRoot, msg, rotationIx}) => {
+  const controlAccount = Number(process.env.controlAccount)
   const ownerRoot = walletRoot.derivePath("m/44'/0'")
-    .deriveHardened(process.env.controlAccount)
+    .deriveHardened(controlAccount)
     .derive(0)
   return ownerRoot.derive(rotationIx)
     .sign(hashFunction(msg)).toDER().toString('hex')
