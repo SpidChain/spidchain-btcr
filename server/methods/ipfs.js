@@ -25,9 +25,9 @@ const ipfsRpcRoute = (app) => {
       const ipfs = ipfsApi(host, '5001', {protocol: 'http'})
       const buffer = Buffer.from(text)
       const hash = await ipfs.files.add(buffer)
-      return res.status(200).send(JSON.stringify(hash))
+      return res.status(200).json(hash)
     } catch (e) {
-      return res.status(500).send(JSON.stringify(e))
+      return res.status(500).json(e)
     }
   })
 
@@ -36,10 +36,12 @@ const ipfsRpcRoute = (app) => {
     try {
       const ipfs = ipfsApi(host, '5001', {protocol: 'http'})
       const stream = await ipfs.cat(hash)
-      const result = streamToPromise(stream)
-      return res.status(200).send(JSON.stringify(result))
+    debugger
+      const result = await streamToPromise(stream)
+    debugger
+      return res.status(200).json(result)
     } catch (e) {
-      return res.status(500).send(JSON.stringify(e))
+      return res.status(500).json(e)
     }
   })
 }
