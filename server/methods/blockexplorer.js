@@ -6,19 +6,17 @@ const blockexplorer = process.env.network === 'testnet'
   : 'https://blockexplorer.com'
 
 const blockexplorerRoute = async (app) => {
-  app.use('/api/blockexplorer/utxo', bodyParser.json(), async (req, res) => {
-    const body = req.body
-    const address = body.address
-    const url = `${blockexplorer}/api/addr/${addr}/utxo`
+  app.use('/api/blockexplorer/utxo', bodyParser.json(), async ({body: {address}}, res) => {
+    const url = `${blockexplorer}/api/addr/${address}/utxo`
     try {
-      const res = await axios.get(url)
-      if (res && res.data) {
-        const result = res.data.map(({amount, txid, vout}) => ({amount, txid, vout}))
-        return res.status(200).send(JSON.stringify(result))
+      const result = await axios.get(url)
+      if (result && result.data) {
+        const data = result.data.map(({amount, txid, vout}) => ({amount, txid, vout}))
+        return res.status(200).json(data)
       }
-      return res.status(500).send(JSON.stringify(Error('blockexplorer.utxo', 'No data in the result')))
+      return res.status(500).json(Error('blockexplorer.utxo', 'No data in the result'))
     } catch (err) {
-      return res.status(500).send(JSON.stringify(Error('blockexplorer.utxo', err)))
+      return res.status(500).json(Error('blockexplorer.utxo', err))
     }
   })
 }
