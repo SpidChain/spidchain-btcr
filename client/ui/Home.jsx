@@ -8,7 +8,6 @@ global.Buffer = global.Buffer || require('buffer').Buffer
 const {HDNode, networks} = require('bitcoinjs-lib')
 
 const network = networks[process.env.network]
-debugger
 const Home = ({did, wallet}) => {
   const walletRoot = HDNode.fromBase58(wallet, network)
   const fundingKeyPair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair

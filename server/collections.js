@@ -20,7 +20,6 @@ const makeDefaultSchema = async () => {
  // const resolvers = _.merge(postsResolvers, greetResolver)
   const resolvers = messagingResolvers
   const schema = makeExecutableSchema({typeDefs, resolvers})
-  debugger
   return schema
 }
 

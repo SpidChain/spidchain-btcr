@@ -1,9 +1,7 @@
 import axios from 'axios'
-import _ from 'lodash'
 
-const bitcoinRpc = async () => {
-  const {data, status} = await axios.post('/api/bitcoin',
-    {method: arguments[0], rpcArgs: _.tail(arguments)})
+const bitcoinRpc = async (method, ...others) => {
+  const {data, status} = await axios.post('/api/bitcoin', {method, rpcArgs: others})
   if (status !== 200) {
     console.error('there was an error')
     throw Error(data)

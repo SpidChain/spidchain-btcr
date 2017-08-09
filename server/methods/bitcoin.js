@@ -9,10 +9,10 @@ const client = new Client({
 })
 
 const bitcoinRpcRoute = (app) => {
-  app.use('/api/bitcoin', bodyParser.json(), (req, res) => {
-    const body = req.body
+  app.use('/api/bitcoin', bodyParser.json(), async (req, res) => {
+    const {body: {method, rpcArgs}} = req
     try {
-      const result = client[body.method].apply(null, body.rpcArgs)
+      const result = await client[method](...rpcArgs)
       const value = JSON.stringify(result)
       return res.status(200).send(value)
     } catch (e) {
