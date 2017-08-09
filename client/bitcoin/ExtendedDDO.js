@@ -43,7 +43,7 @@ const sha256 = msg => crypto.sha256(msg)
 // This should be generic, checking the type of URL (ipfs, github, drive...)
 // and does the appropriet get request
 export const getExtendedDDO = async (extendedDDOUrl) => {
-  const extendedDDOJSON = await ipfsGet('extendedDDOUrl')
+  const extendedDDOJSON = await ipfsGet(extendedDDOUrl)
   return JSON.parse(extendedDDOJSON)
 }
 
@@ -53,7 +53,7 @@ export const makeExtendedDDO = async ({DID, claimsKeyPair, ownerKeyPair}) => {
   // const claimsPubKeys = [claimsKeyPair.getPublicKeyBuffer().toString('hex')]
   const ExtendedDDO = assembleExtendedDDO({DID, ownerKeyPair, claimsKeyPair})
   const extendedDDOJSON = JSON.stringify(ExtendedDDO)
-  const [{hash}] = await ipfsAdd('extendedDDOJSON')
+  const [{hash}] = await ipfsAdd(extendedDDOJSON)
   return hash
 }
 
