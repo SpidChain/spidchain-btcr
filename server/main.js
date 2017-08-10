@@ -20,15 +20,7 @@ const blockexplorerRoute = require('./methods/blockexplorer')
 
 const app = express()
 
-if (isProduction) {
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(DIST_DIR, '/index.html'))
-  })
-
-  app.get('/index.js', (req, res) => {
-    res.sendFile(path.join(DIST_DIR, '/index.js'))
-  })
-} else {
+if (!isProduction) {
   const compiler = webpack(config)
   app.use(webpackDevMiddleware(compiler, {
     quiet: true,
@@ -46,5 +38,15 @@ app.use(express.static('public'));
   await bitcoinRpcRoute(app)
   await ipfsRpcRoute(app)
   await blockexplorerRoute(app)
+  if (isProduction) {
+    app.use('/fonts', express.static(path.join(__dirname, '../dist/fonts')))
+    app.get('/index.js', (req, res) => {
+      res.sendFile(path.join(DIST_DIR, '/index.js'))
+    })
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(DIST_DIR, '/index.html'))
+    })
+  }
   app.listen(PORT)
 })()
