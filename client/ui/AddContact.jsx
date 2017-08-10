@@ -4,7 +4,7 @@ import {
   FormGroup, Input, Jumbotron, Row} from 'reactstrap'
 import { gql, graphql } from 'react-apollo'
 import localforage from 'localforage'
-window.localforage = localforage
+import {NotificationManager} from 'react-notifications'
 
 const getSecureRandom = () => {
   const array = new Uint16Array(1)
@@ -13,10 +13,10 @@ const getSecureRandom = () => {
 }
 
 const sendChallenge = gql`
-mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
-  sendChallenge(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
-    _id
-  }
+  mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
+    sendChallenge(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
+      _id
+    }
 }`
 
 const onSubmit = ({senderDid, mutate}) => async e => {
@@ -29,13 +29,15 @@ const onSubmit = ({senderDid, mutate}) => async e => {
   const nonce = getSecureRandom()
   try {
     // This simulates a p2p call
-      const a = await mutate({
-        variables: {senderDid, receiverDid, nonce},
-        //  refetchQueries: [{query: posts}]
-      })
-    console.log(a)
+    const result = await mutate({
+      variables: {senderDid, receiverDid, nonce},
+      //  refetchQueries: [{query: posts}]
+    })
+    console.log(result)
     localforage.setItem(receiverDid, {nonce, verified: false})
+    NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
   } catch (e) {
+    NotificationManager.error(e.message, 'Message not sent', 5000)
     console.error(e)
     return
   }
