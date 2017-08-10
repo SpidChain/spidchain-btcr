@@ -5,7 +5,7 @@ const wordsHandler = (onWords) => (e) => {
   e.preventDefault()
   const words = []
   for (let i = 0; i < 12; i++) {
-    words[i] = e.target['w' + i].value
+    words[i] = e.target['w' + i].value.trim()
   }
   onWords(words)
 }
