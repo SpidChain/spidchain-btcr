@@ -22,7 +22,7 @@ mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
 const onSubmit = ({senderDid, mutate}) => async e => {
   e.preventDefault()
   const form = e.target
-  const receiverDid = form.did.value
+  const receiverDid = form.did.value.trim()
   if (receiverDid === '') {
     return
   }
@@ -64,6 +64,7 @@ const AddContact = ({did, mutate}) => {
               <Input
                 type='text'
                 name='did'
+                maxLength='27'
                 placeholder='DID'
                 autoCapitalize='none' />
             </FormGroup>
