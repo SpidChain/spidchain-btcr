@@ -50,8 +50,8 @@ const AddContact = ({did, mutate}) => {
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           <Jumbotron>
-            <p className='lead'>
-              Insert a friends's DID here, he will receive a confirmation request
+            <p className='lead text-center'>
+              <strong>Insert a DID here, the owner will receive a confirmation request</strong>
             </p>
           </Jumbotron>
         </Col>
