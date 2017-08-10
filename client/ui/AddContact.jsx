@@ -2,33 +2,47 @@ import React from 'react'
 import {
   Button, Container, Col, Form,
   FormGroup, Input, Jumbotron, Row} from 'reactstrap'
+import { gql, graphql } from 'react-apollo'
+import localforage from 'localforage'
+window.localforage = localforage
 
 const getSecureRandom = () => {
-  const array = new Uint32Array(1)
+  const array = new Uint16Array(1)
   window.crypto.getRandomValues(array)
   return array[0]
 }
 
-const onSubmit = senderDid => async e => {
+const sendChallenge = gql`
+mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
+  sendChallenge(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
+    _id
+  }
+}`
+
+const onSubmit = ({senderDid, mutate}) => async e => {
   e.preventDefault()
   const form = e.target
   const receiverDid = form.did.value
-  const nonce = getSecureRandom()
   if (receiverDid === '') {
     return
   }
+  const nonce = getSecureRandom()
   try {
-    // TODO: update with apollo
-    // await Meteor.callPromise('messaging.sendChallenge', {senderDid, receiverDid, nonce})
+    // This simulates a p2p call
+      const a = await mutate({
+        variables: {senderDid, receiverDid, nonce},
+        //  refetchQueries: [{query: posts}]
+      })
+    console.log(a)
+    localforage.setItem(receiverDid, {nonce, verified: false})
   } catch (e) {
     console.error(e)
     return
   }
-  window.localStorage.setItem(receiverDid, JSON.stringify({nonce, verified: false}))
   form.reset()
 }
 
-const AddContact = ({did}) => {
+const AddContact = ({did, mutate}) => {
   return (
     <Container fluid>
       <Row className='mt-3'>
@@ -45,7 +59,7 @@ const AddContact = ({did}) => {
           <Form
             autoCorrect='off'
             autoComplete='off'
-            onSubmit={onSubmit(did)}>
+            onSubmit={onSubmit({senderDid: did, mutate})}>
             <FormGroup>
               <Input
                 type='text'
@@ -61,4 +75,4 @@ const AddContact = ({did}) => {
   )
 }
 
-export default AddContact
+export default graphql(sendChallenge)(AddContact)
