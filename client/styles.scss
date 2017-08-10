@@ -1,9 +1,7 @@
+// bootstrap
 @import "~bootstrap/scss/bootstrap";
-
+// font-awesome
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome";
-
-canvas {
-    width: 100%;
-    height: auto;
-}
+// react-notifications
+@import "~react-notifications/lib/notifications.css";
