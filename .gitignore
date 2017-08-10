@@ -1,5 +1,6 @@
 .env
 node_modules/
+dist/
 .deploy/dev/settings.json
 .deploy/prod/settings.json
 .deploy/dev/pm2-meteor.json
