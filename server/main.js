@@ -23,14 +23,14 @@ const app = express()
 
 app.use(history({rewrites: [
   {
-    from: /^\/graph.*/,
-    to: function(context) {
+    from: /^\/graph/,
+    to: function (context) {
       return context.parsedUrl.pathname
     }
   },
   {
     from: /^\/api/,
-    to: function(context) {
+    to: function (context) {
       return context.parsedUrl.pathname
     }
   }
