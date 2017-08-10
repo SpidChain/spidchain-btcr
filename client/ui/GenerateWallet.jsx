@@ -65,9 +65,11 @@ export default createReactClass({
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
                 <Jumbotron>
-                  <p className='lead'>
-                    Write down the 12 words below in a safe place, you will need to
-                    confirm them in the next screen
+                  <p className='lead text-center'>
+                    <strong> Write down these 12 words below in a safe place </strong>
+                  </p>
+                  <p className='lead text-center'>
+                    <strong> You will need to confirm them in the next screen </strong>
                   </p>
                 </Jumbotron>
               </Col>
@@ -92,8 +94,8 @@ export default createReactClass({
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
                 <Jumbotron>
-                  <p className='lead'>
-                    Please confirm the words from the previous screen
+                  <p className='lead text-center'>
+                    <strong> Confirm the words from the previous screen </strong>
                   </p>
                 </Jumbotron>
               </Col>
