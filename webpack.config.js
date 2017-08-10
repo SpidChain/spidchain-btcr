@@ -4,17 +4,17 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 
-const nodeEnv = process.env.NODE_ENV || 'development'
-const {ifProduction} = getIfUtils(nodeEnv)
-
+const NODE_ENV = process.env.NODE_ENV || 'development'
+const {ifProduction, ifNotProduction} = getIfUtils(NODE_ENV)
 module.exports = {
-  entry: [
-    'webpack-hot-middleware/client?reload=true',
+  entry: removeEmpty([
+    ifNotProduction('webpack-hot-middleware/client?reload=true'),
     path.join(__dirname, 'client/main.jsx')
-  ],
+  ]),
   devtool: ifProduction('source-map', 'eval-source-map'),
   output: {
     path: path.join(__dirname, 'dist'),
@@ -23,13 +23,16 @@ module.exports = {
   },
   plugins: removeEmpty([
     new ProgressBarPlugin(),
-    new Dotenv(),
+    new Dotenv({path: NODE_ENV !== 'development'
+      ? path.join(__dirname, '.env')
+      : path.join(__dirname, '.env-dev')}),
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
     new HtmlWebpackPlugin({
       inject: 'head',
       template: path.join(__dirname, 'client/index.html')
     }),
     new ExtractTextPlugin('styles.css'),
-    new webpack.HotModuleReplacementPlugin(),
+    ifNotProduction(new webpack.HotModuleReplacementPlugin()),
     new StyleExtHtmlWebpackPlugin({
       minify: true
     }),
@@ -37,12 +40,7 @@ module.exports = {
       minimize: true,
       quiet: true
     })),
-    ifProduction(new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        screw_ie8: true,
-        warnings: false
-      }
-    }))
+    ifProduction(new UglifyJsPlugin())
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],

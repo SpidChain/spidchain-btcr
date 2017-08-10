@@ -6,8 +6,11 @@ import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import 'styles'
 import App from 'ui/App'
 
+const ROOT_URL = process.env.ROOT_URL
+const PORT = process.env.PORT
+
 const client = new ApolloClient({
-  networkInterface: createNetworkInterface({uri: 'http://localhost:3000/graphql'})
+  networkInterface: createNetworkInterface({uri: `${ROOT_URL}:${PORT}/graphql`})
 })
 
 const store = createStore(
