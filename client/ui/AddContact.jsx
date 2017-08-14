@@ -25,9 +25,9 @@ const getSecureRandom = () => {
   return array[0]
 }
 
-const sendChallenge = gql`
-  mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
-    sendChallenge(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
+const sendOwnershipRequest = gql`
+  mutation sendOwnershipRequest($senderDid: String, $receiverDid: String, $nonce: Int) {
+    sendOwnershipRequest(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
      _id
   }
 }`
@@ -41,9 +41,9 @@ const onSubmit = ({senderDid, dispatch}) => async e => {
   }
   const nonce = getSecureRandom()
   try {
-    const {data: {sendChallenge: {_id}}} =
-      await client.mutate({mutation: sendChallenge, variables: {senderDid, receiverDid, nonce}})
-    await db.sentRequests.add({_id, receiverDid, nonce, verified: false})
+    const {data: {sendOwnershipRequest: {_id}}} =
+      await client.mutate({mutation: sendOwnershipRequest, variables: {senderDid, receiverDid, nonce}})
+    await db.sentRequests.add({_id, receiverDid, nonce, verified: 'false'})
     dispatch(getSentRequests())
     NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
   } catch (e) {

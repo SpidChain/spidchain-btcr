@@ -8,16 +8,19 @@ type Message {
   receiverDid: String
   nonce: Int
   signature: String
+  type: String
+  received: Boolean
 }
 
 extend type Query {
-  challengeVerify(senderDid: String, receiverDid: String, nonce: Int): Message
-  contactRequests(receiverDid: String): [Message]
+  getOwnershipProofs(senderDid: String, receiverDid: String, nonce: Int, type: String): [Message]
+  getOwnershipRequests(receiverDid: String, type: String): [Message]
 }
 
 extend type Mutation {
-  sendChallenge(senderDid: String, receiverDid: String, nonce: Int): Message
-  sendChallengeResponse(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
+  sendOwnershipRequest(senderDid: String, receiverDid: String, nonce: Int): Message
+  sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
+  setReceived(_id: String): Message
 }
 `
 
@@ -29,29 +32,38 @@ const prepare = (o) => {
 const makeMessagingResolvers = async () => {
   const db = await MongoClient.connect(process.env.MONGO_URL)
   console.log('Connected correctly to server.')
-
   const Messaging = db.collection('messaging')
   const messagingResolvers = {
     Query: {
-      challengeVerify: async (root, {senderDid, receiverDid, nonce}) => {
-        return Messaging.findOne({senderDid, receiverDid, nonce})
+      getOwnershipProofs: async (root, {senderDid, receiverDid}) => {
+        const data = await Messaging.find(
+          {senderDid, receiverDid, type: 'OWNERSHIP_PROOF', received: false},
+          {receiverDid: 1, signature: 1}).toArray()
+        return data
       },
-      contactRequests: async (root, {receiverDid}) => {
-        const a = await Messaging.find({receiverDid}).toArray()
-        console.log(a)
-        return a
+      getOwnershipRequests: async (root, {receiverDid}) => {
+        const data = await Messaging.find(
+          {receiverDid, type: 'OWNERSHIP_REQUEST', received: false},
+          {senderDid: 1, nonce: 1}).toArray()
+        return data
       }
     },
 
     Mutation: {
-      sendChallenge: async (root, {senderDid, receiverDid, nonce}) => {
-        const res = await Messaging.insert({senderDid, receiverDid, nonce})
-        return prepare(await Messaging.findOne({_id: res.insertedIds[0]}))
+      sendOwnershipRequest: async (root, {senderDid, receiverDid, nonce}) => {
+        const {ops} = await Messaging.insert(
+        {senderDid, receiverDid, nonce, type: 'OWNERSHIP_REQUEST', received: false})
+        return prepare(ops[0])
       },
-      sendChallengeResponse: async (root, {senderDid, receiverDid, nonce, signature}) => {
-        const res = Messaging.update({senderDid, receiverDid, nonce, signature},
-          {$set: {signature}}, {multi: true})
-        return prepare(await Messaging.findOne({_id: res.insertedIds[0]}))
+      sendOwnershipProof: async (root, {senderDid, receiverDid, signature}) => {
+        const {ops} = await Messaging.insert(
+        {senderDid, receiverDid, signature, type: 'OWNERSHIP_PROOF', received: false})
+        return prepare(ops[0])
+      },
+      setReceived: async (root, {_id}) => {
+        console.log('id si', _id)
+        await Messaging.update({_id: new ObjectId(_id)}, {$set: {received: true}})
+        return prepare(await Messaging.findOne({_id: new ObjectId(_id)}, {received: 1}))
       }
     }
   }

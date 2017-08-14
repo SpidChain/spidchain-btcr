@@ -1,55 +1,50 @@
 import React from 'react'
 import {Button, ListGroupItem} from 'reactstrap'
-import {gql, graphql} from 'react-apollo'
-import sign256 from 'bitcoin/sign'
+import {gql} from 'react-apollo'
+
+import signWithOwnerKey256 from 'bitcoin/sign'
+import db from 'db'
+import client from 'apollo'
+import {getSentRequests} from 'redux/actions'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const {HDNode, networks} = require('bitcoinjs-lib')
 
 const network = networks[process.env.network]
 
-const signRequest = gql`
-mutation sendChallengeResponse($senderDid: String, $receiverDid: String, $signature: String) {
-   sendChallengeResponse(senderDid: $senderDid, receiverDid: $receiverDid, signature: $signature) {
+const sendOwnershipProof = gql`
+mutation sendOwnershipProof($senderDid: String, $receiverDid: String, $signature: String) {
+   sendOwnershipProof(senderDid: $senderDid, receiverDid: $receiverDid, signature: $signature) {
          _id
    }
 }`
 
-const handleClick = ({did, senderDid, nonce, walletRoot, mutation}) => async () => {
-  const signature = sign256({walletRoot, ownerAccount: 2, msg: nonce, rotationIx: 0})
+const handleClick = ({_id, did, senderDid, nonce, walletRoot, dispatch}) => async () => {
+  // TODO: rotationIx should be a variable from the redux store
+  const signature = signWithOwnerKey256({walletRoot, msg: nonce, rotationIx: 0})
   try {
-   await mutate(
-    {variables: {did}}
-    )
-  dispatch(signRequest(signature))
-  } catch (e) {
-  }
-  try {
-    // TODO: Update to meteor
-    /*
-    await Meteor.callPromise('messaging.sendChallengeResponse', {
-      senderDid,
-      receiverDid: did,
-      nonce,
-      signature
+    await client.mutate({
+      mutation: sendOwnershipProof,
+      variables: {senderDid, receiverDid: did, signature}
     })
-    */
+    await db.receivedRequests.update(_id, {verified: true})
+    dispatch(getSentRequests())
   } catch (e) {
     console.error(e)
   }
 }
 
-const RequestItem = ({did, nonce, senderDid, wallet, mutation}) => {
+const RequestItem = ({_id, did, nonce, senderDid, wallet, dispatch}) => {
   const walletRoot = HDNode.fromBase58(wallet, network)
   return (
     <ListGroupItem>
       {senderDid}
       <Button color='success' className='float-right'
-        onClick={handleClick({did, senderDid, nonce, walletRoot})}>
+        onClick={handleClick({_id, did, senderDid, nonce, walletRoot, dispatch})}>
         <span className='fa fa-check' />
       </Button>
     </ListGroupItem>
   )
 }
 
-export default graphql(signRequest)(RequestItem)
+export default RequestItem

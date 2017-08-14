@@ -4,14 +4,14 @@ import Spinner from 'react-spinkit'
 import RequestItem from 'ui/RequestItem'
 import {connect} from 'react-redux'
 
-const ContactRequests = ({receivedRequests: {data, loading}, did, wallet}) =>
+const ContactRequests = ({data, loading, did, wallet, dispatch}) =>
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <Jumbotron>
-          <p className='lead text-center'>
+          <h1>
             <strong> Confirm your contact requests </strong>
-          </p>
+          </h1>
         </Jumbotron>
       </Col>
     </Row>
@@ -24,10 +24,12 @@ const ContactRequests = ({receivedRequests: {data, loading}, did, wallet}) =>
                 : <ListGroup>
                   {data.map(({_id, nonce, senderDid}) => <RequestItem
                     key={_id}
+                    _id={_id}
                     did={did}
                     nonce={nonce}
                     senderDid={senderDid}
                     wallet={wallet}
+                    dispatch={dispatch}
                   />)}
                 </ListGroup>
             }
@@ -37,5 +39,5 @@ const ContactRequests = ({receivedRequests: {data, loading}, did, wallet}) =>
   </Container>
 
 export default connect(
-  s => s // mapStateToProps
+  ({receivedRequests}) => receivedRequests // mapStateToProps
 )(ContactRequests)

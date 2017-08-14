@@ -1,10 +1,45 @@
 import createReactClass from 'create-react-class'
 import React from 'react'
-import {Container, Jumbotron, ListGroup, Row, Col} from 'reactstrap'
+import {connect} from 'react-redux'
+import {
+  Col,
+  Container,
+  Jumbotron,
+  ListGroup,
+  Row
+} from 'reactstrap'
+import Spinner from 'react-spinkit'
 
 import Contact from 'ui/Contact'
 import verify from 'bitcoin/verify'
 
+const Contacts = ({loading, data}) =>
+  <Container fluid>
+    <Row className='mt-3'>
+      <Col md='6' className='mx-auto'>
+        <Jumbotron>
+          <h1 className='lead text-center'>
+            <strong> Your DID contacts </strong>
+          </h1>
+        </Jumbotron>
+      </Col>
+    </Row>
+    {loading
+        ? <Spinner name='double-bounce' />
+        : <Row className='mt-3'>
+          <Col md='6' className='mx-auto'>
+            {data.length === 0
+                ? <h3> There are no contacts </h3>
+                : <ListGroup>
+                  {data.map(({receiverDid, verified}) => <Contact key={receiverDid} did={receiverDid} verified={verified} />)}
+                </ListGroup>
+            }
+          </Col>
+        </Row>
+    }
+  </Container>
+
+  /*
 const Contacts = createReactClass({
   getInitialState: () => {
     const ls = window.localStorage
@@ -21,14 +56,6 @@ const Contacts = createReactClass({
   },
 
   async updateContact ({senderDid, receiverDid, nonce}) {
-    // TODO: Update to apollo
-    /*
-        const {signature} = await Meteor.callPromise('messaging.challengeVerify', {
-      senderDid,
-      receiverDid,
-      nonce
-    })
-    */
 
     const contact = {
       did: receiverDid,
@@ -67,16 +94,16 @@ const Contacts = createReactClass({
         <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
             <Jumbotron>
-              <p className='lead'>
-                A list of your DID contacts
-              </p>
+              <h1 className='lead text-center'>
+                <strong> Your DID contacts </strong>
+              </h1>
             </Jumbotron>
           </Col>
         </Row>
         <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
             {this.state.contacts.length === 0
-                ? <p> Your addressbook is empty </p>
+                ? <h3> Your addressbook is empty </h3>
                 : <ListGroup>
                   {this.state.contacts.map(({did, verified}) => <Contact key={did} did={did} verified={verified} />)}
                 </ListGroup>
@@ -87,5 +114,6 @@ const Contacts = createReactClass({
     )
   }
 })
+*/
 
-export default Contacts
+export default connect(s => s.sentRequests)(Contacts)
