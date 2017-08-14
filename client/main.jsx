@@ -1,30 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {ApolloClient, createNetworkInterface, ApolloProvider} from 'react-apollo'
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
-
+import {ApolloProvider} from 'react-apollo'
 import 'styles'
 import App from 'ui/App'
-
-const ROOT_URL = process.env.ROOT_URL
-const PORT = process.env.PORT
-
-const client = new ApolloClient({
-  networkInterface: createNetworkInterface({uri: `${ROOT_URL}:${PORT}/graphql`})
-})
-
-const store = createStore(
-  combineReducers({
-    apollo: client.reducer()
-  }),
-  {}, // initial state
-  compose(
-    applyMiddleware(client.middleware()),
-    // If you are using the devToolsExtension, you can add it here also
-    (typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined')
-    ? window.__REDUX_DEVTOOLS_EXTENSION__()
-    : f => f)
-)
+import client from 'apollo'
+import {store} from 'redux/store'
 
 const render = () => {
   ReactDOM.render(

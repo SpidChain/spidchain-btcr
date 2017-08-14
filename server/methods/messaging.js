@@ -12,6 +12,7 @@ type Message {
 
 extend type Query {
   challengeVerify(senderDid: String, receiverDid: String, nonce: Int): Message
+  contactRequests(receiverDid: String): [Message]
 }
 
 extend type Mutation {
@@ -34,6 +35,11 @@ const makeMessagingResolvers = async () => {
     Query: {
       challengeVerify: async (root, {senderDid, receiverDid, nonce}) => {
         return Messaging.findOne({senderDid, receiverDid, nonce})
+      },
+      contactRequests: async (root, {receiverDid}) => {
+        const a = await Messaging.find({receiverDid}).toArray()
+        console.log(a)
+        return a
       }
     },
 

@@ -1,12 +1,25 @@
 import React from 'react'
 import {
-  Button, Container, Col, Form,
-  FormGroup, Input, Jumbotron, Row} from 'reactstrap'
-import { gql, graphql } from 'react-apollo'
-import localforage from 'localforage'
+  Button,
+  Container,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Jumbotron,
+  Row
+} from 'reactstrap'
+import {gql} from 'react-apollo'
 import {NotificationManager} from 'react-notifications'
+import {getSentRequests} from 'redux/actions'
+import {connect} from 'react-redux'
+
+import db from 'db'
+import client from 'apollo'
 
 const getSecureRandom = () => {
+  // TODO: now using Uint16Array because of problem with indexedDb,
+  // replace with Uint32Array
   const array = new Uint16Array(1)
   window.crypto.getRandomValues(array)
   return array[0]
@@ -15,11 +28,11 @@ const getSecureRandom = () => {
 const sendChallenge = gql`
   mutation addContact($senderDid: String, $receiverDid: String, $nonce: Int) {
     sendChallenge(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
-      _id
-    }
+     _id
+  }
 }`
 
-const onSubmit = ({senderDid, mutate}) => async e => {
+const onSubmit = ({senderDid, dispatch}) => async e => {
   e.preventDefault()
   const form = e.target
   const receiverDid = form.did.value.trim()
@@ -28,13 +41,10 @@ const onSubmit = ({senderDid, mutate}) => async e => {
   }
   const nonce = getSecureRandom()
   try {
-    // This simulates a p2p call
-    const result = await mutate({
-      variables: {senderDid, receiverDid, nonce},
-      //  refetchQueries: [{query: posts}]
-    })
-    console.log(result)
-    localforage.setItem(receiverDid, {nonce, verified: false})
+    const {data: {sendChallenge: {_id}}} =
+      await client.mutate({mutation: sendChallenge, variables: {senderDid, receiverDid, nonce}})
+    await db.sentRequests.add({_id, receiverDid, nonce, verified: false})
+    dispatch(getSentRequests())
     NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
   } catch (e) {
     NotificationManager.error(e.message, 'Message not sent', 5000)
@@ -44,7 +54,7 @@ const onSubmit = ({senderDid, mutate}) => async e => {
   form.reset()
 }
 
-const AddContact = ({did, mutate}) => {
+const AddContact = ({did, dispatch}) => {
   return (
     <Container fluid>
       <Row className='mt-3'>
@@ -61,7 +71,7 @@ const AddContact = ({did, mutate}) => {
           <Form
             autoCorrect='off'
             autoComplete='off'
-            onSubmit={onSubmit({senderDid: did, mutate})}>
+            onSubmit={onSubmit({senderDid: did, dispatch})}>
             <FormGroup>
               <Input
                 type='text'
@@ -78,4 +88,4 @@ const AddContact = ({did, mutate}) => {
   )
 }
 
-export default graphql(sendChallenge)(AddContact)
+export default connect(s => s)(AddContact)

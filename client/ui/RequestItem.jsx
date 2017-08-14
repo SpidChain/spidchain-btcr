@@ -1,6 +1,6 @@
 import React from 'react'
 import {Button, ListGroupItem} from 'reactstrap'
-
+import {gql, graphql} from 'react-apollo'
 import sign256 from 'bitcoin/sign'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
@@ -8,9 +8,22 @@ const {HDNode, networks} = require('bitcoinjs-lib')
 
 const network = networks[process.env.network]
 
-const handleClick = ({did, senderDid, nonce, walletRoot}) => async () => {
-  const signature = sign256({walletRoot, ownerAccount: 2, msg: nonce, rotationIx: 0})
+const signRequest = gql`
+mutation sendChallengeResponse($senderDid: String, $receiverDid: String, $signature: String) {
+   sendChallengeResponse(senderDid: $senderDid, receiverDid: $receiverDid, signature: $signature) {
+         _id
+   }
+}`
 
+const handleClick = ({did, senderDid, nonce, walletRoot, mutation}) => async () => {
+  const signature = sign256({walletRoot, ownerAccount: 2, msg: nonce, rotationIx: 0})
+  try {
+   await mutate(
+    {variables: {did}}
+    )
+  dispatch(signRequest(signature))
+  } catch (e) {
+  }
   try {
     // TODO: Update to meteor
     /*
@@ -26,7 +39,7 @@ const handleClick = ({did, senderDid, nonce, walletRoot}) => async () => {
   }
 }
 
-const RequestItem = ({did, nonce, senderDid, wallet}) => {
+const RequestItem = ({did, nonce, senderDid, wallet, mutation}) => {
   const walletRoot = HDNode.fromBase58(wallet, network)
   return (
     <ListGroupItem>
@@ -39,4 +52,4 @@ const RequestItem = ({did, nonce, senderDid, wallet}) => {
   )
 }
 
-export default RequestItem
+export default graphql(signRequest)(RequestItem)

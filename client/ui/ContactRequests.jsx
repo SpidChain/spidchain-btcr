@@ -1,51 +1,41 @@
 import React from 'react'
 import {Container, Col, Jumbotron, ListGroup, Row} from 'reactstrap'
 import Spinner from 'react-spinkit'
-import { gql, graphql } from 'react-apollo'
 import RequestItem from 'ui/RequestItem'
+import {connect} from 'react-redux'
 
-export const posts = gql`
-query {
-  posts {
-    _id
-    title
-    content
-  }
-}`
+const ContactRequests = ({receivedRequests: {data, loading}, did, wallet}) =>
+  <Container fluid>
+    <Row className='mt-3'>
+      <Col md='6' className='mx-auto'>
+        <Jumbotron>
+          <p className='lead text-center'>
+            <strong> Confirm your contact requests </strong>
+          </p>
+        </Jumbotron>
+      </Col>
+    </Row>
+    { loading
+        ? <Spinner name='double-bounce' />
+        : (<Row className='mt-3'>
+          <Col md='6' className='mx-auto'>
+            {data.length === 0
+                ? <p> You have no requests </p>
+                : <ListGroup>
+                  {data.map(({_id, nonce, senderDid}) => <RequestItem
+                    key={_id}
+                    did={did}
+                    nonce={nonce}
+                    senderDid={senderDid}
+                    wallet={wallet}
+                  />)}
+                </ListGroup>
+            }
+          </Col>
+        </Row>)
+    }
+  </Container>
 
-const ContactRequests = ({loading, requests, did, wallet}) => {
-  if (loading) {
-    return <Spinner name='double-bounce' />
-  }
-  return (
-    <Container fluid>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          <Jumbotron>
-            <p className='lead'>
-              Here you can confirm your contact requests
-            </p>
-          </Jumbotron>
-        </Col>
-      </Row>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          {requests.length === 0
-              ? <p> You have no requests </p>
-              : <ListGroup>
-                {requests.map(({_id, nonce, senderDid}) => <RequestItem
-                  key={_id}
-                  did={did}
-                  nonce={nonce}
-                  senderDid={senderDid}
-                  wallet={wallet}
-                />)}
-              </ListGroup>
-          }
-        </Col>
-      </Row>
-    </Container>
-  )
-}
-
-export default ContactRequests
+export default connect(
+  s => s // mapStateToProps
+)(ContactRequests)

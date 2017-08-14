@@ -11,7 +11,7 @@ import Home from 'ui/Home'
 import NavBar from 'ui/NavBar'
 import Developer from 'ui/Developer'
 import Contacts from 'ui/Contacts'
-// import ContactRequestsContainer from 'ui/ContactRequestsContainer'
+import ContactRequests from 'ui/ContactRequests'
 import {getTxInfo} from 'utils/txUtils'
 import bitcoinRpc from 'bitcoin/bitcoinRpc'
 
@@ -80,10 +80,7 @@ export default createReactClass({
             <NavBar />
             <Route exact path='/' render={() => <Home did={did} wallet={wallet} />} />
             <Route exact path='/addContact' render={() => <AddContact did={did} />} />
-            {/*
-            <Route exact path='/contactRequests'
-              render={() => <ContactRequestsContainer did={did} wallet={wallet} />} />
-              */}
+            <Route exact path='/contactRequests' render={() => <ContactRequests did={did} wallet={wallet} />} />
             <Route exact path='/contacts' render={() => <Contacts did={did} />} />
             <Route exact path='/developer' render={() => <Developer did={did} />} />
             <NotificationContainer />
