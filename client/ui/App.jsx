@@ -14,6 +14,8 @@ import Developer from 'ui/Developer'
 import Contacts from 'ui/Contacts'
 import ContactRequests from 'ui/ContactRequests'
 import {watchUnconfirmed} from 'ui/CreateDID'
+import GenerateClaim from 'ui/GenerateClaim'
+
 const App = createReactClass({
   displayName: 'App',
 
@@ -57,6 +59,7 @@ const App = createReactClass({
           <Route exact path='/addContact' render={() => <AddContact />} />
           <Route exact path='/contactRequests' render={() => <ContactRequests />} />
           <Route exact path='/contacts' render={() => <Contacts />} />
+          <Route exact path='/generateClaim' component={GenerateClaim} />
           <Route exact path='/developer' render={() => <Developer />} />
           <NotificationContainer />
         </div>

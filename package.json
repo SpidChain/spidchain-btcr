@@ -44,6 +44,8 @@
     "graphql-tools": "^1.1.0",
     "ipfs-api": "^14.0.4",
     "localforage": "^1.5.0",
+    "jsonld": "^0.4.12",
+    "jsonld-signatures": "git+https://github.com/digitalbazaar/jsonld-signatures.git#multiSignature",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.30",
     "qrcode.react": "^0.7.1",

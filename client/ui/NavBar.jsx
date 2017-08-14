@@ -50,6 +50,9 @@ export default createReactClass({
               <NavLink tag={RNavLink} exact to='/contacts' onClick={this.close}>Contacts</NavLink>
             </NavItem>
             <NavItem>
+              <NavLink tag={RNavLink} exact to='/generateClaim' onClick={this.close}>Generate Claim</NavLink>
+            </NavItem>
+            <NavItem>
               <NavLink tag={RNavLink} exact to='/developer' onClick={this.close}>Developer</NavLink>
             </NavItem>
           </Nav>
