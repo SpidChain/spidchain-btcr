@@ -8,12 +8,12 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 
-const NODE_ENV = process.env.NODE_ENV || 'development'
-const {ifProduction, ifNotProduction} = getIfUtils(NODE_ENV)
+const {ifProduction, ifNotProduction} = getIfUtils(process.env.NODE_ENV)
+
 module.exports = {
   entry: removeEmpty([
     ifNotProduction('webpack-hot-middleware/client?reload=true'),
-    path.join(__dirname, 'client/main.jsx')
+    path.join(__dirname, 'client', 'main.jsx')
   ]),
   devtool: ifProduction('source-map', 'eval-source-map'),
   output: {
@@ -23,19 +23,25 @@ module.exports = {
   },
   plugins: removeEmpty([
     new ProgressBarPlugin(),
-    new Dotenv({path: NODE_ENV !== 'development'
-      ? path.join(__dirname, '.env')
-      : path.join(__dirname, '.env-dev')}),
+    new Dotenv({
+      path: ifProduction(
+        path.join(__dirname, '.env'),
+        path.join(__dirname, '.env-dev')
+      )
+    }),
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new HtmlWebpackPlugin({
       inject: 'head',
-      template: path.join(__dirname, 'client/index.html')
+      template: path.join(__dirname, 'client', 'index.html')
     }),
-    new ExtractTextPlugin('styles.css'),
+    new ExtractTextPlugin({
+      filename: 'styles.css',
+      disable: ifNotProduction(true, false)
+    }),
     ifNotProduction(new webpack.HotModuleReplacementPlugin()),
-    new StyleExtHtmlWebpackPlugin({
+    ifProduction(new StyleExtHtmlWebpackPlugin({
       minify: true
-    }),
+    })),
     ifProduction(new webpack.LoaderOptionsPlugin({
       minimize: true,
       quiet: true
@@ -46,9 +52,6 @@ module.exports = {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
     extensions: ['.js', '.jsx', '.scss']
   },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist')
-  },
   module: {
     rules: [
       {
@@ -58,13 +61,21 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ifProduction(['style-loader', 'css-loader'], ['css-loader'])
+        use: ExtractTextPlugin.extract({
+          use: [
+            {loader: 'css-loader', options: {sourceMap: true}}
+          ],
+          fallback: 'style-loader'
+        })
       },
       {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: ['css-loader', 'sass-loader']
+          use: [
+            {loader: 'css-loader', options: {sourceMap: true}},
+            {loader: 'sass-loader', options: {sourceMap: true}}
+          ],
+          fallback: 'style-loader'
         })
       },
       {
