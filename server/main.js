@@ -40,11 +40,11 @@ app.use(history({rewrites: [
 if (isProduction) {
   app.use('/fonts', express.static(path.join(__dirname, '../dist/fonts')))
   app.get('/index.js', (req, res) => {
-    res.sendFile(path.join(DIST_DIR, '/index.js'))
+    res.sendFile(path.join(DIST_DIR, 'index.js'))
   })
 
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(DIST_DIR, '/index.html'))
+  app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(DIST_DIR, 'index.html'))
   })
 } else {
   const compiler = webpack(config)
