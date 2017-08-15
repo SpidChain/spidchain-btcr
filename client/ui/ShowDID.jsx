@@ -1,6 +1,7 @@
 import createReactClass from 'create-react-class'
 import QRCode from 'qrcode.react'
 import React from 'react'
+import {connect} from 'react-redux'
 import {Button, Modal, ModalBody} from 'reactstrap'
 
 import TruncatedModalHeader from 'ui/TruncatedModalHeader'
@@ -16,7 +17,10 @@ const ShowDID = createReactClass({
   },
 
   render: function () {
-    const did = `did:btcr:${this.props.did}`
+    const unconfirmedDID = this.props.unconfirmedDID
+    const did = unconfirmedDID
+      ? `did:btcr:${unconfirmedDID}`
+      : `did:btcr:${this.props.did}`
     return (
       <div>
         <Button color='primary' onClick={this.toggle} block> Show DID </Button>
@@ -33,4 +37,4 @@ const ShowDID = createReactClass({
   }
 })
 
-export default ShowDID
+export default connect(({did}) => did)(ShowDID)

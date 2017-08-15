@@ -1,8 +1,19 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
 import {gql} from 'react-apollo'
-import {receivedRequests, sentRequests} from 'redux/reducers'
-import {getReceivedRequests, getSentRequests} from 'redux/actions'
+import {
+  receivedRequests,
+  sentRequests,
+  did,
+  wallet,
+  loading
+} from 'redux/reducers'
+import {
+  getReceivedRequests,
+  getSentRequests,
+  getDid,
+  getWallet
+} from 'redux/actions'
 import verifyWithOwnerKey256 from 'bitcoin/verify'
 import _ from 'lodash'
 
@@ -13,7 +24,10 @@ export const store = createStore(
   combineReducers({
     apollo: client.reducer(),
     receivedRequests,
-    sentRequests
+    sentRequests,
+    did,
+    wallet,
+    loading
   }),
   undefined,
   compose(
@@ -27,6 +41,8 @@ export const store = createStore(
 
 store.dispatch(getReceivedRequests())
 store.dispatch(getSentRequests())
+store.dispatch(getDid())
+store.dispatch(getWallet())
 
 // Listening on ownership proof requests
 const getOwnershipRequests = gql`
@@ -50,7 +66,7 @@ const ownershipRequestsObs = client.watchQuery({
   query: getOwnershipRequests,
   pollInterval: 10000,
   // TODO: should be my DID
-  variables: {receiverDid: 'txtest1-xznn-xzc8-qqpg-wdlr'}
+  variables: {receiverDid: store.getState().did.did}
 })
 
 const addReceivedRequest = async ({_id, senderDid, nonce}) => {
@@ -65,7 +81,7 @@ const addReceivedRequest = async ({_id, senderDid, nonce}) => {
 
 ownershipRequestsObs.subscribe({
   next: ({data: {getOwnershipRequests}}) => {
-    console.log(getOwnershipRequests)
+    debugger
     _.each(getOwnershipRequests, async ({_id, senderDid, nonce}) => {
       await addReceivedRequest({_id, senderDid, nonce})
       await client.mutate({

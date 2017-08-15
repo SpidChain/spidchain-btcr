@@ -4,15 +4,11 @@ import {Col, Container, Row} from 'reactstrap'
 import ReceivePayment from 'ui/ReceivePayment'
 import ShowDID from 'ui/ShowDID'
 
-global.Buffer = global.Buffer || require('buffer').Buffer
-const {HDNode, networks} = require('bitcoinjs-lib')
+// global.Buffer = global.Buffer || require('buffer').Buffer
+// const {HDNode, networks} = require('bitcoinjs-lib')
 
-const network = networks[process.env.network]
-const Home = ({did, wallet}) => {
-  const walletRoot = HDNode.fromBase58(wallet, network)
-  const fundingKeyPair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
-  const receivingAddress = fundingKeyPair.getAddress()
-
+// const network = networks[process.env.network]
+const Home = () => {
   return (
     <Container fluid>
       <Row className='mt-3'>
@@ -22,12 +18,12 @@ const Home = ({did, wallet}) => {
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
-          <ReceivePayment address={receivingAddress} />
+          <ReceivePayment />
         </Col>
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
-          <ShowDID did={did} />
+          <ShowDID />
         </Col>
       </Row>
     </Container>

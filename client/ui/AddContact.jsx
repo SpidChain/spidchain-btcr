@@ -88,4 +88,4 @@ const AddContact = ({did, dispatch}) => {
   )
 }
 
-export default connect(s => s)(AddContact)
+export default connect(({did}) => did)(AddContact)

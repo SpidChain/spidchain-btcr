@@ -1,5 +1,11 @@
 import React from 'react'
-import {Button, Col, Form, FormGroup, Input} from 'reactstrap'
+import {
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Input
+} from 'reactstrap'
 
 const wordsHandler = (onWords) => (e) => {
   e.preventDefault()

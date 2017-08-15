@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import {Button, ListGroupItem} from 'reactstrap'
 import {gql} from 'react-apollo'
 
@@ -7,10 +8,10 @@ import db from 'db'
 import client from 'apollo'
 import {getSentRequests} from 'redux/actions'
 
-global.Buffer = global.Buffer || require('buffer').Buffer
-const {HDNode, networks} = require('bitcoinjs-lib')
+// global.Buffer = global.Buffer || require('buffer').Buffer
+// const {HDNode, networks} = require('bitcoinjs-lib')
 
-const network = networks[process.env.network]
+// const network = networks[process.env.network]
 
 const sendOwnershipProof = gql`
 mutation sendOwnershipProof($senderDid: String, $receiverDid: String, $signature: String) {
@@ -19,9 +20,9 @@ mutation sendOwnershipProof($senderDid: String, $receiverDid: String, $signature
    }
 }`
 
-const handleClick = ({_id, did, senderDid, nonce, walletRoot, dispatch}) => async () => {
+const handleClick = ({_id, did, senderDid, nonce, root, dispatch}) => async () => {
   // TODO: rotationIx should be a variable from the redux store
-  const signature = signWithOwnerKey256({walletRoot, msg: nonce, rotationIx: 0})
+  const signature = signWithOwnerKey256({walletRoot: root, msg: nonce, rotationIx: 0})
   try {
     await client.mutate({
       mutation: sendOwnershipProof,
@@ -34,17 +35,17 @@ const handleClick = ({_id, did, senderDid, nonce, walletRoot, dispatch}) => asyn
   }
 }
 
-const RequestItem = ({_id, did, nonce, senderDid, wallet, dispatch}) => {
-  const walletRoot = HDNode.fromBase58(wallet, network)
+const RequestItem = ({_id, did: {did}, nonce, senderDid, wallet: {root}, dispatch}) => {
+  // const walletRoot = HDNode.fromBase58(wallet, network)
   return (
     <ListGroupItem>
       {senderDid}
       <Button color='success' className='float-right'
-        onClick={handleClick({_id, did, senderDid, nonce, walletRoot, dispatch})}>
+        onClick={handleClick({_id, did, senderDid, nonce, root, dispatch})}>
         <span className='fa fa-check' />
       </Button>
     </ListGroupItem>
   )
 }
 
-export default RequestItem
+export default connect(s => s)(RequestItem)

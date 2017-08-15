@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import {Button, Col, Container, Row} from 'reactstrap'
 
 import {getDDO} from 'bitcoin/DDO'
@@ -11,7 +12,7 @@ const printDDO = (did) => async () => {
   console.log(prettyDDO)
 }
 
-const Developer = ({did}) => (
+const Developer = ({did: {did}}) => (
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
@@ -23,4 +24,4 @@ const Developer = ({did}) => (
   </Container>
 )
 
-export default Developer
+export default connect(s => s)(Developer)

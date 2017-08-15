@@ -1,5 +1,6 @@
 import QRCode from 'qrcode.react'
 import React from 'react'
+import {connect} from 'react-redux'
 import createReactClass from 'create-react-class'
 import {Button, Modal, ModalBody} from 'reactstrap'
 
@@ -20,10 +21,10 @@ const ReceivePayment = createReactClass({
       <div>
         <Button color='primary' onClick={this.toggle} block> Fund Wallet </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <TruncatedModalHeader toggle={this.toggle} text={this.props.address} />
+          <TruncatedModalHeader toggle={this.toggle} text={this.props.receivingAddress} />
           <ModalBody>
             <div className='d-flex justify-content-center'>
-              <QRCode value={this.props.address} size={256} />
+              <QRCode value={this.props.receivingAddress} size={256} />
             </div>
           </ModalBody>
         </Modal>
@@ -32,4 +33,4 @@ const ReceivePayment = createReactClass({
   }
 })
 
-export default ReceivePayment
+export default connect(({wallet}) => wallet)(ReceivePayment)

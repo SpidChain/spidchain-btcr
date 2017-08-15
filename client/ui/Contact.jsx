@@ -1,10 +1,10 @@
 import React from 'react'
 import {ListGroupItem} from 'reactstrap'
 
-const Contact = ({did, verified}) => {
+const Contact = ({receiverDid, verified}) => {
   return (
     <ListGroupItem>
-      {did}
+      {receiverDid}
       {
         verified
         ? <span className='fa fa-check' />

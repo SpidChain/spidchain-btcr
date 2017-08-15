@@ -1,16 +1,23 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import createReactClass from 'create-react-class'
-import {Button, Col, Container, Jumbotron, Row} from 'reactstrap'
+import {
+  Button,
+  Col,
+  Container,
+  Jumbotron,
+  Row
+} from 'reactstrap'
 import {NotificationManager} from 'react-notifications'
+import bip39 from 'bip39'
 
 import createHDWallet from 'bitcoin/createHDWallet'
 import InputMnemonic from 'ui/InputMnemonic'
 import ShowMnemonic from 'ui/ShowMnemonic'
+import {getWallet} from 'redux/actions'
+import db from 'db'
 
-global.Buffer = global.Buffer || require('buffer').Buffer
-const bip39 = require('bip39')
-
-export default createReactClass({
+const GenerateWallet = createReactClass({
   displayName: 'GenerateWallet',
 
   getInitialState: () => ({
@@ -26,7 +33,7 @@ export default createReactClass({
     })
   },
 
-  checkWords (words) {
+  async checkWords (words) {
     if (this.state.mnemonic !== words.join(' ')) {
       this.setState({mismatch: true})
       NotificationManager.error('Words do not match', 'Error!', 5000)
@@ -35,7 +42,10 @@ export default createReactClass({
 
     this.setState({mismatch: false})
     this.setState.step = 'done'
-    this.props.onWallet(createHDWallet(this.state.mnemonic))
+    const wallet = createHDWallet(this.state.mnemonic)
+    await db.wallet.add({root: wallet})
+    this.props.dispatch(getWallet())
+    // this.props.onWallet(createHDWallet(this.state.mnemonic))
   },
 
   render () {
@@ -113,3 +123,5 @@ export default createReactClass({
     }
   }
 })
+
+export default connect(s => s)(GenerateWallet)

@@ -1,30 +1,18 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import {Col, Container, Row} from 'reactstrap'
 
-import CreateDID from './CreateDID'
-import GenerateWallet from './GenerateWallet'
-import ReceivePayment from './ReceivePayment'
-import ShowDID from './ShowDID'
+import CreateDID from 'ui/CreateDID'
+import GenerateWallet from 'ui/GenerateWallet'
+import ReceivePayment from 'ui/ReceivePayment'
+import ShowDID from 'ui/ShowDID'
 
-global.Buffer = global.Buffer || require('buffer').Buffer
-const {HDNode, networks} = require('bitcoinjs-lib')
+const CONFIRMATIONS = 1
 
-const confirmations = 1
-const network = networks[process.env.network]
-
-const ActivationFlow = ({unconfirmedDID, wallet, onWallet, setDID}) => {
-  if (!wallet) {
-    return <GenerateWallet onWallet={onWallet} />
+const ActivationFlow = ({did, wallet}) => {
+  if (!wallet || !wallet.root) {
+    return <GenerateWallet />
   }
-
-  const walletRoot = HDNode.fromBase58(wallet, network)
-  const fundingKeyPair = walletRoot.derivePath("m/44'/0'/0'/0/0").keyPair
-  const receivingAddress = fundingKeyPair.getAddress()
-  const ownerKeyPair = walletRoot.derivePath("m/44'/0'/2'/0/0")
-  const ownerPubKey = ownerKeyPair.getPublicKeyBuffer().toString('hex')
-  const recoveryKeyPair = walletRoot.derivePath("m/44'/0'/3'/0/0")
-  const recoveryAddress = recoveryKeyPair.getAddress()
-
   return (
     <Container fluid>
       <Row className='mt-3'>
@@ -34,28 +22,22 @@ const ActivationFlow = ({unconfirmedDID, wallet, onWallet, setDID}) => {
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
-          <ReceivePayment address={receivingAddress} />
+          <ReceivePayment />
         </Col>
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           {
-            !unconfirmedDID
+            !did
               ? (
-                <CreateDID
-                  setDID={setDID}
-                  walletRoot={walletRoot}
-                  fundingKeyPair={fundingKeyPair}
-                  ownerPubKey={ownerPubKey}
-                  recoveryAddress={recoveryAddress}
-                />
+                <CreateDID />
               )
-              : <ShowDID did={unconfirmedDID} />
+              : <ShowDID />
           }
           {
-            unconfirmedDID
+            did && did.unconfirmedDID
               ? (
-                <p>Waiting {confirmations} confirmations</p>
+                <p>Waiting {CONFIRMATIONS} confirmations</p>
               )
               : null
           }
@@ -65,4 +47,4 @@ const ActivationFlow = ({unconfirmedDID, wallet, onWallet, setDID}) => {
   )
 }
 
-export default ActivationFlow
+export default connect(s => s)(ActivationFlow)

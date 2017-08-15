@@ -1,7 +1,15 @@
 import createReactClass from 'create-react-class'
 import React from 'react'
 import {Link, NavLink as RNavLink} from 'react-router-dom'
-import {Collapse, Nav, NavItem, NavLink, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
+import {
+  Collapse,
+  Nav,
+  NavItem,
+  NavLink,
+  Navbar,
+  NavbarBrand,
+  NavbarToggler
+} from 'reactstrap'
 
 export default createReactClass({
   displayName: 'NavBar',
