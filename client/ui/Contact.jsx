@@ -6,7 +6,7 @@ const Contact = ({receiverDid, verified}) => {
     <ListGroupItem>
       {receiverDid}
       {
-        verified
+        verified === 'true'
         ? <span className='fa fa-check' />
         : <span className='fa fa-question' />
       }

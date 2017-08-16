@@ -35,9 +35,9 @@ const makeMessagingResolvers = async () => {
   const Messaging = db.collection('messaging')
   const messagingResolvers = {
     Query: {
-      getOwnershipProofs: async (root, {senderDid, receiverDid}) => {
+      getOwnershipProofs: async (root, {senderDid}) => {
         const data = await Messaging.find(
-          {senderDid, receiverDid, type: 'OWNERSHIP_PROOF', received: false},
+          {senderDid, type: 'OWNERSHIP_PROOF', received: false},
           {receiverDid: 1, signature: 1}).toArray()
         return data
       },

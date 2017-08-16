@@ -9,6 +9,8 @@ import {
 } from 'redux/constants'
 import db from 'db'
 
+import {ownershipRequestsSub, ownershipProofsSub} from 'redux/subscriptions'
+
 export const getWallet = () => dispatch => {
   dispatch({
     type: START_LOADING
@@ -32,11 +34,15 @@ export const getDid = () => (dispatch, getState) => {
     type: START_LOADING
   })
   db.did.toArray().then(data => {
+    const didObj = _.head(data)
     dispatch({
       type: GET_DID,
-      payload: _.head(data) || null
+      payload: didObj || null
     })
-    console.log(getState())
+    if (didObj && didObj.did) {
+      ownershipRequestsSub(didObj.did, dispatch)
+      ownershipProofsSub(didObj.did, dispatch)
+    }
     dispatch({
       type: STOP_LOADING
     })
@@ -62,7 +68,7 @@ export const getSentRequests = () => (dispatch) => {
   dispatch({
     type: START_LOADING
   })
-  db.sentRequests.where({verified: 'false'}).toArray().then(data => {
+  db.sentRequests.toArray().then(data => {
     dispatch({
       type: GET_SENT_REQUESTS,
       payload: data
