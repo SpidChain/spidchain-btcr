@@ -30,7 +30,7 @@ const OwnClaims = ({ownClaims, loading}) => (
                 ? <h3> There are no claims </h3>
                 : <ListGroup>
                   {ownClaims.map(({_id, signedDocument}) =>
-                    <Claim claim={signedDocument} key={_id} />)}
+                    <Claim claim={signedDocument} claimId={_id} key={_id} />)}
                 </ListGroup>
             }
           </Col>

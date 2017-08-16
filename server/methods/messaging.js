@@ -6,6 +6,7 @@ type Message {
   _id: String
   senderDid: String
   receiverDid: String
+  claim: String
   nonce: Int
   signature: String
   type: String
@@ -15,12 +16,14 @@ type Message {
 extend type Query {
   getOwnershipProofs(senderDid: String, receiverDid: String, nonce: Int, type: String): [Message]
   getOwnershipRequests(receiverDid: String, type: String): [Message]
+  getClaimSignatureRequests(receiverDid: String, type: String): [Message]
 }
 
 extend type Mutation {
   sendOwnershipRequest(senderDid: String, receiverDid: String, nonce: Int): Message
   sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
   setReceived(_id: String): Message
+  sendClaimSignatureRequest(senderDid: String, receiverDid: String, claim: String): Message
 }
 `
 
@@ -46,6 +49,12 @@ const makeMessagingResolvers = async () => {
           {receiverDid, type: 'OWNERSHIP_REQUEST', received: false},
           {senderDid: 1, nonce: 1}).toArray()
         return data
+      },
+      getClaimSignatureRequests: async (root, {receiverDid}) => {
+        const data = await Messaging.find(
+          {receiverDid, type: 'CLAIM_SIGNATURE_REQUEST', received: false},
+          {senderDid: 1, claim: 1}).toArray()
+        return data
       }
     },
 
@@ -61,9 +70,13 @@ const makeMessagingResolvers = async () => {
         return prepare(ops[0])
       },
       setReceived: async (root, {_id}) => {
-        console.log('id si', _id)
         await Messaging.update({_id: new ObjectId(_id)}, {$set: {received: true}})
         return prepare(await Messaging.findOne({_id: new ObjectId(_id)}, {received: 1}))
+      },
+      sendClaimSignatureRequest: async (root, {senderDid, receiverDid, claim}) => {
+        const {ops} = await Messaging.insert(
+        {senderDid, receiverDid, claim, type: 'CLAIM_SIGNATURE_REQUEST', received: false})
+        return prepare(ops[0])
       }
     }
   }

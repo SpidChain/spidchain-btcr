@@ -42,7 +42,13 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
   const rotationIx = 0
   try {
     const signedDocument = await signClaim(claim, ownerRoot, rotationIx)
-    await db.claims.add({subject: did, signedDocument})
+    await db.claims.add({
+      subject: did,
+      signedDocument,
+      signers: [
+        {did, status: 'signed'}
+      ]
+    })
     dispatch(getOwnClaims(did))
   } catch (e) {
     console.error(e)
