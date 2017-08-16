@@ -3,6 +3,7 @@ import {
   GET_RECEIVED_REQUESTS,
   GET_SENT_REQUESTS,
   GET_DID,
+  GET_OWN_CLAIMS,
   GET_WALLET,
   START_LOADING,
   STOP_LOADING
@@ -77,4 +78,21 @@ export const getSentRequests = () => (dispatch) => {
       type: STOP_LOADING
     })
   })
+}
+
+// TODO: get did from localStorage
+export const getOwnClaims = (did) => (dispatch) => {
+  dispatch({
+    type: START_LOADING
+  })
+  db.claims.where({subject: did}).toArray()
+    .then((data) => {
+      dispatch({
+        type: GET_OWN_CLAIMS,
+        payload: data
+      })
+      dispatch({
+        type: STOP_LOADING
+      })
+    })
 }

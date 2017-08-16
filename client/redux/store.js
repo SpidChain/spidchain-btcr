@@ -1,18 +1,21 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
 
+import db from 'db'
 import {
   receivedRequests,
   sentRequests,
   did,
   wallet,
-  loading
+  loading,
+  ownClaims
 } from 'redux/reducers'
 import {
   getReceivedRequests,
   getSentRequests,
   getDid,
-  getWallet
+  getWallet,
+  getOwnClaims
 } from 'redux/actions'
 
 import client from 'apollo'
@@ -24,7 +27,8 @@ export const store = createStore(
     sentRequests,
     did,
     wallet,
-    loading
+    loading,
+    ownClaims
   }),
   undefined,
   compose(
@@ -36,7 +40,16 @@ export const store = createStore(
     : f => f)
 )
 
-store.dispatch(getReceivedRequests())
-store.dispatch(getSentRequests())
-store.dispatch(getDid())
-store.dispatch(getWallet())
+db.did.toArray()
+  .then((value) => {
+    if (value.length !== 0) {
+      const did = value[0].did
+      if (did) {
+        store.dispatch(getReceivedRequests())
+        store.dispatch(getSentRequests())
+        store.dispatch(getDid())
+        store.dispatch(getWallet())
+        store.dispatch(getOwnClaims(did))
+      }
+    }
+  })
