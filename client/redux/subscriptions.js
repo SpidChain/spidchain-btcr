@@ -1,7 +1,7 @@
 import client from 'apollo'
 import db from 'db'
 import _ from 'lodash'
-import {gql} from 'react-apollo'
+import gql from 'graphql-tag'
 
 import verifyWithOwnerKey256 from 'bitcoin/verify'
 import {getReceivedRequests, getSentRequests, getOthersClaims} from 'redux/actions'

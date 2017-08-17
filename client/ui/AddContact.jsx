@@ -9,7 +9,7 @@ import {
   Jumbotron,
   Row
 } from 'reactstrap'
-import {gql} from 'react-apollo'
+import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
 import {getSentRequests} from 'redux/actions'
 import {connect} from 'react-redux'

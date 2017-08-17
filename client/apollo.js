@@ -1,4 +1,4 @@
-import {ApolloClient, createNetworkInterface} from 'react-apollo'
+import {ApolloClient, createNetworkInterface} from 'apollo-client'
 
 const ROOT_URL = process.env.ROOT_URL
 const PORT = process.env.PORT

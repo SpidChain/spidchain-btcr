@@ -1,16 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {ApolloProvider} from 'react-apollo'
+import {Provider} from 'react-redux'
 import 'styles'
 import App from 'ui/App'
-import client from 'apollo'
 import {store} from 'redux/store'
 
 const render = () => {
   ReactDOM.render(
-    <ApolloProvider store={store} client={client}>
+    <Provider store={store}>
       <App />
-    </ApolloProvider>
+    </Provider>
     , document.getElementById('app'))
 }
 document.addEventListener('DOMContentLoaded', () => render())

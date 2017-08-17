@@ -1,6 +1,6 @@
 import createReactClass from 'create-react-class'
 import React from 'react'
-import {gql} from 'react-apollo'
+import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
 import {Button, Form, FormGroup, Input, Modal, ModalBody, ModalHeader} from 'reactstrap'

@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {Button, ListGroupItem} from 'reactstrap'
-import {gql} from 'react-apollo'
+import gql from 'graphql-tag'
 
 import signWithOwnerKey256 from 'bitcoin/sign'
 import db from 'db'
