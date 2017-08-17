@@ -45,8 +45,8 @@ module.exports = {
     ifProduction(new webpack.LoaderOptionsPlugin({
       minimize: true,
       quiet: true
-    })),
-    ifProduction(new UglifyJsPlugin())
+    }))
+    // ifProduction(new UglifyJsPlugin())
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
