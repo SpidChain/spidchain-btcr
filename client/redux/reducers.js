@@ -3,6 +3,7 @@ import {
   GET_SENT_REQUESTS,
   GET_RECEIVED_REQUESTS,
   GET_DID,
+  GET_OTHERS_CLAIMS,
   GET_OWN_CLAIMS,
   GET_WALLET,
   START_LOADING,
@@ -73,6 +74,14 @@ export const wallet = (state = null, {type, payload}) => {
 export const ownClaims = function (state = null, {type, payload}) {
   switch (type) {
     case GET_OWN_CLAIMS: return payload
+
+    default: return state
+  }
+}
+
+export const othersClaims = (state = null, {type, payload}) => {
+  switch (type) {
+    case GET_OTHERS_CLAIMS: return payload
 
     default: return state
   }

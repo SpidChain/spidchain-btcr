@@ -9,28 +9,28 @@ import {
 } from 'reactstrap'
 import Spinner from 'react-spinkit'
 
-import Claim from 'ui/Claim'
+import OthersClaim from 'ui/OthersClaim'
 
-const OwnClaims = ({ownClaims, loading}) => (
+const OthersClaims = ({othersClaims, loading}) => (
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <Jumbotron>
           <h1 className='lead text-center'>
-            <strong> Your own claims </strong>
+            <strong> Other users claims </strong>
           </h1>
         </Jumbotron>
       </Col>
     </Row>
-    {loading || !ownClaims
+    {loading || !othersClaims
         ? <Spinner name='double-bounce' />
         : <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
-            {ownClaims.length === 0
+            {othersClaims.length === 0
                 ? <h3> There are no claims </h3>
                 : <ListGroup>
-                  {ownClaims.map(({_id, signedDocument}) =>
-                    <Claim claim={JSON.parse(signedDocument)} claimId={_id} key={_id} />)}
+                  {othersClaims.map(({_id, signedDocument}) =>
+                    <OthersClaim claim={JSON.parse(signedDocument)} claimId={_id} key={_id} />)}
                 </ListGroup>
             }
           </Col>
@@ -39,4 +39,4 @@ const OwnClaims = ({ownClaims, loading}) => (
   </Container>
 )
 
-export default connect(s => s)(OwnClaims)
+export default connect(s => s)(OthersClaims)

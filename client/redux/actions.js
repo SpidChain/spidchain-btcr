@@ -3,6 +3,7 @@ import {
   GET_RECEIVED_REQUESTS,
   GET_SENT_REQUESTS,
   GET_DID,
+  GET_OTHERS_CLAIMS,
   GET_OWN_CLAIMS,
   GET_WALLET,
   START_LOADING,
@@ -10,7 +11,7 @@ import {
 } from 'redux/constants'
 import db from 'db'
 
-import {ownershipRequestsSub, ownershipProofsSub} from 'redux/subscriptions'
+import {ownershipRequestsSub, ownershipProofsSub, claimSignatureRequestsSub} from 'redux/subscriptions'
 
 export const getWallet = () => dispatch => {
   dispatch({
@@ -43,6 +44,7 @@ export const getDid = () => (dispatch, getState) => {
     if (didObj && didObj.did) {
       ownershipRequestsSub(didObj.did, dispatch)
       ownershipProofsSub(didObj.did, dispatch)
+      claimSignatureRequestsSub(didObj.did, dispatch)
     }
     dispatch({
       type: STOP_LOADING
@@ -89,6 +91,22 @@ export const getOwnClaims = (did) => (dispatch) => {
     .then((data) => {
       dispatch({
         type: GET_OWN_CLAIMS,
+        payload: data
+      })
+      dispatch({
+        type: STOP_LOADING
+      })
+    })
+}
+
+export const getOthersClaims = (did) => (dispatch) => {
+  dispatch({
+    type: START_LOADING
+  })
+  db.claims.where('subject').notEqual(did).toArray()
+    .then((data) => {
+      dispatch({
+        type: GET_OTHERS_CLAIMS,
         payload: data
       })
       dispatch({

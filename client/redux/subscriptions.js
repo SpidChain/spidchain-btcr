@@ -4,7 +4,7 @@ import _ from 'lodash'
 import {gql} from 'react-apollo'
 
 import verifyWithOwnerKey256 from 'bitcoin/verify'
-import {getReceivedRequests, getSentRequests} from 'redux/actions'
+import {getReceivedRequests, getSentRequests, getOthersClaims} from 'redux/actions'
 
 // Listening on ownership proof requests
 
@@ -89,6 +89,62 @@ export const ownershipProofsSub = (did, dispatch) => ownershipProofsObs(did).sub
   next: ({data: {getOwnershipProofs}}) => {
     _.each(getOwnershipProofs, async ({_id, receiverDid, signature}) => {
       await checkOwnershipProof(dispatch, {_id, receiverDid, signature})
+      await client.mutate({
+        mutation: setReceived,
+        variables: {_id}
+      })
+    })
+  }
+})
+
+// Listening on new claim signature requests
+
+const getClaimSignatureRequests = gql`
+  query getClaimSignatureRequests($receiverDid: String) {
+     getClaimSignatureRequests(receiverDid: $receiverDid) {
+       _id
+       senderDid
+       claim
+    }
+  }
+`
+
+const claimSignatureRequestsObs = (did) => client.watchQuery({
+  query: getClaimSignatureRequests,
+  pollInterval: 10000,
+  variables: {receiverDid: did}
+})
+/*
+const checkOwnershipProof = async (dispatch, {_id, receiverDid, signature}) => {
+  try {
+    const {_id, nonce} = await db.sentRequests.get({receiverDid})
+    const p = await verifyWithOwnerKey256({DID: receiverDid, msg: nonce, sig: signature})
+    if (p) {
+      await db.sentRequests.update({_id}, {verified: 'true'})
+    } else {
+      await db.sentRequests.update({_id}, {verified: 'fail'})
+    }
+    dispatch(getSentRequests)
+  } catch (e) {
+    console.error('addReceivedRequest:', e)
+  }
+}
+*/
+
+const addClaimSignatureRequest = async (did, dispatch, {senderDid, claim}) => {
+  const payload = {subject: senderDid, signedDocument: claim, signers: []}
+  try {
+    await db.claims.add(payload)
+    dispatch(getOthersClaims(did))
+  } catch (e) {
+    console.error('addClaimSignatureRequest:', e)
+  }
+}
+
+export const claimSignatureRequestsSub = (did, dispatch) => claimSignatureRequestsObs(did).subscribe({
+  next: ({data: {getClaimSignatureRequests}}) => {
+    _.each(getClaimSignatureRequests, async ({_id, senderDid, claim}) => {
+      await addClaimSignatureRequest(did, dispatch, {senderDid, claim})
       await client.mutate({
         mutation: setReceived,
         variables: {_id}

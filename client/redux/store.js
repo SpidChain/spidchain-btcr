@@ -8,6 +8,7 @@ import {
   did,
   wallet,
   loading,
+  othersClaims,
   ownClaims
 } from 'redux/reducers'
 import {
@@ -15,6 +16,7 @@ import {
   getSentRequests,
   getDid,
   getWallet,
+  getOthersClaims,
   getOwnClaims
 } from 'redux/actions'
 
@@ -28,6 +30,7 @@ export const store = createStore(
     did,
     wallet,
     loading,
+    othersClaims,
     ownClaims
   }),
   undefined,
@@ -50,6 +53,7 @@ db.did.toArray()
         store.dispatch(getDid())
         store.dispatch(getWallet())
         store.dispatch(getOwnClaims(did))
+        store.dispatch(getOthersClaims(did))
       }
     }
   })
