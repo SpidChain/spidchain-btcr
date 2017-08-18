@@ -21,15 +21,6 @@ import OwnClaims from 'ui/OwnClaims'
 const App = createReactClass({
   displayName: 'App',
 
-  /*
-  getInitialState: () => ({
-    did: window.localStorage.getItem('did'),
-    didTxId: window.localStorage.getItem('didTxId'),
-    unconfirmedDID: window.localStorage.getItem('unconfirmedDID'),
-    wallet: window.localStorage.getItem('wallet')
-  }),
-  */
-
   componentDidMount () {
     if (this.props.did && this.props.did.unconfirmedDID) {
       watchUnconfirmed({
@@ -38,15 +29,6 @@ const App = createReactClass({
       })
     }
   },
-
-  /*
-  onWallet (root) {
-    window.localStorage.setItem('wallet', root)
-    this.setState({
-      wallet: root
-    })
-  },
-  */
 
   render () {
     const {did, wallet, loading} = this.props

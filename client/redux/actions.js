@@ -19,13 +19,16 @@ export const getWallet = () => dispatch => {
   })
   db.wallet.toArray()
     .then(data => {
+      debugger
       dispatch({
         type: GET_WALLET,
         payload: _.head(data) || null
       })
+      debugger
       dispatch({
         type: STOP_LOADING
       })
+      debugger
     }).catch(() => dispatch({
       type: STOP_LOADING
     }))

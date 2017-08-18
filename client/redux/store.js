@@ -33,7 +33,8 @@ export const store = createStore(
     othersClaims,
     ownClaims
   }),
-  undefined,
+ // undefined,
+  {loading: true},
   compose(
     applyMiddleware(thunk),
     applyMiddleware(client.middleware()),
@@ -48,10 +49,10 @@ db.did.toArray()
     if (value.length !== 0) {
       const did = value[0].did
       if (did) {
+        store.dispatch(getWallet())
+        store.dispatch(getDid())
         store.dispatch(getReceivedRequests())
         store.dispatch(getSentRequests())
-        store.dispatch(getDid())
-        store.dispatch(getWallet())
         store.dispatch(getOwnClaims(did))
         store.dispatch(getOthersClaims(did))
       }
