@@ -35,7 +35,7 @@ const addReceivedRequest = async (dispatch, {_id, senderDid, nonce}) => {
   const payload = {_id, senderDid, nonce, verified: 'false'}
   try {
     await db.receivedRequests.add(payload)
-    dispatch(getReceivedRequests)
+    dispatch(getReceivedRequests())
   } catch (e) {
     console.error('addReceivedRequest:', e)
   }
@@ -44,6 +44,7 @@ const addReceivedRequest = async (dispatch, {_id, senderDid, nonce}) => {
 export const ownershipRequestsSub = (did, dispatch) => ownershipRequestsObs(did).subscribe({
   next: ({data: {getOwnershipRequests}}) => {
     _.each(getOwnershipRequests, async ({_id, senderDid, nonce}) => {
+      // TODO: fix this?
       await addReceivedRequest(dispatch, {_id, senderDid, nonce})
       await client.mutate({
         mutation: setReceived,
@@ -79,7 +80,7 @@ const checkOwnershipProof = async (dispatch, {_id, receiverDid, signature}) => {
     } else {
       await db.sentRequests.update({_id}, {verified: 'fail'})
     }
-    dispatch(getSentRequests)
+    dispatch(getSentRequests())
   } catch (e) {
     console.error('addReceivedRequest:', e)
   }

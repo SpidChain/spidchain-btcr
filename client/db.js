@@ -17,6 +17,12 @@ window.cleardb = () => {
   db.did.clear()
   db.wallet.clear()
 }
+
+window.safeClear = () => {
+  db.sentRequests.clear()
+  db.receivedRequests.clear()
+  db.claims.clear()
+}
 window.showDb = () => {
   db.sentRequests.toArray().then(a => console.log('sentRequests: \n', a))
   db.receivedRequests.toArray().then(a => console.log('receivedRequests: \n', a))

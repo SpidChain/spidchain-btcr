@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import signWithOwnerKey256 from 'bitcoin/sign'
 import db from 'db'
 import client from 'apollo'
-import {getSentRequests} from 'redux/actions'
+import {getReceivedRequests} from 'redux/actions'
 
 // global.Buffer = global.Buffer || require('buffer').Buffer
 // const {HDNode, networks} = require('bitcoinjs-lib')
@@ -29,7 +29,8 @@ const handleClick = ({_id, did, senderDid, nonce, root, dispatch}) => async () =
       variables: {senderDid, receiverDid: did, signature}
     })
     await db.receivedRequests.update(_id, {verified: true})
-    dispatch(getSentRequests())
+    // TODO: there may be a race condition with remote requests from db
+    dispatch(getReceivedRequests())
   } catch (e) {
     console.error(e)
   }

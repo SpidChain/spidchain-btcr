@@ -15,7 +15,7 @@ const ContactRequests = ({receivedRequests, loading, did, wallet, dispatch}) =>
         </Jumbotron>
       </Col>
     </Row>
-    { loading
+    { loading || receivedRequests === null // TODO: Check this error condition
         ? <Spinner name='double-bounce' />
         : (<Row className='mt-3'>
           <Col md='6' className='mx-auto'>

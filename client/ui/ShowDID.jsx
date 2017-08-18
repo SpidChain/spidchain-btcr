@@ -18,9 +18,7 @@ const ShowDID = createReactClass({
 
   render: function () {
     const unconfirmedDID = this.props.unconfirmedDID
-    const did = unconfirmedDID
-      ? `did:btcr:${unconfirmedDID}`
-      : `did:btcr:${this.props.did}`
+    const did = unconfirmedDID || this.props.did
     return (
       <div>
         <Button color='primary' onClick={this.toggle} block> Show DID </Button>
