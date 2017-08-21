@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import {BrowserRouter, Route} from 'react-router-dom'
 import 'react-notifications/dist/react-notifications.css'
 import {NotificationContainer} from 'react-notifications'
+import {Col, Container, Row} from 'reactstrap'
 import Spinner from 'react-spinkit'
 
 import ActivationFlow from 'ui/ActivationFlow'
@@ -17,6 +18,13 @@ import {watchUnconfirmed} from 'ui/CreateDID'
 import GenerateClaim from 'ui/GenerateClaim'
 import OthersClaims from 'ui/OthersClaims'
 import OwnClaims from 'ui/OwnClaims'
+
+const centerElement = {
+  'height': '100vh',
+  'display': 'flex',
+  'align-items': 'center',
+  'justify-content': 'center'
+}
 
 const App = createReactClass({
   displayName: 'App',
@@ -33,7 +41,11 @@ const App = createReactClass({
   render () {
     const {did, wallet, loading} = this.props
     if (loading) {
-      return <Spinner name='double-bounce' />
+      return (
+        <Container fluid style={centerElement}>
+          <Spinner name='double-bounce' />
+        </Container>
+      )
     }
     return wallet && wallet && wallet.root && did && did.did
       ? <BrowserRouter>
