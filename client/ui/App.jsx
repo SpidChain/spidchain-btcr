@@ -39,12 +39,12 @@ const App = createReactClass({
       ? <BrowserRouter>
         <div>
           <NavBar />
-          <Route exact path='/' render={() => <Home />} />
-          <Route exact path='/addContact' render={() => <AddContact />} />
-          <Route exact path='/contactRequests' render={() => <ContactRequests />} />
-          <Route exact path='/contacts' render={() => <Contacts />} />
+          <Route exact path='/' component={Home} />
+          <Route exact path='/addContact' component={AddContact} />
+          <Route exact path='/contactRequests' component={ContactRequests} />
+          <Route exact path='/contacts' component={Contacts} />
           <Route exact path='/generateClaim' component={GenerateClaim} />
-          <Route exact path='/developer' render={() => <Developer />} />
+          <Route exact path='/developer' component={Developer} />
           <Route exact path='/ownClaims' component={OwnClaims} />
           <Route exact path='/othersClaims' component={OthersClaims} />
           <NotificationContainer />
