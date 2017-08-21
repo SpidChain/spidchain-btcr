@@ -44,12 +44,13 @@ export const store = createStore(
     : f => f)
 )
 
+store.dispatch(getWallet())
+
 db.did.toArray()
   .then((value) => {
     if (value.length !== 0) {
       const did = value[0].did
       if (did) {
-        store.dispatch(getWallet())
         store.dispatch(getDid())
         store.dispatch(getReceivedRequests())
         store.dispatch(getSentRequests())
