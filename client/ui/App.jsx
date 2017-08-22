@@ -20,10 +20,10 @@ import OthersClaims from 'ui/OthersClaims'
 import OwnClaims from 'ui/OwnClaims'
 
 const centerElement = {
-  'height': '100vh',
-  'display': 'flex',
-  'align-items': 'center',
-  'justify-content': 'center'
+  height: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
 }
 
 const App = createReactClass({

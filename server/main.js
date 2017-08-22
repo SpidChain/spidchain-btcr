@@ -17,7 +17,6 @@ const DIST_DIR = path.join(__dirname, '../dist')
 const makeDefaultSchema = require('./collections')
 const bitcoinRpcRoute = require('./methods/bitcoin')
 const ipfsRpcRoute = require('./methods/ipfs')
-const blockexplorerRoute = require('./methods/blockexplorer')
 
 const app = express()
 
@@ -64,6 +63,5 @@ app.use(express.static('public'));
   // /api/ routes
   await bitcoinRpcRoute(app)
   await ipfsRpcRoute(app)
-  await blockexplorerRoute(app)
   app.listen(PORT)
 })()
