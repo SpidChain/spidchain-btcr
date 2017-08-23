@@ -18,8 +18,8 @@ export const listUtxos = async (address) => {
 window.listUtxos = listUtxos
 
 const blockcypher = process.env.network === 'testnet'
-  ? 'https://api.blockcypher.com/v1/btc/test3'
-  : 'https://blockexplorer.com'
+  ? process.env.corsProxyUrl + 'https://api.blockcypher.com/v1/btc/test3'
+  : process.env.corsProxyUrl + 'https://api.blockcypher.com/v1/btc/main'
 
 export const getBalance = async (address) => {
   const url = `${blockcypher}/addrs/${address}/balance`

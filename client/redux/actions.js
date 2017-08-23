@@ -14,7 +14,7 @@ import db from 'db'
 
 import {ownershipRequestsSub, ownershipProofsSub, claimSignatureRequestsSub} from 'redux/subscriptions'
 
-export const getBalance = balance => {
+export const setBalance = balance => {
   return {
     type: SET_BALANCE,
     payload: balance

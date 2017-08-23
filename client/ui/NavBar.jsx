@@ -11,6 +11,8 @@ import {
   NavbarToggler
 } from 'reactstrap'
 
+import Balance from 'ui/Balance'
+
 export default createReactClass({
   displayName: 'NavBar',
 
@@ -37,6 +39,9 @@ export default createReactClass({
         <NavbarBrand tag={Link} to='/'>SpidChain</NavbarBrand>
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar className='ml-auto'>
+            <NavItem>
+              <Balance />
+            </NavItem>
             <NavItem>
               <NavLink tag={RNavLink} exact to='/' onClick={this.close}>Home</NavLink>
             </NavItem>
