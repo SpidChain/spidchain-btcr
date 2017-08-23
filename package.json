@@ -60,6 +60,7 @@
     "react-spinkit": "^3.0.0",
     "react-transition-group": "^1.2.0",
     "reactstrap": "^4.8.0",
+    "redux-promise-middleware": "^4.3.0",
     "redux-thunk": "^2.2.0",
     "satoshi-bitcoin": "^1.0.4",
     "txref-conversion-js": "git+https://github.com/WebOfTrustInfo/txref-conversion-js.git"

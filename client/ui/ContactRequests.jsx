@@ -4,7 +4,7 @@ import Spinner from 'react-spinkit'
 import RequestItem from 'ui/RequestItem'
 import {connect} from 'react-redux'
 
-const ContactRequests = ({receivedRequests, loading, did, wallet, dispatch}) =>
+const ContactRequests = ({receivedRequests, loading}) =>
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>

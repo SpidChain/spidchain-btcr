@@ -1,7 +1,9 @@
+import promiseMiddleware from 'redux-promise-middleware'
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
 
 import db from 'db'
+import watchWallet from 'bitcoin/watchWallet'
 import {
   receivedRequests,
   sentRequests,
@@ -9,7 +11,8 @@ import {
   wallet,
   loading,
   othersClaims,
-  ownClaims
+  ownClaims,
+  balance
 } from 'redux/reducers'
 import {
   getReceivedRequests,
@@ -30,6 +33,7 @@ export const store = createStore(
     did,
     wallet,
     loading,
+    balance,
     othersClaims,
     ownClaims
   }),
@@ -37,6 +41,7 @@ export const store = createStore(
   {loading: true},
   compose(
     applyMiddleware(thunk),
+    applyMiddleware(promiseMiddleware()),
     applyMiddleware(client.middleware()),
     // If you are using the devToolsExtension, you can add it here also
     (typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined')
@@ -44,7 +49,11 @@ export const store = createStore(
     : f => f)
 )
 
-store.dispatch(getWallet())
+store.dispatch(getWallet()).then(() => {
+  const {wallet: {receivingAddress}} = store.getState()
+  console.log(receivingAddress)
+  watchWallet(store.dispatch)({receivingAddress})
+})
 
 db.did.toArray()
   .then((value) => {

@@ -5,9 +5,11 @@ import {
   GET_DID,
   GET_OTHERS_CLAIMS,
   GET_OWN_CLAIMS,
-  GET_WALLET,
+  GET_WALLET_FULFILLED,
+  GET_WALLET_PENDING,
   START_LOADING,
-  STOP_LOADING
+  STOP_LOADING,
+  SET_BALANCE
 } from 'redux/constants'
 
 const network = networks[process.env.network]
@@ -46,9 +48,16 @@ export const did = function (state = null, {type, payload}) {
   }
 }
 
+export const balance = function (state = null, {type, payload}) {
+  switch (type) {
+    case SET_BALANCE: return payload.balance
+
+    default: return state
+  }
+}
 export const wallet = (state = null, {type, payload}) => {
   switch (type) {
-    case GET_WALLET: {
+    case GET_WALLET_FULFILLED: {
       const root = payload.root
       const wallet = HDNode.fromBase58(root, network)
       const fundingKeyPair = wallet.derivePath("m/44'/0'/0'/0/0").keyPair
@@ -63,8 +72,13 @@ export const wallet = (state = null, {type, payload}) => {
         receivingAddress,
         ownerKeyPair,
         ownerPubKey,
-        recoveryAddress
+        recoveryAddress,
+        loading: false
       }
+    }
+
+    case GET_WALLET_PENDING: {
+      return {loading: true}
     }
 
     default: return state

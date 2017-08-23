@@ -7,12 +7,30 @@ import {
   GET_OWN_CLAIMS,
   GET_WALLET,
   START_LOADING,
-  STOP_LOADING
+  STOP_LOADING,
+  SET_BALANCE
 } from 'redux/constants'
 import db from 'db'
 
 import {ownershipRequestsSub, ownershipProofsSub, claimSignatureRequestsSub} from 'redux/subscriptions'
 
+export const getBalance = balance => {
+  return {
+    type: SET_BALANCE,
+    payload: balance
+  }
+}
+export const getWallet = () => dispatch => {
+  const walletP = db.wallet.toArray().then(data => {
+    return _.head(data) || null
+  })
+  return dispatch({
+    type: GET_WALLET,
+    payload: walletP
+  })
+}
+
+/*
 export const getWallet = () => dispatch => {
   dispatch({
     type: START_LOADING
@@ -30,6 +48,7 @@ export const getWallet = () => dispatch => {
       type: STOP_LOADING
     }))
 }
+*/
 
 export const getDid = () => (dispatch, getState) => {
   dispatch({

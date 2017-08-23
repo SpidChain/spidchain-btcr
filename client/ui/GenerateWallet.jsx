@@ -15,6 +15,7 @@ import createHDWallet from 'bitcoin/createHDWallet'
 import InputMnemonic from 'ui/InputMnemonic'
 import ShowMnemonic from 'ui/ShowMnemonic'
 import {getWallet} from 'redux/actions'
+import watchWallet from 'bitcoin/watchWallet'
 import db from 'db'
 
 const GenerateWallet = createReactClass({
@@ -44,7 +45,13 @@ const GenerateWallet = createReactClass({
     this.setState.step = 'done'
     const wallet = createHDWallet(this.state.mnemonic)
     await db.wallet.add({root: wallet})
-    this.props.dispatch(getWallet())
+    const dispatch = this.props.dispatch
+    const getState = this.props.getState
+    dispatch(getWallet()).then(() => {
+      const {wallet: {receivingAddress}} = getState()
+      watchWallet(dispatch)({receivingAddress})
+    }
+    )
     // this.props.onWallet(createHDWallet(this.state.mnemonic))
   },
 

@@ -40,7 +40,7 @@ const App = createReactClass({
 
   render () {
     const {did, wallet, loading} = this.props
-    if (loading) {
+    if (loading || wallet.loading) {
       return (
         <Container fluid style={centerElement}>
           <Spinner name='double-bounce' />
