@@ -1,19 +1,23 @@
 import promiseMiddleware from 'redux-promise-middleware'
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
+import bitcoinRpc from 'bitcoin/bitcoinRpc'
+import {getTxInfo} from 'utils/txUtils'
+import {txrefEncode} from 'txref-conversion-js'
 
-import db from 'db'
 import watchWallet from 'bitcoin/watchWallet'
+import db from 'db'
+
 import {
   receivedRequests,
   sentRequests,
   did,
   wallet,
-  loading,
   othersClaims,
   ownClaims,
   balance
 } from 'redux/reducers'
+
 import {
   getReceivedRequests,
   getSentRequests,
@@ -22,6 +26,12 @@ import {
   getOthersClaims,
   getOwnClaims
 } from 'redux/actions'
+
+import {
+  ownershipRequestsSub,
+  ownershipProofsSub,
+  claimSignatureRequestsSub
+} from 'redux/subscriptions'
 
 import client from 'apollo'
 
@@ -32,13 +42,12 @@ export const store = createStore(
     sentRequests,
     did,
     wallet,
-    loading,
     balance,
     othersClaims,
     ownClaims
   }),
- // undefined,
-  {loading: true},
+  undefined,
+  // {loading: true},
   compose(
     applyMiddleware(thunk),
     applyMiddleware(promiseMiddleware()),
@@ -49,22 +58,68 @@ export const store = createStore(
     : f => f)
 )
 
-store.dispatch(getWallet()).then(() => {
+store.dispatch(getWallet()).then(({value}) => {
+  if (!value) {
+    console.log('wallet is null')
+    console.log(store.getState())
+    return
+  }
   const {wallet: {receivingAddress}} = store.getState()
   console.log(receivingAddress)
   watchWallet(store.dispatch)({receivingAddress})
 })
 
-db.did.toArray()
-  .then((value) => {
-    if (value.length !== 0) {
-      const did = value[0].did
-      if (did) {
-        store.dispatch(getDid())
-        store.dispatch(getReceivedRequests())
-        store.dispatch(getSentRequests())
-        store.dispatch(getOwnClaims(did))
-        store.dispatch(getOthersClaims(did))
-      }
+store.dispatch(getDid()).then((didObj) => {
+  // Only run if there is a did
+  if (didObj && didObj.value) {
+    // if uncofirmed
+    if (didObj.value.unconfirmedDID) {
+      watchUnconfirmed({
+        txId1: didObj.value.unconfirmedDID
+      })
+      // if confirmed
+    } else {
+      initSystem(didObj.value.did)
     }
-  })
+  }
+})
+
+const initSystem = (did) => {
+  // const did = didObj.value.did
+  ownershipRequestsSub(did, store.dispatch)
+  ownershipProofsSub(did, store.dispatch)
+  claimSignatureRequestsSub(did, store.dispatch)
+  store.dispatch(getReceivedRequests())
+  store.dispatch(getSentRequests())
+  store.dispatch(getOwnClaims())
+  store.dispatch(getOthersClaims())
+}
+
+const CONFIRMATIONS = 1
+
+export const watchUnconfirmed = ({txId1}) => {
+  const interval = 20000  // 1 minute
+  const handle = setInterval(async () => {
+    const tx = await bitcoinRpc('getRawTransaction', txId1, 1)
+    if (tx.confirmations >= CONFIRMATIONS) {
+      const {height, ix} = await getTxInfo(txId1)
+      const txRef = txrefEncode(process.env.network, height, ix)
+      /*
+        this.setState({
+          did: txRef,
+          didTxId: txId,
+          unconfirmedDID: null
+        })
+        */
+      // TODO: fix
+      await db.did.update(txId1, {did: txRef, unconfirmedDID: null})
+      store.dispatch(getDid()).then(() => {
+        initSystem(txRef)
+      })
+      // window.localStorage.removeItem('unconfirmedDID')
+      // window.localStorage.setItem('did', txRef)
+      // window.localStorage.setItem('didTxId', txId)
+      clearInterval(handle)
+    }
+  }, interval)
+}

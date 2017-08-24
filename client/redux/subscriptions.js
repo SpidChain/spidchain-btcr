@@ -1,10 +1,12 @@
 import client from 'apollo'
-import db from 'db'
 import _ from 'lodash'
 import gql from 'graphql-tag'
 
-import verifyWithOwnerKey256 from 'bitcoin/verify'
-import {getReceivedRequests, getSentRequests, getOthersClaims} from 'redux/actions'
+import {
+  addClaimSignatureRequest,
+  addReceivedRequest,
+  checkOwnershipProof
+} from 'redux/actions'
 
 // Listening on ownership proof requests
 
@@ -31,6 +33,7 @@ const ownershipRequestsObs = (did) => client.watchQuery({
   variables: {receiverDid: did}
 })
 
+/*
 const addReceivedRequest = async (dispatch, {_id, senderDid, nonce}) => {
   const payload = {_id, senderDid, nonce, verified: 'false'}
   try {
@@ -40,12 +43,13 @@ const addReceivedRequest = async (dispatch, {_id, senderDid, nonce}) => {
     console.error('addReceivedRequest:', e)
   }
 }
+*/
 
 export const ownershipRequestsSub = (did, dispatch) => ownershipRequestsObs(did).subscribe({
   next: ({data: {getOwnershipRequests}}) => {
     _.each(getOwnershipRequests, async ({_id, senderDid, nonce}) => {
       // TODO: fix this?
-      await addReceivedRequest(dispatch, {_id, senderDid, nonce})
+      await dispatch(addReceivedRequest({_id, senderDid, nonce}))
       await client.mutate({
         mutation: setReceived,
         variables: {_id}
@@ -71,6 +75,7 @@ const ownershipProofsObs = (did) => client.watchQuery({
   variables: {senderDid: did}
 })
 
+/*
 const checkOwnershipProof = async (dispatch, {_id, receiverDid, signature}) => {
   try {
     const {_id, nonce} = await db.sentRequests.get({receiverDid})
@@ -85,11 +90,11 @@ const checkOwnershipProof = async (dispatch, {_id, receiverDid, signature}) => {
     console.error('addReceivedRequest:', e)
   }
 }
-
+*/
 export const ownershipProofsSub = (did, dispatch) => ownershipProofsObs(did).subscribe({
   next: ({data: {getOwnershipProofs}}) => {
     _.each(getOwnershipProofs, async ({_id, receiverDid, signature}) => {
-      await checkOwnershipProof(dispatch, {_id, receiverDid, signature})
+      await dispatch(checkOwnershipProof({_id, receiverDid, signature}))
       await client.mutate({
         mutation: setReceived,
         variables: {_id}
@@ -132,6 +137,7 @@ const checkOwnershipProof = async (dispatch, {_id, receiverDid, signature}) => {
 }
 */
 
+/*
 const addClaimSignatureRequest = async (did, dispatch, {senderDid, claim}) => {
   const payload = {subject: senderDid, signedDocument: claim, signers: []}
   try {
@@ -141,11 +147,12 @@ const addClaimSignatureRequest = async (did, dispatch, {senderDid, claim}) => {
     console.error('addClaimSignatureRequest:', e)
   }
 }
+*/
 
 export const claimSignatureRequestsSub = (did, dispatch) => claimSignatureRequestsObs(did).subscribe({
   next: ({data: {getClaimSignatureRequests}}) => {
     _.each(getClaimSignatureRequests, async ({_id, senderDid, claim}) => {
-      await addClaimSignatureRequest(did, dispatch, {senderDid, claim})
+      await dispatch(addClaimSignatureRequest({senderDid, claim}))
       await client.mutate({
         mutation: setReceived,
         variables: {_id}

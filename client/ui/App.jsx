@@ -14,7 +14,6 @@ import NavBar from 'ui/NavBar'
 import Developer from 'ui/Developer'
 import Contacts from 'ui/Contacts'
 import ContactRequests from 'ui/ContactRequests'
-import {watchUnconfirmed} from 'ui/CreateDID'
 import GenerateClaim from 'ui/GenerateClaim'
 import OthersClaims from 'ui/OthersClaims'
 import OwnClaims from 'ui/OwnClaims'
@@ -29,18 +28,9 @@ const centerElement = {
 const App = createReactClass({
   displayName: 'App',
 
-  componentDidMount () {
-    if (this.props.did && this.props.did.unconfirmedDID) {
-      watchUnconfirmed({
-        txId1: this.props.did.unconfirmedDID,
-        dispatch: this.props.dispatch
-      })
-    }
-  },
-
   render () {
-    const {did, wallet, loading} = this.props
-    if (loading || wallet.loading) {
+    const {did, wallet} = this.props
+    if (did.loading || wallet.loading) {
       return (
         <Container fluid style={centerElement}>
           <Spinner name='double-bounce' />

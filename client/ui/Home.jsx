@@ -4,10 +4,6 @@ import {Col, Container, Row} from 'reactstrap'
 import ReceivePayment from 'ui/ReceivePayment'
 import ShowDID from 'ui/ShowDID'
 
-// global.Buffer = global.Buffer || require('buffer').Buffer
-// const {HDNode, networks} = require('bitcoinjs-lib')
-
-// const network = networks[process.env.network]
 const Home = () => {
   return (
     <Container fluid>

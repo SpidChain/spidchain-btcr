@@ -3,17 +3,21 @@ import {setBalance} from 'redux/actions'
 //
 // Update wallet balance once every 10 minutes
 console.log('walletUpdateInterval', process.env.BALANCE)
-const walletUpdateInterval = process.env.BALANCE || 300000
+// TODO: does not read from process.env
+const walletUpdateInterval = process.env.BALANCE || 600000
 console.log('walletUpdateInterval', walletUpdateInterval)
 
 const watchWallet = dispatch => ({receivingAddress}) => {
-  const interval = walletUpdateInterval // 10 minute
   getBalance(receivingAddress)
-    .then(balance => dispatch(setBalance(balance)))
+    .then(({balance}) => {
+      console.log("Initial balance is: ", balance)
+      return dispatch(setBalance(balance))
+    })
   const handle = setInterval(async () => {
-    const {balance} = await getBalance(receivingAddress)
-    dispatch(setBalance(balance))
-  }, interval)
+   const {balance} = await getBalance(receivingAddress)
+   console.log('balance is: ', balance)
+   dispatch(setBalance(balance))
+  }, walletUpdateInterval)
 }
 
 export default watchWallet

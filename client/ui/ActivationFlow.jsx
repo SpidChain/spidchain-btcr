@@ -28,18 +28,11 @@ const ActivationFlow = ({did, wallet}) => {
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           {
-            !did
+            !did.loading && !did.did
               ? (
                 <CreateDID />
               )
               : <ShowDID />
-          }
-          {
-            did && did.unconfirmedDID
-              ? (
-                <p>Waiting {CONFIRMATIONS} confirmations</p>
-              )
-              : null
           }
         </Col>
       </Row>

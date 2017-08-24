@@ -10,6 +10,7 @@ import {
 } from 'reactstrap'
 import {NotificationManager} from 'react-notifications'
 import bip39 from 'bip39'
+import {HDNode, networks} from 'bitcoinjs-lib'
 
 import createHDWallet from 'bitcoin/createHDWallet'
 import InputMnemonic from 'ui/InputMnemonic'
@@ -17,6 +18,8 @@ import ShowMnemonic from 'ui/ShowMnemonic'
 import {getWallet} from 'redux/actions'
 import watchWallet from 'bitcoin/watchWallet'
 import db from 'db'
+
+const network = networks[process.env.network]
 
 const GenerateWallet = createReactClass({
   displayName: 'GenerateWallet',
@@ -46,12 +49,14 @@ const GenerateWallet = createReactClass({
     const wallet = createHDWallet(this.state.mnemonic)
     await db.wallet.add({root: wallet})
     const dispatch = this.props.dispatch
-    const getState = this.props.getState
-    dispatch(getWallet()).then(() => {
-      const {wallet: {receivingAddress}} = getState()
-      watchWallet(dispatch)({receivingAddress})
-    }
-    )
+    dispatch(getWallet()).then(({value}) => {
+      //const {wallet: {receivingAddress}} = value
+      const root = value.root
+      const wallet = HDNode.fromBase58(root, network)
+      const fundingKeyPair = wallet.derivePath("m/44'/0'/0'/0/0").keyPair
+      const receivingAddress = fundingKeyPair.getAddress()
+       watchWallet(dispatch)({receivingAddress})
+    })
     // this.props.onWallet(createHDWallet(this.state.mnemonic))
   },
 
