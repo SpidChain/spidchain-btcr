@@ -233,13 +233,14 @@ export const addClaimSignatureRequest = ({senderDid, claim}) => (dispatch, getSt
 export const checkOwnershipProof = ({_id, receiverDid, signature}) => (dispatch) => {
   db.sentRequests.get({receiverDid})
     .then(({_id, nonce}) => {
-      return verifyWithOwnerKey256({DID: receiverDid, msg: nonce, sig: signature})
+      const verified = verifyWithOwnerKey256({DID: receiverDid, msg: nonce, sig: signature})
+      return {verified, nonce}
     })
-    .then(p => {
-      if (p) {
-        return db.sentRequests.update({_id}, {verified: 'true'})
+    .then(({verified, nonce}) => {
+      if (verified) {
+        return db.sentRequests.where('nonce').equals(nonce).modify({verified: 'true'})
       } else {
-        return db.sentRequests.update({_id}, {verified: 'fail'})
+        return db.sentRequests.where('nonce').equals(nonce).modify({verified: 'fail'})
       }
     })
     .then(() => {
