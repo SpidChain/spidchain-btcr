@@ -11,25 +11,25 @@ import Spinner from 'react-spinkit'
 
 import OthersClaim from 'ui/OthersClaim'
 
-const OthersClaims = ({othersClaims: {data, loading}}) => (
+const OthersClaims = ({othersClaims}) => (
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <Jumbotron>
-          <h1 className='lead text-center'>
+          <p className='lead text-center'>
             <strong> Other users claims </strong>
-          </h1>
+          </p>
         </Jumbotron>
       </Col>
     </Row>
-    {loading
+    {!othersClaims || othersClaims.loading
         ? <Spinner name='double-bounce' />
         : <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
-            {data.length === 0
-                ? <h3> There are no claims </h3>
+            {othersClaims.data.length === 0
+                ? <p className='text-center'> No claims </p>
                 : <ListGroup>
-                  {data.map(({_id, signedDocument}) =>
+                  {othersClaims.data.map(({_id, signedDocument}) =>
                     <OthersClaim claim={JSON.parse(signedDocument)} claimId={_id} key={_id} />)}
                 </ListGroup>
             }

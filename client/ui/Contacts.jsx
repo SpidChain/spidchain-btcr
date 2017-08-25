@@ -12,7 +12,7 @@ import Spinner from 'react-spinkit'
 import Contact from 'ui/Contact'
 // import verify from 'bitcoin/verify'
 
-const Contacts = ({sentRequests: {data, loading}}) =>
+const Contacts = ({sentRequests}) =>
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
@@ -23,14 +23,14 @@ const Contacts = ({sentRequests: {data, loading}}) =>
         </Jumbotron>
       </Col>
     </Row>
-    {loading
+    {!sentRequests || sentRequests.loading
         ? <Spinner name='double-bounce' />
         : <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
-            {data.length === 0
-                ? <h3> There are no contacts </h3>
+            {sentRequests.data.length === 0
+                ? <p className='text-center'> No contacts </p>
                 : <ListGroup>
-                  {data.map(({receiverDid, verified}) =>
+                  {sentRequests.data.map(({receiverDid, verified}) =>
                     <Contact
                       key={receiverDid}
                       receiverDid={receiverDid}

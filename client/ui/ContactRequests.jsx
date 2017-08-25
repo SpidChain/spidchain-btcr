@@ -4,26 +4,26 @@ import Spinner from 'react-spinkit'
 import RequestItem from 'ui/RequestItem'
 import {connect} from 'react-redux'
 
-const ContactRequests = ({receivedRequests: {loading, data}}) => {
+const ContactRequests = ({receivedRequests}) => {
   return (
     <Container fluid>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           <Jumbotron>
-            <h1>
+            <p className='lead text-center'>
               <strong> Confirm your contact requests </strong>
-            </h1>
+            </p>
           </Jumbotron>
         </Col>
       </Row>
-      { loading || data === null // TODO: Check this error condition
+      { !receivedRequests || receivedRequests.loading || receivedRequests.data === null // TODO: Check this error condition
           ? <Spinner name='double-bounce' />
           : (<Row className='mt-3'>
             <Col md='6' className='mx-auto'>
-              {data.length === 0
-                  ? <p> You have no requests </p>
+              {receivedRequests.data.length === 0
+                  ? <p className='text-center'> No requests </p>
                   : <ListGroup>
-                    {data.map(({_id, nonce, senderDid}) => <RequestItem
+                    {receivedRequests.data.map(({_id, nonce, senderDid}) => <RequestItem
                       key={_id}
                       _id={_id}
                       nonce={nonce}
