@@ -4,7 +4,16 @@ import React from 'react'
 import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
-import {Button, Form, FormGroup, Input, Modal, ModalBody, ModalHeader} from 'reactstrap'
+import {
+  Button,
+  Form,
+  FormGroup,
+  Input,
+  ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader
+} from 'reactstrap'
 
 import db from 'db'
 import {getOwnClaims} from 'redux/actions'
@@ -53,7 +62,7 @@ const Claim = createReactClass({
   render () {
     const {claim} = this.props
     return (
-      <div>
+      <ListGroupItem>
         <p>
           Subject: {claim['@id']}
         </p>
@@ -61,7 +70,7 @@ const Claim = createReactClass({
           {Object.keys(claim).filter(e => e !== '@context' && e !== '@id' && e !== 'https://w3id.org/security#signature')
             .map((key) => <p key={key}>{key}: {claim[key].toString()}</p>)}
         </div>
-        <Button onClick={this.toggle}>Request signature</Button>
+        <Button block outline color='primary' onClick={this.toggle}>Request signature</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Request signature</ModalHeader>
           <ModalBody>
@@ -82,7 +91,7 @@ const Claim = createReactClass({
             </Form>
           </ModalBody>
         </Modal>
-      </div>
+      </ListGroupItem>
     )
   }
 })
