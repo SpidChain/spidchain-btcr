@@ -3,7 +3,16 @@ import React from 'react'
 import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
-import {Button, Form, FormGroup, Input, Modal, ModalBody, ModalHeader} from 'reactstrap'
+import {
+  Button,
+  Form,
+  FormGroup,
+  Input,
+  ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader
+} from 'reactstrap'
 
 import signClaim from 'bitcoin/signClaim'
 import db from 'db'
@@ -47,7 +56,7 @@ const OthersClaim = createReactClass({
   render () {
     const {claim} = this.props
     return (
-      <div>
+      <ListGroupItem>
         <p>
           Subject: {claim['@id']}
         </p>
@@ -55,8 +64,10 @@ const OthersClaim = createReactClass({
           {Object.keys(claim).filter(e => e !== '@context' && e !== '@id' && e !== 'https://w3id.org/security#signature')
             .map((key) => <p key={key}>{key}: {claim[key].toString()}</p>)}
         </div>
-        <Button onClick={this.onClick} block>Sign</Button>
-      </div>
+        <Button block outline color='primary' onClick={this.onClick}>
+          Sign
+        </Button>
+      </ListGroupItem>
     )
   }
 })
