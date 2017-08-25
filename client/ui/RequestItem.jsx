@@ -39,11 +39,11 @@ const handleClick = ({_id, did, senderDid, nonce, root, dispatch}) => async () =
 const RequestItem = ({_id, did: {did}, nonce, senderDid, wallet: {root}, dispatch}) => {
   // const walletRoot = HDNode.fromBase58(wallet, network)
   return (
-    <ListGroupItem>
+    <ListGroupItem className='justify-content-between'>
       {senderDid}
-      <Button color='success' className='float-right'
+      <Button color='primary'
         onClick={handleClick({_id, did, senderDid, nonce, root, dispatch})}>
-        <span className='fa fa-check' />
+        Confirm
       </Button>
     </ListGroupItem>
   )

@@ -1,14 +1,14 @@
 import React from 'react'
-import {ListGroupItem} from 'reactstrap'
+import {Badge, ListGroupItem} from 'reactstrap'
 
 const Contact = ({receiverDid, verified}) => {
   return (
-    <ListGroupItem>
+    <ListGroupItem className='justify-content-between'>
       {receiverDid}
       {
         verified === 'true'
-        ? <span className='fa fa-check' />
-        : <span className='fa fa-question' />
+          ? <Badge color='success' > confirmed </Badge>
+          : <Badge color='warning' > unconfirmed </Badge>
       }
     </ListGroupItem>
   )
