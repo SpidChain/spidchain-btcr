@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {Button, Col, Container, Jumbotron, Form, FormGroup, Input, Label, Row} from 'reactstrap'
+import {NotificationManager} from 'react-notifications'
 
 import signClaim from 'bitcoin/signClaim'
 import db from 'db'
@@ -13,8 +14,9 @@ const context = {
 
 const handleSubmit = (did, dispatch, wallet) => async (e) => {
   e.preventDefault()
-  const firstname = e.target.firstname.value.trim()
-  const lastname = e.target.lastname.value.trim()
+  const form = e.target
+  const firstname = form.firstname.value.trim()
+  const lastname = form.lastname.value.trim()
 
   if (firstname === '' && lastname === '') {
     return
@@ -50,9 +52,13 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
       ]
     })
     dispatch(getOwnClaims(did))
+    NotificationManager.success('', 'Claim generated', 5000)
   } catch (e) {
+    NotificationManager.success('', 'Claim genration failed', 5000)
     console.error(e)
+    return
   }
+  form.reset()
 }
 
 const GenerateClaim = ({did, dispatch, wallet}) => (
