@@ -5,18 +5,12 @@ import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
 import {
   Button,
-  Form,
-  FormGroup,
-  Input,
   ListGroupItem,
-  Modal,
-  ModalBody,
-  ModalHeader
+  Table
 } from 'reactstrap'
 
 import signClaim from 'bitcoin/signClaim'
 import db from 'db'
-import {getOwnClaims} from 'redux/actions'
 
 const sendClaimSignatureRequest = gql`
   mutation sendClaimSignatureRequest($senderDid: String, $receiverDid: String, $claim: String) {
@@ -27,7 +21,7 @@ const sendClaimSignatureRequest = gql`
 
 const OthersClaim = createReactClass({
   async onClick (e) {
-    const {claim, did:{did}, dispatch, wallet} = this.props
+    const {claim, did: {did}, dispatch, wallet} = this.props
     const walletRoot = wallet.root
     const controlAccount = Number(process.env.controlAccount)
     const ownerRoot = walletRoot.derivePath("m/44'/0'")
@@ -37,8 +31,8 @@ const OthersClaim = createReactClass({
     const rotationIx = 0
     try {
       const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did})
-      console.log('Claim:', signedDocument);
-    /*
+      console.log('Claim:', signedDocument)
+      /*
     await db.claims.add({
       subject: did,
       signedDocument,
@@ -47,7 +41,7 @@ const OthersClaim = createReactClass({
       ]
     })
     */
-    //dispatch(getOwnClaims(did))
+      // dispatch(getOwnClaims(did))
     } catch (e) {
       console.error(e)
     }
@@ -57,13 +51,30 @@ const OthersClaim = createReactClass({
     const {claim} = this.props
     return (
       <ListGroupItem>
-        <p>
-          Subject: {claim['@id']}
-        </p>
-        <div>
-          {Object.keys(claim).filter(e => e !== '@context' && e !== '@id' && e !== 'https://w3id.org/security#signature')
-            .map((key) => <p key={key}>{key}: {claim[key].toString()}</p>)}
-        </div>
+        <Table>
+          <tbody>
+            <tr>
+              <th>
+                Subject
+              </th>
+              <td>
+                {claim['@id']}
+              </td>
+            </tr>
+            {Object.keys(claim)
+                .filter(e => e !== '@context' &&
+                  e !== '@id' &&
+                  e !== 'https://w3id.org/security#signature')
+                .map(key =>
+                  <tr key={key}>
+                    <th> {key} </th>
+                    <td >
+                      {claim[key].toString()}
+                    </td>
+                  </tr>)
+            }
+          </tbody>
+        </Table>
         <Button block outline color='primary' onClick={this.onClick}>
           Sign
         </Button>
