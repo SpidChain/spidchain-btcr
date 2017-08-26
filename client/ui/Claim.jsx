@@ -9,11 +9,11 @@ import {
   Button,
   Form,
   FormGroup,
-  Input,
   ListGroupItem,
   Modal,
   ModalBody,
-  ModalHeader
+  ModalHeader,
+  Table
 } from 'reactstrap'
 
 import db from 'db'
@@ -73,19 +73,31 @@ const Claim = createReactClass({
     const {claim} = this.props
     return (
       <ListGroupItem>
-        <p>
-          Subject: {claim['@id']}
-        </p>
-        <div>
-          {Object.keys(claim).filter(e => e !== '@context' &&
-            e !== '@id' &&
-            e !== 'https://w3id.org/security#signature')
-              .map((key) =>
-                <p key={key}>
-                  {key}: {claim[key].toString()}
-                </p>
-              )}
-        </div>
+        <Table>
+          <tbody>
+            <tr>
+              <th>
+                Subject
+              </th>
+              <td>
+                {claim['@id']}
+              </td>
+            </tr>
+            {Object.keys(claim)
+                .filter(e => e !== '@context' &&
+                  e !== '@id' &&
+                  e !== 'https://w3id.org/security#signature')
+                .map(key => (
+                  <tr key={key}>
+                    <th> {key} </th>
+                    <td >
+                      {claim[key].toString()}
+                    </td>
+                  </tr>
+                ))
+            }
+          </tbody>
+        </Table>
         <Button block outline color='primary' onClick={this.toggle}>Request signature</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Request signature</ModalHeader>
@@ -98,6 +110,7 @@ const Claim = createReactClass({
               <FormGroup>
                 <Select.Async
                   name='did'
+                  placeholder='Send to...'
                   value={this.state.selected}
                   loadOptions={getDids}
                   onChange={(selected) => this.setState({selected})}
