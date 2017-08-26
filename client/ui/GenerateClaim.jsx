@@ -43,7 +43,9 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
 
   const rotationIx = 0
   try {
-    const signedDocument = await signClaim(claim, ownerRoot, rotationIx)
+    debugger
+    const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did})
+    debugger
     await db.claims.add({
       subject: did,
       signedDocument: JSON.stringify(signedDocument),

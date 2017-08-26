@@ -27,7 +27,7 @@ const sendClaimSignatureRequest = gql`
 
 const OthersClaim = createReactClass({
   async onClick (e) {
-    const {claim, did, dispatch, wallet} = this.props
+    const {claim, did:{did}, dispatch, wallet} = this.props
     const walletRoot = wallet.root
     const controlAccount = Number(process.env.controlAccount)
     const ownerRoot = walletRoot.derivePath("m/44'/0'")
@@ -36,7 +36,7 @@ const OthersClaim = createReactClass({
 
     const rotationIx = 0
     try {
-      const signedDocument = await signClaim(claim, ownerRoot, rotationIx)
+      const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did})
       console.log('Claim:', signedDocument);
     /*
     await db.claims.add({

@@ -8,9 +8,10 @@ jsigs.use('jsonld', jsonld)
 
 const algorithm = 'EcdsaKoblitzSignature2016'
 
-const signClaim = (claim, ownerRoot, rotationIx) => jsigs.promises().sign(claim, {
+const signClaim = ({claim, ownerRoot, rotationIx, did}) => jsigs.promises().sign(claim, {
   algorithm,
-  creator: `ecdsa-koblitz-pubkey:${ownerRoot.derive(rotationIx).getAddress()}`,
+  // creator: `ecdsa-koblitz-pubkey:${ownerRoot.derive(rotationIx).getAddress()}`,
+  creator: 'did:btcr:' + did,
   privateKeyWif: ownerRoot.derive(rotationIx).keyPair.toWIF()
 })
 
