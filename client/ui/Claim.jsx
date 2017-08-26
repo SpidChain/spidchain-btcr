@@ -1,6 +1,7 @@
 import client from 'apollo'
 import createReactClass from 'create-react-class'
 import React from 'react'
+import Select from 'react-select'
 import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
@@ -25,9 +26,16 @@ const sendClaimSignatureRequest = gql`
   }
 }`
 
+const getDids = async () => {
+  const sent = await db.sentRequests.toArray()
+  const options = sent.map(e => ({value: e.receiverDid, label: e.receiverDid}))
+  return {options}
+}
+
 const Claim = createReactClass({
   getInitialState: () => ({
-    modal: false
+    modal: false,
+    value: undefined
   }),
 
   toggle () {
@@ -39,12 +47,14 @@ const Claim = createReactClass({
   async onSubmit (e) {
     e.preventDefault()
     const form = e.target
-    const receiverDid = form.did.value.trim()
-    if (receiverDid === '') {
+    if (!form.did || !form.did.value) {
       return
     }
+    const receiverDid = form.did.value
+    console.log('receiverDid', receiverDid)
     try {
       const {claim, claimId, did, dispatch} = this.props
+      console.log('receiverDid', receiverDid)
       await client.mutate({mutation: sendClaimSignatureRequest, variables: {senderDid: did.did, receiverDid, claim: JSON.stringify(claim)}})
       const signers = (await db.claims.get(claimId)).signers
       signers.push({did: receiverDid, status: 'pending'})
@@ -67,8 +77,14 @@ const Claim = createReactClass({
           Subject: {claim['@id']}
         </p>
         <div>
-          {Object.keys(claim).filter(e => e !== '@context' && e !== '@id' && e !== 'https://w3id.org/security#signature')
-            .map((key) => <p key={key}>{key}: {claim[key].toString()}</p>)}
+          {Object.keys(claim).filter(e => e !== '@context' &&
+            e !== '@id' &&
+            e !== 'https://w3id.org/security#signature')
+              .map((key) =>
+                <p key={key}>
+                  {key}: {claim[key].toString()}
+                </p>
+              )}
         </div>
         <Button block outline color='primary' onClick={this.toggle}>Request signature</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
@@ -80,12 +96,12 @@ const Claim = createReactClass({
               onSubmit={this.onSubmit}
             >
               <FormGroup>
-                <Input
-                  type='text'
+                <Select.Async
                   name='did'
-                  maxLength='27'
-                  placeholder='DID'
-                  autoCapitalize='none' />
+                  value={this.state.selected}
+                  loadOptions={getDids}
+                  onChange={(selected) => this.setState({selected})}
+                />
               </FormGroup>
               <Button type='submit' block color='primary'> Send Request </Button>
             </Form>
