@@ -42,7 +42,7 @@ const getDids = async () => {
   return {options}
 }
 
-const Claim = createReactClass({
+const OwnClaim = createReactClass({
   getInitialState: () => ({
     modal: false,
     value: undefined
@@ -166,4 +166,4 @@ const Claim = createReactClass({
   }
 })
 
-export default connect(s => s)(Claim)
+export default connect(s => s)(OwnClaim)

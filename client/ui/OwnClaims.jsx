@@ -9,7 +9,7 @@ import {
 } from 'reactstrap'
 import Spinner from 'react-spinkit'
 
-import Claim from 'ui/Claim'
+import OwnClaim from 'ui/OwnClaim'
 
 const OwnClaims = ({ownClaims}) => (
   <Container fluid>
@@ -30,7 +30,7 @@ const OwnClaims = ({ownClaims}) => (
                 ? <p className='text-center'> No claims </p>
                 : <ListGroup>
                   {ownClaims.data.map(({_id, signedDocument, signers}) =>
-                    <Claim claim={signedDocument} signers={signers} claimId={_id} key={_id} />)}
+                    <OwnClaim claim={signedDocument} signers={signers} claimId={_id} key={_id} />)}
                 </ListGroup>
             }
           </Col>
