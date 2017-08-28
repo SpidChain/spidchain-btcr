@@ -7,6 +7,7 @@ type Message {
   senderDid: String
   receiverDid: String
   claim: String
+  claimId: Int
   claimSignature: String
   nonce: Int
   signature: String
@@ -18,14 +19,15 @@ extend type Query {
   getOwnershipProofs(senderDid: String, receiverDid: String, nonce: Int, type: String): [Message]
   getOwnershipRequests(receiverDid: String, type: String): [Message]
   getClaimSignatureRequests(receiverDid: String, type: String): [Message]
+  getClaimSignatures(receiverDid: String, type: String): [Message]
 }
 
 extend type Mutation {
   sendOwnershipRequest(senderDid: String, receiverDid: String, nonce: Int): Message
   sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
   setReceived(_id: String): Message
-  sendClaimSignatureRequest(senderDid: String, receiverDid: String, claim: String): Message
-  sendClaimSignature(senderDid: String, receiverDid: String, claimSignature: String): Message
+  sendClaimSignatureRequest(senderDid: String, receiverDid: String, claimId: Int, claim: String): Message
+  sendClaimSignature(senderDid: String, receiverDid: String, claimId: Int, claimSignature: String): Message
 }
 `
 
@@ -55,9 +57,16 @@ const makeMessagingResolvers = async () => {
       getClaimSignatureRequests: async (root, {receiverDid}) => {
         const data = await Messaging.find(
           {receiverDid, type: 'CLAIM_SIGNATURE_REQUEST', received: false},
-          {senderDid: 1, claim: 1}).toArray()
+          {senderDid: 1, claimId: 1, claim: 1}).toArray()
+        return data
+      },
+      getClaimSignatures: async (root, {receiverDid}) => {
+        const data = await Messaging.find(
+          {receiverDid, type: 'CLAIM_SIGNATURE', received: false},
+          {senderDid: 1, claimId: 1, claimSignature: 1}).toArray()
         return data
       }
+
     },
 
     Mutation: {
@@ -75,15 +84,16 @@ const makeMessagingResolvers = async () => {
         await Messaging.update({_id: new ObjectId(_id)}, {$set: {received: true}})
         return prepare(await Messaging.findOne({_id: new ObjectId(_id)}, {received: 1}))
       },
-      sendClaimSignatureRequest: async (root, {senderDid, receiverDid, claim}) => {
+      sendClaimSignatureRequest: async (root, {senderDid, receiverDid, claimId, claim}) => {
         const {ops} = await Messaging.insert(
-        {senderDid, receiverDid, claim, type: 'CLAIM_SIGNATURE_REQUEST', received: false})
+        {senderDid, receiverDid, claimId, claim, type: 'CLAIM_SIGNATURE_REQUEST', received: false})
         return prepare(ops[0])
       },
-      sendClaimSignature: async (root, {senderDid, receiverDid, claimSignature}) => {
+      sendClaimSignature: async (root, {senderDid, receiverDid, claimId, claimSignature}) => {
         const {ops} = await Messaging.insert({
           senderDid,
           receiverDid,
+          claimId,
           claimSignature,
           type: 'CLAIM_SIGNATURE',
           received: false

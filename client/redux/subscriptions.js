@@ -5,7 +5,8 @@ import gql from 'graphql-tag'
 import {
   addClaimSignatureRequest,
   addReceivedRequest,
-  checkOwnershipProof
+  checkOwnershipProof,
+  addClaimSignature
 } from 'redux/actions'
 
 // Listening on ownership proof requests
@@ -110,6 +111,7 @@ const getClaimSignatureRequests = gql`
      getClaimSignatureRequests(receiverDid: $receiverDid) {
        _id
        senderDid
+       claimId
        claim
     }
   }
@@ -151,8 +153,41 @@ const addClaimSignatureRequest = async (did, dispatch, {senderDid, claim}) => {
 
 export const claimSignatureRequestsSub = (did, dispatch) => claimSignatureRequestsObs(did).subscribe({
   next: ({data: {getClaimSignatureRequests}}) => {
-    _.each(getClaimSignatureRequests, async ({_id, senderDid, claim}) => {
-      await dispatch(addClaimSignatureRequest({senderDid, claim}))
+    _.each(getClaimSignatureRequests, async ({_id, senderDid, claimId, claim}) => {
+      await dispatch(addClaimSignatureRequest({senderDid, claimId, claim}))
+      await client.mutate({
+        mutation: setReceived,
+        variables: {_id}
+      })
+    })
+  }
+})
+
+const getClaimSignatures = gql`
+  query getClaimSignatures($receiverDid: String) {
+     getClaimSignatures(receiverDid: $receiverDid) {
+       _id
+       claimId
+       senderDid
+       claimSignature
+    }
+  }
+`
+
+const claimSignatureObs = (did) => client.watchQuery({
+  query: getClaimSignatures,
+  pollInterval: 10000,
+  variables: {receiverDid: did}
+})
+
+export const claimSignaturesSub = (did, dispatch) => claimSignatureObs(did).subscribe({
+  next: ({data: {getClaimSignatures}}) => {
+    _.each(getClaimSignatures, async ({_id, senderDid, claimId, claimSignature}) => {
+      await dispatch(addClaimSignature({
+        senderDid,
+        claimId,
+        claimSignature: JSON.parse(claimSignature)
+      }))
       await client.mutate({
         mutation: setReceived,
         variables: {_id}

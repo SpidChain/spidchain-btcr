@@ -14,16 +14,24 @@ import signClaim from 'bitcoin/signClaim'
 import db from 'db'
 
 const sendClaimSignature = gql`
-  mutation sendClaimSignature($senderDid: String, $receiverDid: String, $claimSignature: String) {
-    sendClaimSignature(senderDid: $senderDid, receiverDid: $receiverDid, claimSignature: $claimSignature) {
-     _id
-  }
+  mutation sendClaimSignature(
+    $senderDid: String,
+    $receiverDid: String,
+    $claimId: Int,
+    $claimSignature: String) {
+      sendClaimSignature(
+        senderDid: $senderDid,
+        receiverDid: $receiverDid,
+        claimId: $claimId,
+        claimSignature: $claimSignature) {
+          _id
+        }
 }`
 
 const OthersClaim = createReactClass({
   async onClick (e) {
     console.log(this.props)
-    const {claim, subject, did: {did}, dispatch, wallet} = this.props
+    const {claim, claimId, subject, did: {did}, dispatch, wallet} = this.props
     const walletRoot = wallet.root
     const controlAccount = Number(process.env.controlAccount)
     const ownerRoot = walletRoot.derivePath("m/44'/0'")
@@ -49,6 +57,7 @@ const OthersClaim = createReactClass({
         mutation: sendClaimSignature,
         variables: {
           senderDid: did,
+          claimId,
           receiverDid: subject,
           claimSignature: JSON.stringify(signature)
         }

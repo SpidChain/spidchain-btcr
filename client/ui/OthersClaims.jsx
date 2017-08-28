@@ -29,12 +29,12 @@ const OthersClaims = ({othersClaims}) => (
             {othersClaims.data.length === 0
                 ? <p className='text-center'> No claims </p>
                 : <ListGroup>
-                  {othersClaims.data.map(({_id, subject, signedDocument}) =>
+                  {othersClaims.data.map(({_id, subject, claimId, signedDocument}) =>
                     <OthersClaim
                       key={_id}
                       claim={signedDocument}
                       subject={subject}
-                      claimId={_id}
+                      claimId={claimId}
                     />)}
                 </ListGroup>
             }
