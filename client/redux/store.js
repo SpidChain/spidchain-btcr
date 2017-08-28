@@ -106,21 +106,11 @@ export const watchUnconfirmed = ({txId1}) => {
     if (tx.confirmations >= CONFIRMATIONS) {
       const {height, ix} = await getTxInfo(txId1)
       const txRef = txrefEncode(process.env.network, height, ix)
-      /*
-        this.setState({
-          did: txRef,
-          didTxId: txId,
-          unconfirmedDID: null
-        })
-        */
       // TODO: fix
       await db.did.update(txId1, {did: txRef, unconfirmedDID: null})
       store.dispatch(getDid()).then(() => {
         initSystem(txRef)
       })
-      // window.localStorage.removeItem('unconfirmedDID')
-      // window.localStorage.setItem('did', txRef)
-      // window.localStorage.setItem('didTxId', txId)
       clearInterval(handle)
     }
   }, interval)
