@@ -3,15 +3,16 @@ import {
   Button,
   Col,
   Form,
-  FormGroup,
-  Input
+  FormGroup
 } from 'reactstrap'
+import InputWord from 'ui/InputWord'
 
 const wordsHandler = (onWords) => (e) => {
   e.preventDefault()
   const words = []
   for (let i = 0; i < 12; i++) {
     words[i] = e.target['w' + i].value.trim()
+    console.log('words' + i, words[i])
   }
   onWords(words)
 }
@@ -19,16 +20,16 @@ const wordsHandler = (onWords) => (e) => {
 const Row = ({num}) => (
   <FormGroup row>
     <Col xs='3'>
-      <Input type='text' autoCapitalize='none' name={'w' + (4 * num)} placeholder={4 * num + 1} />
+      <InputWord name={'w' + (4 * num)} placeholder={4 * num + 1} />
     </Col>
     <Col xs='3'>
-      <Input type='text' autoCapitalize='none' name={'w' + (4 * num + 1)} placeholder={4 * num + 2} />
+      <InputWord tag='input' name={'w' + (4 * num + 1)} placeholder={4 * num + 2} />
     </Col>
     <Col xs='3'>
-      <Input type='text' autoCapitalize='none' name={'w' + (4 * num + 2)} placeholder={4 * num + 3} />
+      <InputWord tag='input' name={'w' + (4 * num + 2)} placeholder={4 * num + 3} />
     </Col>
     <Col xs='3'>
-      <Input type='text' autoCapitalize='none' name={'w' + (4 * num + 3)} placeholder={4 * num + 4} />
+      <InputWord tag='input' name={'w' + (4 * num + 3)} placeholder={4 * num + 4} />
     </Col>
   </FormGroup>
 )

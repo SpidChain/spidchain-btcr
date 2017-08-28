@@ -7,7 +7,6 @@ const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
-
 const {ifProduction, ifNotProduction} = getIfUtils(process.env.NODE_ENV)
 
 module.exports = {
@@ -54,6 +53,11 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.txt/,
+        exclude: /node_modules/,
+        use: ['raw-loader']
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
