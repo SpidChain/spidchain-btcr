@@ -30,7 +30,7 @@ const OthersClaims = ({othersClaims}) => (
                 ? <p className='text-center'> No claims </p>
                 : <ListGroup>
                   {othersClaims.data.map(({_id, signedDocument}) =>
-                    <OthersClaim claim={JSON.parse(signedDocument)} claimId={_id} key={_id} />)}
+                    <OthersClaim claim={signedDocument} claimId={_id} key={_id} />)}
                 </ListGroup>
             }
           </Col>

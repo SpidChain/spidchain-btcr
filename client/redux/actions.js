@@ -220,7 +220,7 @@ export const addReceivedRequest = ({_id, senderDid, nonce}) => (dispatch) => {
 
 export const addClaimSignatureRequest = ({senderDid, claim}) => (dispatch, getState) => {
   const did = getState().did.did
-  const payload = {subject: senderDid, signedDocument: claim, signers: []}
+  const payload = {subject: senderDid, signedDocument: JSON.parse(claim), signers: []}
   const claimSignatureP = db.claims.add(payload)
     .then(() => {
       return dispatch(getOthersClaims(did))

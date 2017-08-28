@@ -46,7 +46,7 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
     const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did})
     await db.claims.add({
       subject: did,
-      signedDocument: JSON.stringify(signedDocument),
+      signedDocument: signedDocument,
       signers: [
         {did, status: 'signed'}
       ]
