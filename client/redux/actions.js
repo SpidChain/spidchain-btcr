@@ -13,14 +13,6 @@ import db from 'db'
 import verifyWithOwnerKey256 from 'bitcoin/verify'
 import {verifyClaim} from 'bitcoin/verifyClaim'
 
-/*
-import {
-  ownershipRequestsSub,
-  ownershipProofsSub,
-  claimSignatureRequestsSub
-} from 'redux/subscriptions'
-*/
-
 export const setBalance = balance => {
   return {
     type: SET_BALANCE,
@@ -38,68 +30,17 @@ export const getWallet = () => dispatch => {
   })
 }
 
-/*
-export const getWallet = () => dispatch => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.wallet.toArray()
-    .then(data => {
-      dispatch({
-        type: GET_WALLET,
-        payload: _.head(data) || null
-      })
-      dispatch({
-        type: STOP_LOADING
-      })
-    }).catch(() => dispatch({
-      type: STOP_LOADING
-    }))
-}
-*/
-
 export const getDid = () => (dispatch) => {
   const didP = db.did.toArray().then(data => {
     const didObj = _.head(data)
 
     return didObj
   })
-  /*
-    if (didObj && didObj.did) {
-      ownershipRequestsSub(didObj.did, dispatch)
-      ownershipProofsSub(didObj.did, dispatch)
-      claimSignatureRequestsSub(didObj.did, dispatch)
-    }
-  })
-  */
   return dispatch({
     type: GET_DID,
     payload: didP
   })
 }
-
-/*
-export const getDid = () => (dispatch, getState) => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.did.toArray().then(data => {
-    const didObj = _.head(data)
-    dispatch({
-      type: GET_DID,
-      payload: didObj || null
-    })
-    if (didObj && didObj.did) {
-      ownershipRequestsSub(didObj.did, dispatch)
-      ownershipProofsSub(didObj.did, dispatch)
-      claimSignatureRequestsSub(didObj.did, dispatch)
-    }
-    dispatch({
-      type: STOP_LOADING
-    })
-  })
-}
-*/
 
 export const getReceivedRequests = () => (dispatch) => {
   const receivedRequestsP = db.receivedRequests.where({verified: 'false'}).toArray()
@@ -109,23 +50,6 @@ export const getReceivedRequests = () => (dispatch) => {
   })
 }
 
-/*
-export const getReceivedRequests = () => (dispatch) => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.receivedRequests.where({verified: 'false'}).toArray().then(data => {
-    dispatch({
-      type: GET_RECEIVED_REQUESTS,
-      payload: data
-    })
-    dispatch({
-      type: STOP_LOADING
-    })
-  })
-}
-*/
-
 export const getSentRequests = () => (dispatch) => {
   const sentRequestsP = db.sentRequests.toArray()
   return dispatch({
@@ -134,24 +58,6 @@ export const getSentRequests = () => (dispatch) => {
   })
 }
 
-/*
-export const getSentRequests = () => (dispatch) => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.sentRequests.toArray().then(data => {
-    dispatch({
-      type: GET_SENT_REQUESTS,
-      payload: data
-    })
-    dispatch({
-      type: STOP_LOADING
-    })
-  })
-}
-
-*/
-// TODO: get did from localStorage
 export const getOwnClaims = () => (dispatch, getState) => {
   // TODO improve
   const did = getState().did.did
@@ -162,24 +68,6 @@ export const getOwnClaims = () => (dispatch, getState) => {
   })
 }
 
-/*
-export const getOwnClaims = (did) => (dispatch) => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.claims.where({subject: did}).toArray()
-    .then((data) => {
-      dispatch({
-        type: GET_OWN_CLAIMS,
-        payload: data
-      })
-      dispatch({
-        type: STOP_LOADING
-      })
-    })
-}
-*/
-
 export const getOthersClaims = () => (dispatch, getState) => {
   const did = getState().did.did
   const othersClaimsP = db.claims.where('subject').notEqual(did).toArray()
@@ -188,26 +76,6 @@ export const getOthersClaims = () => (dispatch, getState) => {
     payload: othersClaimsP
   })
 }
-
-/*
-export const getOthersClaims = (did) => (dispatch) => {
-  dispatch({
-    type: START_LOADING
-  })
-  db.claims.where('subject').notEqual(did).toArray()
-    .then((data) => {
-      dispatch({
-        type: GET_OTHERS_CLAIMS,
-        payload: data
-      })
-      dispatch({
-        type: STOP_LOADING
-      })
-    })
-}
-*/
-
-// NEW
 
 export const addReceivedRequest = ({_id, senderDid, nonce}) => (dispatch) => {
   const payload = {_id, senderDid, nonce, verified: 'false'}
@@ -256,7 +124,6 @@ export const addClaimSignature =
   ({senderDid, claimId, claimSignature}) => (dispatch, getState) => {
     const claimP = db.claims.get(claimId)
     const verifyClaimP = claimP.then(({signedDocument}) => {
-      //signedDocument['https://w3id.org/security#signature'] = claimSignature
       const newDocument = {
         ...signedDocument,
         'https://w3id.org/security#signature': claimSignature
