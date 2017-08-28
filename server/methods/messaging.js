@@ -7,6 +7,7 @@ type Message {
   senderDid: String
   receiverDid: String
   claim: String
+  claimSignature: String
   nonce: Int
   signature: String
   type: String
@@ -24,6 +25,7 @@ extend type Mutation {
   sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
   setReceived(_id: String): Message
   sendClaimSignatureRequest(senderDid: String, receiverDid: String, claim: String): Message
+  sendClaimSignature(senderDid: String, receiverDid: String, claimSignature: String): Message
 }
 `
 
@@ -76,6 +78,16 @@ const makeMessagingResolvers = async () => {
       sendClaimSignatureRequest: async (root, {senderDid, receiverDid, claim}) => {
         const {ops} = await Messaging.insert(
         {senderDid, receiverDid, claim, type: 'CLAIM_SIGNATURE_REQUEST', received: false})
+        return prepare(ops[0])
+      },
+      sendClaimSignature: async (root, {senderDid, receiverDid, claimSignature}) => {
+        const {ops} = await Messaging.insert({
+          senderDid,
+          receiverDid,
+          claimSignature,
+          type: 'CLAIM_SIGNATURE',
+          received: false
+        })
         return prepare(ops[0])
       }
     }

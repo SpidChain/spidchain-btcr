@@ -55,6 +55,7 @@ const Claim = createReactClass({
     try {
       const {claim, claimId, did, dispatch} = this.props
       console.log('receiverDid', receiverDid)
+      // const purgedClaim = claim with 
       await client.mutate({mutation: sendClaimSignatureRequest, variables: {senderDid: did.did, receiverDid, claim: JSON.stringify(claim)}})
       const signers = (await db.claims.get(claimId)).signers
       signers.push({did: receiverDid, status: 'pending'})
