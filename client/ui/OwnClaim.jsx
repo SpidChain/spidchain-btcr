@@ -61,10 +61,8 @@ const OwnClaim = createReactClass({
       return
     }
     const receiverDid = form.did.value
-    console.log('receiverDid', receiverDid)
     try {
       const {claim, claimId, did, dispatch} = this.props
-      console.log('receiverDid', receiverDid)
       // const purgedClaim = claim with
       const signatures = claim['https://w3id.org/security#signature']
       if (_.isArray(signatures)) {

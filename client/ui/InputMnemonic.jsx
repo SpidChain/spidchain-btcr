@@ -12,7 +12,6 @@ const wordsHandler = (onWords) => (e) => {
   const words = []
   for (let i = 0; i < 12; i++) {
     words[i] = e.target['w' + i].value.trim()
-    console.log('words' + i, words[i])
   }
   onWords(words)
 }

@@ -30,7 +30,6 @@ const sendClaimSignature = gql`
 
 const OthersClaim = createReactClass({
   async onClick (e) {
-    console.log(this.props)
     const {claim, claimId, subject, did: {did}, dispatch, wallet} = this.props
     const walletRoot = wallet.root
     const controlAccount = Number(process.env.controlAccount)

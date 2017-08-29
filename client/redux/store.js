@@ -61,12 +61,9 @@ export const store = createStore(
 
 store.dispatch(getWallet()).then(({value}) => {
   if (!value) {
-    console.log('wallet is null')
-    console.log(store.getState())
     return
   }
   const {wallet: {receivingAddress}} = store.getState()
-  console.log(receivingAddress)
   watchWallet(store.dispatch)({receivingAddress})
 })
 

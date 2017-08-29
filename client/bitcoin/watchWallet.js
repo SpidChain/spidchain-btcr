@@ -5,18 +5,15 @@ import {setBalance} from 'redux/actions'
 console.log('walletUpdateInterval', process.env.BALANCE)
 // TODO: does not read from process.env
 const walletUpdateInterval = process.env.BALANCE || 600000
-console.log('walletUpdateInterval', walletUpdateInterval)
 
 const watchWallet = dispatch => ({receivingAddress}) => {
   getBalance(receivingAddress)
     .then(({balance}) => {
-      console.log("Initial balance is: ", balance)
       return dispatch(setBalance(balance))
     })
   const handle = setInterval(async () => {
-   const {balance} = await getBalance(receivingAddress)
-   console.log('balance is: ', balance)
-   dispatch(setBalance(balance))
+    const {balance} = await getBalance(receivingAddress)
+    dispatch(setBalance(balance))
   }, walletUpdateInterval)
 }
 
