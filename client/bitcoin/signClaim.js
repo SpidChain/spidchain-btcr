@@ -1,5 +1,5 @@
 // TODO: find a better way to import bitcore-message
-import bitcoreMessage from 'jsonld-signatures/node_modules/bitcore-message'
+import bitcoreMessage from 'bitcore-message'
 import jsigs from 'jsonld-signatures'
 import jsonld from 'jsonld'
 
