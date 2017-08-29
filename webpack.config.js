@@ -1,6 +1,7 @@
 const Dotenv = require('dotenv-webpack')
 const {getIfUtils, removeEmpty} = require('webpack-config-utils')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
@@ -29,6 +30,10 @@ module.exports = {
       )
     }),
     new webpack.EnvironmentPlugin(['NODE_ENV']),
+    new FaviconsWebpackPlugin({
+      logo: path.join(__dirname, 'client', 'logo.png'),
+      prefix: 'icons/'
+    }),
     new HtmlWebpackPlugin({
       inject: 'head',
       template: path.join(__dirname, 'client', 'index.html')

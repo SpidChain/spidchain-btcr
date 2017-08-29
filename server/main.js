@@ -37,6 +37,7 @@ app.use(history({rewrites: [
 ))
 
 if (isProduction) {
+  app.use('/icons', express.static(path.join(__dirname, '../dist/icons')))
   app.use('/fonts', express.static(path.join(__dirname, '../dist/fonts')))
   app.get('/index.js', (req, res) => {
     res.sendFile(path.join(DIST_DIR, 'index.js'))
