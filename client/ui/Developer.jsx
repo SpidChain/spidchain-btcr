@@ -13,6 +13,9 @@ const printDDO = (did) => async () => {
   const prettyDDO = JSON.stringify(DDO, null, 2)
   console.log('%cDDO is:', logStyle)
   console.log(prettyDDO)
+  const ipfsGateway = 'https://ipfs.io/ipfs/'
+  const link = ipfsGateway + DDO.deterministicDDO.extendedDDOUrl
+  console.log('%cLink to the extened DDO:\n' + link, logStyle)
 }
 
 const printClaims = async () => {
