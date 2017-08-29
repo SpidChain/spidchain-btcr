@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {Button, Col, Container, Row} from 'reactstrap'
 
 import {getDDO} from 'bitcoin/DDO'
+import db from 'db'
 
 const printDDO = (did) => async () => {
   console.log('Fetching the DDO from the blockchain...')
@@ -12,12 +13,25 @@ const printDDO = (did) => async () => {
   console.log(prettyDDO)
 }
 
+const printClaims = async () => {
+  console.log('Fetching claims from the database...')
+  const claims = await db.claims.toArray()
+  claims.forEach(({signedDocument}) => console.log(signedDocument))
+}
+
 const Developer = ({did: {did}}) => (
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <div>
           <Button color='primary' onClick={printDDO(did)} block> Show DDO </Button>
+        </div>
+      </Col>
+    </Row>
+    <Row className='mt-3'>
+      <Col md='6' className='mx-auto'>
+        <div>
+          <Button color='primary' onClick={printClaims} block> Show Claims </Button>
         </div>
       </Col>
     </Row>
