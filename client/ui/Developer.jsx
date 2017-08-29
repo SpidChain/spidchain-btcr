@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Button, Col, Container, Row} from 'reactstrap'
+import {Button, Col, Container, Jumbotron, Row} from 'reactstrap'
 
 import {getDDO} from 'bitcoin/DDO'
 import db from 'db'
@@ -21,6 +21,18 @@ const printClaims = async () => {
 
 const Developer = ({did: {did}}) => (
   <Container fluid>
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
+          <Jumbotron>
+            <p className='lead text-center'>
+              <strong> This section is for developers. </strong>
+            </p>
+            <p className='lead text-center'>
+              <strong> Output is in the console </strong>
+            </p>
+          </Jumbotron>
+        </Col>
+      </Row>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <div>
