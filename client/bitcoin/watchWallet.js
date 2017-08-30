@@ -1,4 +1,4 @@
-import {getBalance} from 'bitcoin/blockexplorerRpc'
+import {getBalance, getBalanceBE} from 'bitcoin/blockexplorerRpc'
 import {setBalance} from 'redux/actions'
 //
 // Update wallet balance once every 10 minutes
@@ -13,7 +13,7 @@ const watchWallet = dispatch => ({receivingAddress}) => {
     })
   const handle = setInterval(async () => {
     try {
-      const {balance} = await getBalance(receivingAddress)
+      const {balance} = await getBalanceBE(receivingAddress)
       dispatch(setBalance(balance))
     } catch (e) {
       console.warning(e)
