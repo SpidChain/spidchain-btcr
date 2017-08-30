@@ -34,7 +34,10 @@ export default createReactClass({
     return (
       <Navbar color='faded' light toggleable='md'>
         <NavbarToggler right onClick={this.toggle} />
-        <NavbarBrand tag={Link} to='/'>SpidChain</NavbarBrand>
+        <NavbarBrand tag={Link} to='/'>
+          <img src='/spidchain-logo.png' style={{width: '30px'}} alt='SpidChain logo' />{' '}
+          <span style={{width: '30px'}} >SpidChain</span>
+        </NavbarBrand>
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar className='ml-auto'>
             <NavItem>
