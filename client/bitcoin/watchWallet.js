@@ -12,8 +12,12 @@ const watchWallet = dispatch => ({receivingAddress}) => {
       return dispatch(setBalance(balance))
     })
   const handle = setInterval(async () => {
-    const {balance} = await getBalance(receivingAddress)
-    dispatch(setBalance(balance))
+    try {
+      const {balance} = await getBalance(receivingAddress)
+      dispatch(setBalance(balance))
+    } catch (e) {
+      console.warning(e)
+    }
   }, walletUpdateInterval)
 }
 
