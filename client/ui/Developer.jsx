@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Button, Col, Container, Jumbotron, Row} from 'reactstrap'
+import {Badge, Button, Col, Container, Jumbotron, Row} from 'reactstrap'
 
 import {getDDO} from 'bitcoin/DDO'
 import db from 'db'
@@ -36,6 +36,13 @@ const Developer = ({did: {did}}) => (
             <strong> Output is in the console </strong>
           </p>
         </Jumbotron>
+      </Col>
+    </Row>
+    <Row className='mt-3'>
+      <Col md='6' className='mx-auto'>
+        <div>
+          Running on: <Badge color='success'>Bitcoin {process.env.network} </Badge>
+        </div>
       </Col>
     </Row>
     <Row className='mt-3'>
