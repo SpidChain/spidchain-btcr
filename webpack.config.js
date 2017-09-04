@@ -5,7 +5,7 @@ const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 const {ifProduction, ifNotProduction} = getIfUtils(process.env.NODE_ENV)
@@ -49,8 +49,8 @@ module.exports = {
     ifProduction(new webpack.LoaderOptionsPlugin({
       minimize: true,
       quiet: true
-    }))
-    // ifProduction(new UglifyJsPlugin())
+    })),
+    ifProduction(new MinifyPlugin({mangle: false}))
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
