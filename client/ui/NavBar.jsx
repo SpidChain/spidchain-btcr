@@ -11,6 +11,8 @@ import {
   NavbarToggler
 } from 'reactstrap'
 
+import Logo from 'spidchain'
+
 export default createReactClass({
   displayName: 'NavBar',
 
@@ -35,8 +37,7 @@ export default createReactClass({
       <Navbar color='faded' light toggleable='md'>
         <NavbarToggler right onClick={this.toggle} />
         <NavbarBrand tag={Link} to='/'>
-          <img src='/spidchain-logo.png' style={{width: '30px'}} alt='SpidChain logo' />{' '}
-          <span style={{width: '30px'}} >SpidChain</span>
+          <Logo height='30' width={null} />
         </NavbarBrand>
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar className='ml-auto'>

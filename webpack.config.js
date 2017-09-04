@@ -54,7 +54,7 @@ module.exports = {
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
-    extensions: ['.js', '.jsx', '.scss']
+    extensions: ['.js', '.jsx', '.scss', '.svg']
   },
   module: {
     rules: [
@@ -89,7 +89,17 @@ module.exports = {
       },
       {
         test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+        exclude: /client/,
         use: 'file-loader?name=fonts/[name].[ext]'
+      },
+      {
+        test: /\.svg$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'react-svg-loader'
+          }
+        ]
       }
     ]
   }
