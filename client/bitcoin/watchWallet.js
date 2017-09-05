@@ -16,7 +16,7 @@ const watchWallet = dispatch => ({receivingAddress}) => {
       const {balance} = await getBalanceBE(receivingAddress)
       dispatch(setBalance(balance))
     } catch (e) {
-      console.warning(e)
+      console.warn(e)
     }
   }, walletUpdateInterval)
 }
