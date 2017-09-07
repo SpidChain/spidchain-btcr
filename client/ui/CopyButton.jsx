@@ -9,7 +9,7 @@ const CopyButton = ({text, toggle}) => (
         Copy Me
       </Button>
     </CopyToClipboard>
-      <div className='lead text-center'> or </div>
+    <p className='lead text-center'> or </p>
   </div>
 )
 
