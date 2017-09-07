@@ -19,8 +19,9 @@ const handleDIDCreation = async ({root, recoveryAddress, dispatch}) => {
   const recoveryAmount = Number(process.env.recoveryAmount)
   // TODO: factor fundingKeyPair out, maybe put it in the walletdb
   const fundingKeyPair = root.derivePath("m/44'/0'/0'/0/0").keyPair
+  let txId1
   try {
-    const {txId1, txId2} = await makeDID({
+    const res = await makeDID({
       claimsRoot,
       controlBond,
       controlRoot,
@@ -28,6 +29,7 @@ const handleDIDCreation = async ({root, recoveryAddress, dispatch}) => {
       recoveryAddress,
       recoveryAmount
     })
+    txId1 = res.txId1
   } catch (e) {
     NotificationManager.error(e.message, 'DID not created', 5000)
     console.error(e)

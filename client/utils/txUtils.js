@@ -160,7 +160,7 @@ export const listUtxos = async (address) => {
     blockcypherRes = blockcypherStatus !== 200 || error
       ? 'failed'
       : txrefs.map(({value, tx_output_n, tx_hash}) =>
-        ({amount: value, txid: tx_hash, vout: tx_output_n}))
+        ({value, txid: tx_hash, vout: tx_output_n}))
   } catch (e) {
     blockcypherRes = {failed: true, message: e.message}
   }
@@ -172,7 +172,7 @@ export const listUtxos = async (address) => {
       ? 'failed'
       : soData.data.txs
       .map(({txid, output_no, value}) =>
-        ({amount: sb.toSatoshi(value), txid, vout: output_no}))
+        ({value: sb.toSatoshi(value), txid, vout: output_no}))
   } catch (e) {
     sochainRes = {failed: true, message: e.message}
   }
