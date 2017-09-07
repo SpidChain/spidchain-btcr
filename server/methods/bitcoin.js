@@ -15,6 +15,8 @@ const bitcoinRpcRoute = (app) => {
       const result = await client[method](...rpcArgs)
       return res.status(200).json(result)
     } catch (e) {
+      // TODO: Better error logging
+      console.error(e)
       return res.status(500).json(e)
     }
   })
