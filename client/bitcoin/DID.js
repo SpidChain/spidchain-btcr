@@ -4,7 +4,7 @@ import coinSelect from 'bitcoin/coinSelect'
 import {makeExtendedDDO} from 'bitcoin/ExtendedDDO'
 //import sendRawTransaction from 'bitcoin/sendRawTransaction'
 import bitcoinRpc from 'bitcoin/bitcoinRpc'
-import {listUtxos} from 'bitcoin/blockexplorerRpc'
+import {listUtxos} from 'utils/txUtils'
 
 global.Buffer = global.Buffer || require('buffer').Buffer
 const bitcoin = require('bitcoinjs-lib')

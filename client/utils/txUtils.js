@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
+import sb from 'satoshi-bitcoin'
 
 const corsProxyUrl = process.env.corsProxyUrl
 
@@ -110,8 +111,6 @@ export const getTxInfo = async (txId) => {
     : null
 }
 
-window.getTxInfo = getTxInfo
-
 export const getPath = async (txId) => {
   const path = []
   let thisTx = txId
@@ -152,4 +151,110 @@ export const txrefToTxid = async (height, index) => {
     : null
 }
 
-window.txrefToTxid = txrefToTxid
+export const listUtxos = async (address) => {
+  let blockcypherRes
+  try {
+    const url = `${blockcypherApi}/addrs/${address}`
+    const {status: blockcypherStatus, data: {error, txrefs}} =
+      await axios.get(url, {params: {unspentOnly: true}})
+    blockcypherRes = blockcypherStatus !== 200 || error
+      ? 'failed'
+      : txrefs.map(({value, tx_output_n, tx_hash}) =>
+        ({amount: value, txid: tx_hash, vout: tx_output_n}))
+  } catch (e) {
+    blockcypherRes = {failed: true, message: e.message}
+  }
+  let sochainRes
+  try {
+    const sochainUrl = soChainApi('get_tx_unspent') + address
+    const {status: soStatus, data: soData} = await axios.get(sochainUrl)
+    sochainRes = soStatus !== 200 || soData.status !== 'success'
+      ? 'failed'
+      : soData.data.txs
+      .map(({txid, output_no, value}) =>
+        ({amount: sb.toSatoshi(value), txid, vout: output_no}))
+  } catch (e) {
+    sochainRes = {failed: true, message: e.message}
+  }
+  const result = [sochainRes, blockcypherRes]
+    .filter(e => !e.failed && e !== 'failed')
+    .map(e => _.sortBy(e, ['txid']))
+  const firstRes = _.head(result)
+  return firstRes && _.every(result, res => _.isEqual(res, firstRes))
+    ? firstRes
+    : null
+}
+
+export const getBalance = async (address) => {
+  let blockcypherRes
+  try {
+    const url = `${blockcypherApi}/addrs/${address}/balance`
+    const {status: blockcypherStatus, data: {error, balance}} =
+      await axios.get(url)
+    blockcypherRes = blockcypherStatus !== 200 || error
+      ? 'failed'
+      : balance
+  } catch (e) {
+    blockcypherRes = {failed: true, message: e.message}
+  }
+  let sochainRes
+  try {
+    const sochainUrl = soChainApi('get_address_balance') + address + '/0'
+    const {status: soStatus, data: soData} = await axios.get(sochainUrl)
+    sochainRes = soStatus !== 200 || soData.status !== 'success'
+      ? 'failed'
+      : sb.toSatoshi(soData.data.confirmed_balance)
+  } catch (e) {
+    sochainRes = {failed: true, message: e.message}
+  }
+  const result = _.filter([sochainRes, blockcypherRes],
+    e => !e.failed && e !== 'failed')
+  const firstRes = _.head(result)
+  return _.isNumber(firstRes) && _.every(result, res => res === firstRes)
+    ? firstRes
+    : null
+}
+
+/*
+ * TODO: Implementations with other explorers
+
+const blockexplorer = process.env.network === 'testnet'
+  ? process.env.corsProxyUrl + 'https://testnet.blockexplorer.com/api/'
+  : process.env.corsProxyUrl + 'https://blockexplorer.com/api/'
+
+export const listUtxos = async (address) => {
+  const url = `${blockexplorer}/addr/${address}/utxo`
+  const result = await axios.get(url)
+  if (result && result.data) {
+    const data = result.data.map(({amount, txid, vout}) => ({amount, txid, vout}))
+    return data
+  }
+  throw new Error('listUtxos')
+}
+
+// TODO: does not work with developer key
+const blocktrail = process.env.network === 'testnet'
+  ? process.env.corsProxyUrl + 'https://api.blocktrail.com/v1/tBTC'
+  : process.env.corsProxyUrl + 'https://api.blocktrail.com/v1/btc'
+
+export const getBalanceBT = async (address) => {
+  const url = `${blocktrail}/address/${address}`
+  console.log(url)
+  const result = await axios.get(url)
+  if (result && result.data) {
+    return result.data.balance
+  }
+  throw new Error('getBalance')
+}
+
+export const getBalanceBE = async (address) => {
+  const url = `${blockexplorer}/addr/${address}/balance`
+  console.log(url)
+  const result = await axios.get(url)
+  if (result && result.data) {
+    return result.data
+  }
+  throw new Error('getBalance')
+}
+
+*/
