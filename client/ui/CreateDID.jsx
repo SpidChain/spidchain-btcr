@@ -1,11 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {Button} from 'reactstrap'
-// import {NotificationManager} from 'react-notifications'
+import {NotificationManager} from 'react-notifications'
 
 import {makeDID} from 'bitcoin/DID'
-// import ddo from '/imports/bitcoin/ddo'
-// import sendRawTransaction from '/imports/bitcoin/sendRawTransaction'
 import db from 'db'
 import {getDid} from 'redux/actions'
 import {watchUnconfirmed} from 'redux/store'
@@ -21,14 +19,20 @@ const handleDIDCreation = async ({root, recoveryAddress, dispatch}) => {
   const recoveryAmount = Number(process.env.recoveryAmount)
   // TODO: factor fundingKeyPair out, maybe put it in the walletdb
   const fundingKeyPair = root.derivePath("m/44'/0'/0'/0/0").keyPair
-  const {txId1, txId2} = await makeDID({
-    claimsRoot,
-    controlBond,
-    controlRoot,
-    fundingKeyPair,
-    recoveryAddress,
-    recoveryAmount
-  })
+  try {
+    const {txId1, txId2} = await makeDID({
+      claimsRoot,
+      controlBond,
+      controlRoot,
+      fundingKeyPair,
+      recoveryAddress,
+      recoveryAmount
+    })
+  } catch (e) {
+    NotificationManager.error(e.message, 'DID not created', 5000)
+    console.error(e)
+    return
+  }
   await db.did.add({txId1, unconfirmedDID: txId1})
   dispatch(getDid())
   watchUnconfirmed({txId1})
