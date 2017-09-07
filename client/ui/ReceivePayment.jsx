@@ -5,7 +5,7 @@ import createReactClass from 'create-react-class'
 import {Button, Modal, ModalBody} from 'reactstrap'
 
 import Balance from 'ui/Balance'
-import TruncatedModalHeader from 'ui/TruncatedModalHeader'
+import CopyButton from 'ui/CopyButton'
 
 const ReceivePayment = createReactClass({
 
@@ -24,7 +24,7 @@ const ReceivePayment = createReactClass({
           <Balance />
           </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <TruncatedModalHeader toggle={this.toggle} text={this.props.receivingAddress} />
+          <CopyButton toggle={this.toggle} text={this.props.receivingAddress} />
           <ModalBody>
             <div className='d-flex justify-content-center'>
               <QRCode value={this.props.receivingAddress} size={256} />

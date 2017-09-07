@@ -4,7 +4,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {Button, Modal, ModalBody} from 'reactstrap'
 
-import TruncatedModalHeader from 'ui/TruncatedModalHeader'
+import CopyButton from 'ui/CopyButton'
 
 const ShowDID = createReactClass({
 
@@ -23,7 +23,7 @@ const ShowDID = createReactClass({
       <div>
         <Button color='primary' onClick={this.toggle} block> Show DID </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <TruncatedModalHeader text={did} toggle={this.toggle} />
+          <CopyButton text={did} toggle={this.toggle} />
           <ModalBody>
             <div className='d-flex justify-content-center'>
               <QRCode value={did} size={256} className='mx-auto' />
