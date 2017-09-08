@@ -75,7 +75,7 @@ const GenerateWallet = createReactClass({
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
                 <Button color='primary' block onClick={this.generateWallet}>
-                  Generate Bitcoin Wallet
+                  Activate
                 </Button>
               </Col>
             </Row>
