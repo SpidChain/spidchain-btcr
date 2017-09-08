@@ -4,8 +4,10 @@ import {Col, Container, Row} from 'reactstrap'
 
 import CreateDID from 'ui/CreateDID'
 import GenerateWallet from 'ui/GenerateWallet'
-import ReceivePayment from 'ui/ReceivePayment'
-import ShowDID from 'ui/ShowDID'
+// import ReceivePayment from 'ui/ReceivePayment'
+//import ShowDID from 'ui/ShowDID'
+import ShowQRCode from 'ui/ShowQRCode'
+import Balance from 'ui/Balance'
 
 const CONFIRMATIONS = 1
 
@@ -22,17 +24,19 @@ const ActivationFlow = ({did, wallet}) => {
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
-          <ReceivePayment />
+          <ShowQRCode content={wallet.receivingAddress}>
+            <Balance />
+          </ShowQRCode>
         </Col>
       </Row>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           {
-            !did.loading && !did.did
-              ? (
-                <CreateDID />
-              )
-              : <ShowDID />
+            //  !did.loading && !did.did
+            //  ? (
+            <CreateDID />
+              // )
+              // : <ShowDID />
           }
         </Col>
       </Row>
