@@ -17,8 +17,28 @@ import InputMnemonic from 'ui/InputMnemonic'
 import ShowMnemonic from 'ui/ShowMnemonic'
 import {getWallet} from 'redux/actions'
 import watchWallet from 'bitcoin/watchWallet'
+import Icon from 'assets/spidchain-icon'
 import db from 'db'
 
+const spidButton = {
+  //backgroundColor: 'grey',
+  border: 'none',
+  color: 'white',
+  // textAlign: 'center',
+  // textDecoration: 'none',
+  //display: 'inline-block',
+  // fontSize: '16px',
+  //margin: '4px 2px',
+  cursor: 'pointer',
+  transitionDuration: '0.4s'
+}
+
+
+  /*
+.spidButton:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+*/
 const network = networks[process.env.network]
 
 const GenerateWallet = createReactClass({
@@ -50,7 +70,6 @@ const GenerateWallet = createReactClass({
     await db.wallet.add({root: wallet})
     const dispatch = this.props.dispatch
     dispatch(getWallet()).then(({value}) => {
-      //const {wallet: {receivingAddress}} = value
       const root = value.root
       const wallet = HDNode.fromBase58(root, network)
       const fundingKeyPair = wallet.derivePath("m/44'/0'/0'/0/0").keyPair
@@ -69,7 +88,9 @@ const GenerateWallet = createReactClass({
           <Container fluid>
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
-                <img src='/spidchain-logo.png' className='w-50 d-block mx-auto mt-3' alt='SpidChain logo' />
+                <button style={spidButton} className='w-25 align-middle d-inline mx-auto mt-3'>
+                  <Icon className='mt-3' alt='SpidChain icon' />
+                </button>
               </Col>
             </Row>
             <Row className='mt-3'>

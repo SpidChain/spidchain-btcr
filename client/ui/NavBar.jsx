@@ -11,7 +11,7 @@ import {
   NavbarToggler
 } from 'reactstrap'
 
-import Logo from 'assets/spidchain'
+import Logo from 'assets/spidchain-logo'
 
 export default createReactClass({
   displayName: 'NavBar',

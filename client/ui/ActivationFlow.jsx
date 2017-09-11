@@ -4,10 +4,9 @@ import {Col, Container, Row} from 'reactstrap'
 
 import CreateDID from 'ui/CreateDID'
 import GenerateWallet from 'ui/GenerateWallet'
-// import ReceivePayment from 'ui/ReceivePayment'
-//import ShowDID from 'ui/ShowDID'
 import ShowQRCode from 'ui/ShowQRCode'
 import Balance from 'ui/Balance'
+import Icon from 'assets/spidchain-icon'
 
 const CONFIRMATIONS = 1
 
@@ -19,7 +18,7 @@ const ActivationFlow = ({did, wallet}) => {
     <Container fluid>
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
-          <img src='/spidchain-logo.png' className='w-75 d-block mx-auto mt-3' alt='SpidChain logo' />
+          <Icon className='w-75 d-block mx-auto mt-3' alt='SpidChain icon' />
         </Col>
       </Row>
       <Row className='mt-3'>
