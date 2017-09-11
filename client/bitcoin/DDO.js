@@ -1,12 +1,10 @@
 import {txrefDecode} from 'txref-conversion-js'
 import _ from 'lodash'
+import bitcoin from 'bitcoinjs-lib'
 
 import {getPath, txrefToTxid} from 'utils/txUtils'
 import getDeterministicDDO from 'bitcoin/DeterministicDDO'
 import {getExtendedDDO} from 'bitcoin/ExtendedDDO'
-
-global.Buffer = global.Buffer || require('buffer').Buffer
-const bitcoin = require('bitcoinjs-lib')
 
 const isTxId = (str) => /^[0-9A-Fa-f]{64}$/.test(str)
 

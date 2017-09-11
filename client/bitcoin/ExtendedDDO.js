@@ -33,10 +33,10 @@
   }
 }
 */
-// import {Meteor} from 'meteor/meteor'
+
+import {crypto} from 'bitcoinjs-lib'
+
 import {ipfsAdd, ipfsGet} from 'bitcoin/ipfsRpc'
-global.Buffer = global.Buffer || require('buffer').Buffer
-const {crypto} = require('bitcoinjs-lib')
 
 const sha256 = msg => crypto.sha256(msg)
 

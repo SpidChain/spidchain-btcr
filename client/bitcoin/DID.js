@@ -1,12 +1,10 @@
 import _ from 'lodash'
-
 import coinSelect from 'coinselect'
+import bitcoin from 'bitcoinjs-lib'
+
 import {makeExtendedDDO} from 'bitcoin/ExtendedDDO'
 import bitcoinRpc from 'bitcoin/bitcoinRpc'
 import {listUtxos} from 'utils/txUtils'
-
-global.Buffer = global.Buffer || require('buffer').Buffer
-const bitcoin = require('bitcoinjs-lib')
 
 const createFirstTransaction = ({
   changeAddress,

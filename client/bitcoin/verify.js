@@ -1,7 +1,6 @@
-import {getDDO} from 'bitcoin/DDO'
+import {ECPair, ECSignature, crypto} from 'bitcoinjs-lib'
 
-global.Buffer = global.Buffer || require('buffer').Buffer
-const {ECPair, ECSignature, crypto} = require('bitcoinjs-lib')
+import {getDDO} from 'bitcoin/DDO'
 
 const sha256 = msg => crypto.sha256(msg)
 
