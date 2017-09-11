@@ -20,25 +20,6 @@ import watchWallet from 'bitcoin/watchWallet'
 import Icon from 'assets/spidchain-icon'
 import db from 'db'
 
-const spidButton = {
-  //backgroundColor: 'grey',
-  border: 'none',
-  color: 'white',
-  // textAlign: 'center',
-  // textDecoration: 'none',
-  //display: 'inline-block',
-  // fontSize: '16px',
-  //margin: '4px 2px',
-  cursor: 'pointer',
-  transitionDuration: '0.4s'
-}
-
-
-  /*
-.spidButton:hover {
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
-}
-*/
 const network = networks[process.env.network]
 
 const GenerateWallet = createReactClass({
@@ -74,7 +55,7 @@ const GenerateWallet = createReactClass({
       const wallet = HDNode.fromBase58(root, network)
       const fundingKeyPair = wallet.derivePath("m/44'/0'/0'/0/0").keyPair
       const receivingAddress = fundingKeyPair.getAddress()
-       watchWallet(dispatch)({receivingAddress})
+      watchWallet(dispatch)({receivingAddress})
     })
     // this.props.onWallet(createHDWallet(this.state.mnemonic))
   },
@@ -88,9 +69,7 @@ const GenerateWallet = createReactClass({
           <Container fluid>
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
-                <button style={spidButton} className='w-25 align-middle d-inline mx-auto mt-3'>
-                  <Icon className='mt-3' alt='SpidChain icon' />
-                </button>
+                <Icon className='w-75 d-block mx-auto mt-3' alt='SpidChain icon' />
               </Col>
             </Row>
             <Row className='mt-3'>
