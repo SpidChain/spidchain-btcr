@@ -1,8 +1,7 @@
 import _ from 'lodash'
 
-import coinSelect from 'coinSelect'
+import coinSelect from 'coinselect'
 import {makeExtendedDDO} from 'bitcoin/ExtendedDDO'
-//import sendRawTransaction from 'bitcoin/sendRawTransaction'
 import bitcoinRpc from 'bitcoin/bitcoinRpc'
 import {listUtxos} from 'utils/txUtils'
 
