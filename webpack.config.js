@@ -31,7 +31,7 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new FaviconsWebpackPlugin({
-      logo: path.join(__dirname, 'client', 'logo.png'),
+      logo: path.join(__dirname, 'client', 'assets', 'spidchain-icon'),
       prefix: 'icons/'
     }),
     new HtmlWebpackPlugin({
