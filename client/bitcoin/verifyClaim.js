@@ -3,6 +3,7 @@ import bitcoreMessage from 'bitcore-message'
 import jsigs from 'jsonld-signatures'
 import jsonld from 'jsonld'
 import {ECPair, networks} from 'bitcoinjs-lib'
+import _ from 'lodash'
 
 import {getDDO} from 'bitcoin/DDO'
 
@@ -16,7 +17,7 @@ export const verifyClaim = async ({signedDocument, signerDid}) => {
   const {deterministicDDO: {ownerPubKey}} = await getDDO(signerDid)
   const keyPair = ECPair.fromPublicKeyBuffer(Buffer.from(ownerPubKey, 'hex'), network)
   const publicKeyWif = keyPair.getAddress()
-  const res = await jsigs.promises().verify(signedDocument, {
+  const verifiedSigs = await jsigs.promises().verify(signedDocument, {
     publicKey: {
       '@context': jsigs.SECURITY_CONTEXT_URL,
       //   id: keyId,
@@ -32,7 +33,10 @@ export const verifyClaim = async ({signedDocument, signerDid}) => {
       publicKey: ['did:btcr:' + signerDid]
     }
   })
-  return res.keyResults[0].verified
+  const found = _.find(verifiedSigs, {publicKey: 'did:btcr:' + signerDid})
+  return found
+    ? found.verified
+    : false
 }
 
 export default verifyClaim

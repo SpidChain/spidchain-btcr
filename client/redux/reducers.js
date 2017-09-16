@@ -13,7 +13,9 @@ import {
   GET_WALLET_FULFILLED,
   GET_WALLET_PENDING,
   SET_BALANCE,
-  SET_GOT_COINS
+  SET_GOT_COINS,
+  GET_MY_KNOWS_CLAIMS_FULFILLED,
+  GET_MY_KNOWS_CLAIMS_PENDING
 } from 'redux/constants'
 
 const network = networks[process.env.network]
@@ -129,5 +131,18 @@ export const othersClaims = (state = null, {type, payload}) => {
     case GET_OTHERS_CLAIMS_PENDING: return {loading: true}
 
     default: return state
+  }
+}
+
+export const myKnowsClaims = (state = null, {type, payload}) => {
+  switch (type) {
+    case GET_MY_KNOWS_CLAIMS_FULFILLED:
+      return {loading: false, data: payload}
+
+    case GET_MY_KNOWS_CLAIMS_PENDING:
+      return {loading: true}
+
+    default:
+      return state
   }
 }

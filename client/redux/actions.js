@@ -8,9 +8,12 @@ import {
   GET_OWN_CLAIMS,
   GET_WALLET,
   SET_BALANCE,
-  SET_GOT_COINS
+  SET_GOT_COINS,
+  GET_CLAIMS,
+  GET_MY_KNOWS_CLAIMS
 } from 'redux/constants'
 import db from 'db'
+import {insertClaim, updateClaim} from 'dbUtils'
 import verifyWithOwnerKey256 from 'bitcoin/verify'
 import {verifyClaim} from 'bitcoin/verifyClaim'
 
@@ -83,14 +86,18 @@ export const getOthersClaims = () => (dispatch, getState) => {
   })
 }
 
-export const addReceivedRequest = ({_id, senderDid, nonce}) => (dispatch) => {
-  const payload = {_id, senderDid, nonce, verified: 'false'}
-  db.receivedRequests.add(payload)
-    .then(() => {
-      return dispatch(getReceivedRequests())
-    }).catch(e => {
-      console.error('addReceivedRequest:', e)
-    })
+export const addReceivedRequest = ({claim, senderDid}) => (dispatch, getState) => {
+  const did = getState().did.did
+  insertClaim({
+    subjects: [senderDid, did],
+    type: 'KNOWS',
+    signers: [senderDid, did],
+    requests: [],
+    claim
+  })
+    .then(() => dispatch(getClaims))
+    .then(() => dispatch(getMyKnowsClaims))
+    .catch((e) => console.error('addReceivedRequest:', e))
 }
 
 export const addClaimSignatureRequest = ({senderDid, claimId, claim}) => (dispatch, getState) => {
@@ -163,3 +170,26 @@ export const addClaimSignature =
         return dispatch(getOwnClaims())
       })
   }
+
+export const getClaims = () => (dispatch, getState) => dispatch({
+  type: GET_CLAIMS,
+  payload: db.claims.toArray()
+})
+
+export const getMyKnowsClaims = () => (dispatch, getState) => {
+  const did = getState().did.did
+  const myKnowsClaimsP = db.claims.where({subjects: did}).toArray()
+  return dispatch({
+    type: GET_MY_KNOWS_CLAIMS,
+    payload: myKnowsClaimsP
+  })
+}
+
+export const addClaim = ({
+  senderDid,
+  claim,
+  type,
+  subjects
+}) => (dispatch, getState) => updateClaim(claim, subjects, type)
+.then(() => dispatch(getClaims()))
+.then(() => dispatch(getMyKnowsClaims()))

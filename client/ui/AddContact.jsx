@@ -9,25 +9,28 @@ import {
 } from 'reactstrap'
 import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
-import {getSentRequests} from 'redux/actions'
+import {getMyKnowsClaims} from 'redux/actions'
 import {connect} from 'react-redux'
 
-import db from 'db'
 import client from 'apollo'
-
-const getSecureRandom = () => {
-  // TODO: now using Uint16Array because of problem with indexedDb,
-  // replace with Uint32Array
-  const array = new Uint16Array(1)
-  window.crypto.getRandomValues(array)
-  return array[0]
-}
+import signClaim from 'bitcoin/signClaim'
+import {insertClaim} from 'dbUtils'
 
 const sendOwnershipRequest = gql`
-  mutation sendOwnershipRequest($senderDid: String, $receiverDid: String, $nonce: Int) {
-    sendOwnershipRequest(senderDid: $senderDid, receiverDid: $receiverDid, nonce: $nonce) {
-     _id
-  }
+  mutation sendOwnershipRequest(
+    $senderDid: String,
+    $receiverDid: String,
+    $claim: String,
+    $nonce: String
+  ) {
+    sendOwnershipRequest(
+      senderDid: $senderDid,
+      receiverDid: $receiverDid,
+      claim: $claim,
+      nonce: $nonce
+    ) {
+      _id
+    }
 }`
 
 const AddContact = createReactClass({
@@ -57,13 +60,66 @@ const AddContact = createReactClass({
     }
 
     window.QRScanner.pausePreview()
-    const receiverDid = data
-    const nonce = getSecureRandom()
+    const [receiverDid, nonce] = data.split('/')
+    if (!receiverDid || !nonce) {
+      return
+    }
+
+    const senderDid = this.props.did
+
+    const context = {
+      knows: 'http://schema.org/knows'
+    }
+
+    const graph1 = {
+      '@id': `did:btcr:${senderDid}`,
+      knows: `did:btcr:${receiverDid}`
+    }
+
+    const graph2 = {
+      '@id': `did:btcr:${receiverDid}`,
+      knows: `did:btcr:${senderDid}`
+    }
+
+    const claim = {
+      '@context': context,
+      '@graph': [
+        graph1,
+        graph2
+      ]
+    }
+
+    const walletRoot = this.props.wallet.root
+    const controlAccount = Number(process.env.controlAccount)
+    const ownerRoot = walletRoot.derivePath("m/44'/0'")
+      .deriveHardened(controlAccount)
+      .derive(0)
+
+    const rotationIx = 0
+
     try {
-      const {data: {sendOwnershipRequest: {_id}}} =
-        await client.mutate({mutation: sendOwnershipRequest, variables: {senderDid: this.props.did, receiverDid, nonce}})
-      await db.sentRequests.add({_id, receiverDid, nonce, verified: 'false'})
-      this.props.dispatch(getSentRequests())
+      const signedClaim = await signClaim({claim, ownerRoot, rotationIx, did: senderDid})
+      debugger
+      await client.mutate({
+        mutation: sendOwnershipRequest,
+        variables: {
+          senderDid,
+          receiverDid,
+          claim: JSON.stringify(signedClaim),
+          nonce
+        }
+      })
+      debugger
+      await insertClaim(
+        signedClaim,
+        [
+          receiverDid,
+          senderDid
+        ],
+        'KNOWS',
+        [senderDid]
+      )
+      this.props.dispatch(getMyKnowsClaims())
       NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
       this.props.history.push('/')
     } catch (e) {

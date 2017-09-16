@@ -9,25 +9,29 @@ type Message {
   claim: String
   claimId: Int
   claimSignature: String
-  nonce: Int
+  nonce: String
   signature: String
   type: String
   received: Boolean
+  subjects: [String]
+  claimType: String
 }
 
 extend type Query {
-  getOwnershipProofs(senderDid: String, receiverDid: String, nonce: Int, type: String): [Message]
-  getOwnershipRequests(receiverDid: String, type: String): [Message]
+  getOwnershipProofs(senderDid: String, receiverDid: String, nonce: String, type: String): [Message]
+  getOwnershipRequests(receiverDid: String): [Message]
   getClaimSignatureRequests(receiverDid: String, type: String): [Message]
   getClaimSignatures(receiverDid: String, type: String): [Message]
+  getClaims(receiverDid: String): [Message]
 }
 
 extend type Mutation {
-  sendOwnershipRequest(senderDid: String, receiverDid: String, nonce: Int): Message
+  sendOwnershipRequest(senderDid: String, receiverDid: String, claim: String, nonce: String): Message
   sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
   setReceived(_id: String): Message
   sendClaimSignatureRequest(senderDid: String, receiverDid: String, claimId: Int, claim: String): Message
   sendClaimSignature(senderDid: String, receiverDid: String, claimId: Int, claimSignature: String): Message
+  sendClaim(senderDid: String, receiverDid: String, claim: String, claimType: String, subjects: [String]): Message
 }
 `
 
@@ -51,7 +55,7 @@ const makeMessagingResolvers = async () => {
       getOwnershipRequests: async (root, {receiverDid}) => {
         const data = await Messaging.find(
           {receiverDid, type: 'OWNERSHIP_REQUEST', received: false},
-          {senderDid: 1, nonce: 1}).toArray()
+          {senderDid: 1, claim: 1, nonce: 1}).toArray()
         return data
       },
       getClaimSignatureRequests: async (root, {receiverDid}) => {
@@ -65,14 +69,19 @@ const makeMessagingResolvers = async () => {
           {receiverDid, type: 'CLAIM_SIGNATURE', received: false},
           {senderDid: 1, claimId: 1, claimSignature: 1}).toArray()
         return data
+      },
+      getClaims: async (root, {receiverDid}) => {
+        const data = await Messaging.find(
+          {receiverDid, type: 'CLAIM', received: false},
+          {senderDid: 1, claim: 1, claimType: 1, subjects: 1}).toArray()
+        return data
       }
-
     },
 
     Mutation: {
-      sendOwnershipRequest: async (root, {senderDid, receiverDid, nonce}) => {
+      sendOwnershipRequest: async (root, {senderDid, receiverDid, claim, nonce}) => {
         const {ops} = await Messaging.insert(
-        {senderDid, receiverDid, nonce, type: 'OWNERSHIP_REQUEST', received: false})
+        {senderDid, receiverDid, claim, nonce, type: 'OWNERSHIP_REQUEST', received: false})
         return prepare(ops[0])
       },
       sendOwnershipProof: async (root, {senderDid, receiverDid, signature}) => {
@@ -96,6 +105,17 @@ const makeMessagingResolvers = async () => {
           claimId,
           claimSignature,
           type: 'CLAIM_SIGNATURE',
+          received: false
+        })
+        return prepare(ops[0])
+      },
+      sendClaim: async (root, {senderDid, receiverDid, claim, claimType, subjects}) => {
+        const {ops} = await Messaging.insert({
+          senderDid,
+          receiverDid,
+          claim: 'CLAIM',
+          claimType,
+          subjects,
           received: false
         })
         return prepare(ops[0])

@@ -7,7 +7,10 @@ db.version(1).stores({
   receivedRequests: '_id, senderDid, verified, nonce',
   did: 'txId1',
   wallet: '++id',
-  claims: '++_id, subject, signed'
+  // claims: '++_id, subject, signed',
+  claims: 'hash, *subjects, type, *signers, *requests',  // claim
+  nonces: 'nonce',
+  sigRequests: 'hash, *subjects, *signers, signed'  // claim
 })
 
 window.db = db

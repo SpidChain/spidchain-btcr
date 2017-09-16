@@ -21,7 +21,8 @@ import {
   othersClaims,
   ownClaims,
   balance,
-  gotCoins
+  gotCoins,
+  myKnowsClaims
 } from 'redux/reducers'
 
 import {
@@ -53,7 +54,8 @@ export const store = createStore(
     balance,
     othersClaims,
     ownClaims,
-    gotCoins
+    gotCoins,
+    myKnowsClaims
   }),
   {gotCoins: window.localStorage.getItem('gotCoins') === 'true'},
   // {loading: true},
@@ -65,16 +67,42 @@ export const store = createStore(
     (typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined')
     ? window.__REDUX_DEVTOOLS_EXTENSION__()
     : f => f)
-)
+);
 
 // store.dispatch(setGotCoins())
 
+(async () => {
+  const [value, didObj] = await Promise.all([
+    store.dispatch(getWallet()),
+    store.dispatch(getDid())
+  ])
+  if (!value) {
+    return
+  }
+  const {wallet: {receivingAddress, root}} = store.getState()
+  watchWallet(store.dispatch)({receivingAddress})
+  if (didObj && didObj.value) {
+    // if uncofirmed
+    if (didObj.value.unconfirmedDID) {
+      watchUnconfirmed({
+        txId1: didObj.value.unconfirmedDID
+      })
+      // if confirmed
+    } else {
+      initSystem(didObj.value.did, root)
+    }
+  }
+})()
+/*
 store.dispatch(getWallet()).then(({value}) => {
   if (!value) {
     return
   }
-  const {wallet: {receivingAddress}} = store.getState()
+  const {wallet: {receivingAddress, root}} = store.getState()
   watchWallet(store.dispatch)({receivingAddress})
+  return root
+}).then(root => {
+  const didObj = await store.dispatch(getDid())
 })
 
 store.dispatch(getDid()).then((didObj) => {
@@ -91,10 +119,10 @@ store.dispatch(getDid()).then((didObj) => {
     }
   }
 })
-
-const initSystem = (did) => {
+*/
+const initSystem = (did, root) => {
   // const did = didObj.value.did
-  ownershipRequestsSub(did, store.dispatch)
+  ownershipRequestsSub(did, store.dispatch, root)
   ownershipProofsSub(did, store.dispatch)
   claimSignatureRequestsSub(did, store.dispatch)
   claimSignaturesSub(did, store.dispatch)
