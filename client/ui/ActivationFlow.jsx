@@ -12,7 +12,6 @@ import Icon from 'assets/spidchain-icon'
 const CONFIRMATIONS = 1
 
 const ActivationFlow = ({did, wallet, gotCoins}) => {
-  console.log(did, wallet, gotCoins)
   if (!wallet || !wallet.root) {
     return <GenerateWallet />
   }
@@ -30,13 +29,6 @@ const ActivationFlow = ({did, wallet, gotCoins}) => {
           </ShowQRCode>
         </Col>
       </Row>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          {
-            <CreateDID />
-          }
-        </Col>
-      </Row>
       {!gotCoins
           ? <Row className='mt-3'>
             <Col md='6' className='mx-auto'>
@@ -45,6 +37,13 @@ const ActivationFlow = ({did, wallet, gotCoins}) => {
           </Row>
           : null
       }
+      <Row className='mt-3'>
+        <Col md='6' className='mx-auto'>
+          {
+            <CreateDID />
+          }
+        </Col>
+      </Row>
     </Container>
   )
 }

@@ -13,10 +13,15 @@ const FreeCoins = createReactClass({
 
   sendBitcoins: function (address, amount) {
     return async () => {
-      await bitcoinRpc('sendToAddress', address, amount)
+      try {
+        await bitcoinRpc('sendToAddress', address, amount)
+        this.props.dispatch(setGotCoins())
+        NotificationManager.success('wait a few minutes', 'Bitcoins sent', 5000)
+      } catch (e) {
+        NotificationManager.error('', 'Bitcoins not sent', 5000)
+        console.error('could not get free bitcoins', e)
+      }
       this.toggle()
-      this.props.dispatch(setGotCoins())
-      NotificationManager.success('wait a few minutes', 'Bitcoins sent', 5000)
     }
   },
 
@@ -36,11 +41,11 @@ const FreeCoins = createReactClass({
     const amount = 0.01
     return (
       <div>
-        <Button color='primary' onClick={this.toggle} block> Free Coins </Button>
+        <Button color='primary' onClick={this.toggle} block> Get Bitcoins </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalBody className='justify-content-center'>
             <div className='lead text-center'>
-              Get free coins once
+              Get free Bitcoins once
             </div>
           </ModalBody>
           <ModalFooter>
