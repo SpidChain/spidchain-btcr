@@ -1,5 +1,10 @@
 import promiseMiddleware from 'redux-promise-middleware'
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
+import {
+  createStore,
+  combineReducers,
+  applyMiddleware,
+  compose
+} from 'redux'
 import thunk from 'redux-thunk'
 import bitcoinRpc from 'bitcoin/bitcoinRpc'
 import {getTxInfo} from 'utils/txUtils'
@@ -15,7 +20,8 @@ import {
   wallet,
   othersClaims,
   ownClaims,
-  balance
+  balance,
+  gotCoins
 } from 'redux/reducers'
 
 import {
@@ -24,7 +30,8 @@ import {
   getDid,
   getWallet,
   getOthersClaims,
-  getOwnClaims
+  getOwnClaims,
+  setGotCoins
 } from 'redux/actions'
 
 import {
@@ -45,9 +52,10 @@ export const store = createStore(
     wallet,
     balance,
     othersClaims,
-    ownClaims
+    ownClaims,
+    gotCoins
   }),
-  undefined,
+  {gotCoins: window.localStorage.getItem('gotCoins') === 'true'},
   // {loading: true},
   compose(
     applyMiddleware(thunk),
@@ -58,6 +66,8 @@ export const store = createStore(
     ? window.__REDUX_DEVTOOLS_EXTENSION__()
     : f => f)
 )
+
+// store.dispatch(setGotCoins())
 
 store.dispatch(getWallet()).then(({value}) => {
   if (!value) {

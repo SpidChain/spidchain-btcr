@@ -12,10 +12,21 @@ import {
   GET_OWN_CLAIMS_PENDING,
   GET_WALLET_FULFILLED,
   GET_WALLET_PENDING,
-  SET_BALANCE
+  SET_BALANCE,
+  SET_GOT_COINS
 } from 'redux/constants'
 
 const network = networks[process.env.network]
+
+export const gotCoins = function (state = null, {type}) {
+  switch (type) {
+    case SET_GOT_COINS: {
+      window.localStorage.setItem('gotCoins', 'true')
+      return true
+    }
+    default: return state
+  }
+}
 
 export const receivedRequests = function (state = null, {type, payload}) {
   switch (type) {
@@ -36,7 +47,6 @@ export const sentRequests = function (state = null, {type, payload}) {
     }
 
     case GET_SENT_REQUESTS_PENDING: return {loading: true}
-
 
     default: return state
   }
@@ -62,6 +72,7 @@ export const balance = function (state = null, {type, payload}) {
     default: return state
   }
 }
+
 export const wallet = (state = null, {type, payload}) => {
   switch (type) {
     case GET_WALLET_FULFILLED: {

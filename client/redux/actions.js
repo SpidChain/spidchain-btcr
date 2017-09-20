@@ -7,12 +7,18 @@ import {
   GET_OTHERS_CLAIMS,
   GET_OWN_CLAIMS,
   GET_WALLET,
-  SET_BALANCE
+  SET_BALANCE,
+  SET_GOT_COINS
 } from 'redux/constants'
 import db from 'db'
 import verifyWithOwnerKey256 from 'bitcoin/verify'
 import {verifyClaim} from 'bitcoin/verifyClaim'
 
+export const setGotCoins = () => {
+  return {
+    type: SET_GOT_COINS
+  }
+}
 export const setBalance = balance => {
   return {
     type: SET_BALANCE,
