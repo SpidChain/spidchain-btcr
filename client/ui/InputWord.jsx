@@ -56,7 +56,8 @@ const InputWord = createReactClass({
       placeholder: this.props.placeholder,
       value: this.state.value,
       onChange: this.onChange,
-      name: this.props.name
+      name: this.props.name,
+      style:{width: '70em'}
     }
     return (
       <Autosuggest

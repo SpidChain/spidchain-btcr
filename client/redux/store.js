@@ -6,7 +6,7 @@ import {
   compose
 } from 'redux'
 import thunk from 'redux-thunk'
-import bitcoinRpc from 'bitcoin/bitcoinRpc'
+import {getRawTransaction} from 'bitcoin/bitcoinRpc'
 import {getTxInfo} from 'utils/txUtils'
 import {txrefEncode} from 'txref-conversion-js'
 
@@ -107,9 +107,9 @@ const initSystem = (did) => {
 const CONFIRMATIONS = 1
 
 export const watchUnconfirmed = ({txId1}) => {
-  const interval = 20000  // 1 minute
+  const interval = 60000  // 1 minute
   const handle = setInterval(async () => {
-    const tx = await bitcoinRpc('getRawTransaction', txId1, 1)
+    const tx = await getRawTransaction(txId1)
     if (tx.confirmations >= CONFIRMATIONS) {
       const {height, ix} = await getTxInfo(txId1)
       const txRef = txrefEncode(process.env.network, height, ix)

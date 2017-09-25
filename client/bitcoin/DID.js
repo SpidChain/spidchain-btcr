@@ -3,7 +3,7 @@ import coinSelect from 'coinselect'
 import bitcoin from 'bitcoinjs-lib'
 
 import {makeExtendedDDO} from 'bitcoin/ExtendedDDO'
-import bitcoinRpc from 'bitcoin/bitcoinRpc'
+import {sendRawTransaction} from 'bitcoin/bitcoinRpc'
 import {listUtxos} from 'utils/txUtils'
 
 const createFirstTransaction = ({
@@ -156,7 +156,7 @@ export const makeDID = async (args) => {
     ...args,
     utxos
   })
-  await bitcoinRpc('sendRawTransaction', tx1.toHex())
-  await bitcoinRpc('sendRawTransaction', tx2.toHex())
+  await sendRawTransaction(tx1.toHex())
+  await sendRawTransaction(tx2.toHex())
   return {txId1: tx1.getId(), txId2: tx2.getId()}
 }

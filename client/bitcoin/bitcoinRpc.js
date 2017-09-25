@@ -1,7 +1,8 @@
 import axios from 'axios'
 
-const bitcoinRpc = async (method, ...others) => {
-  const {data, status} = await axios.post('/api/bitcoin', {method, rpcArgs: others})
+export const getRawTransaction = async (txId) => {
+  const {data, status} = await axios.post('/api/bitcoin/getRawTransaction',
+    {txId})
   if (status !== 200) {
     console.error('there was an error')
     throw Error(data)
@@ -9,4 +10,22 @@ const bitcoinRpc = async (method, ...others) => {
   return data
 }
 
-export default bitcoinRpc
+export const sendRawTransaction = async (tx) => {
+  const {data, status} = await axios.post('/api/bitcoin/sendRawTransaction',
+    {tx})
+  if (status !== 200) {
+    console.error('there was an error')
+    throw Error(data)
+  }
+  return data
+}
+
+export const sendToAddress = async ({address, secret}) => {
+  const {data, status} = await axios.post('/api/bitcoin/sendToAddress',
+    {address, secret})
+  if (status !== 200) {
+    console.error('there was an error')
+    throw Error(data)
+  }
+  return data
+}

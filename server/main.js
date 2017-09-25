@@ -15,7 +15,11 @@ const config = isProduction ? undefined : require('../webpack.config.js')
 const {graphqlExpress, graphiqlExpress} = require('graphql-server-express')
 const DIST_DIR = path.join(__dirname, '../dist')
 const makeDefaultSchema = require('./collections')
-const bitcoinRpcRoute = require('./methods/bitcoin')
+const {
+  getRawTransaction,
+  sendRawTransaction,
+  sendToAddress
+} = require('./methods/bitcoin')
 const ipfsRpcRoute = require('./methods/ipfs')
 
 const app = express()
@@ -62,7 +66,9 @@ app.use(express.static('public'));
   app.use('/graphql', bodyParser.json(), graphqlExpress({schema}))
   app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
   // /api/ routes
-  await bitcoinRpcRoute(app)
+  await sendToAddress(app)
+  await sendRawTransaction(app)
+  await getRawTransaction(app)
   await ipfsRpcRoute(app)
   app.listen(PORT)
 })()
