@@ -14,6 +14,7 @@ import Developer from 'ui/Developer'
 import Contacts from 'ui/Contacts'
 import ContactRequests from 'ui/ContactRequests'
 import GenerateClaim from 'ui/GenerateClaim'
+import LoginAuthorization from 'ui/LoginAuthorization'
 import OthersClaims from 'ui/OthersClaims'
 import OwnClaims from 'ui/OwnClaims'
 
@@ -42,6 +43,7 @@ const App = ({did, wallet}) => {
         <Route exact path='/contacts' component={Contacts} />
         <Route exact path='/generateClaim' component={GenerateClaim} />
         <Route exact path='/developer' component={Developer} />
+        <Route exact path='/loginAuthorization' component={LoginAuthorization} />
         <Route exact path='/ownClaims' component={OwnClaims} />
         <Route exact path='/othersClaims' component={OthersClaims} />
         <NotificationContainer />
