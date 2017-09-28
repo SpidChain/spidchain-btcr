@@ -74,21 +74,24 @@ const GenerateClaim = ({did, dispatch, wallet}) => (
         </Jumbotron>
       </Col>
     </Row>
-    <Form onSubmit={handleSubmit(did.did, dispatch, wallet)}>
+    <Form
+      autoComplete='off'
+      autoCorrect='off'
+      onSubmit={handleSubmit(did.did, dispatch, wallet)}>
       <Row>
         <Col md='6' className='mx-auto'>
           <FormGroup>
             <Label>
               First name
             </Label>
-            <Input type='text' name='firstname' />
+            <Input type='text' autoCapitalize='none' name='firstname' />
           </FormGroup>
 
           <FormGroup>
             <Label>
               Last name
             </Label>
-            <Input type='text' name='lastname' />
+            <Input type='text' autoCapitalize='none' name='lastname' />
           </FormGroup>
 
           <Button type='submit' block color='primary'>
