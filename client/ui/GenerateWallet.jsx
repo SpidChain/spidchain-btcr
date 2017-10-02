@@ -72,7 +72,7 @@ const GenerateWallet = createReactClass({
                 <Icon className='w-75 d-block mx-auto mt-3' alt='SpidChain icon' />
               </Col>
             </Row>
-            <Row className='mt-3'>
+            <Row className='mt-3 pt-3'>
               <Col md='6' className='mx-auto'>
                 <Button color='primary' block onClick={this.generateWallet}>
                   Activate
@@ -87,12 +87,9 @@ const GenerateWallet = createReactClass({
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
                 <Jumbotron>
-                  <p className='lead text-center'>
-                    <strong> Write down these 12 words below in a safe place </strong>
-                  </p>
-                  <p className='lead text-center'>
-                    <strong> You will need to confirm them in the next screen </strong>
-                  </p>
+                  <h6 className='mb-0 lead text-center'>
+                    <strong> Write down the 12 words below in a safe place </strong>
+                  </h6>
                 </Jumbotron>
               </Col>
             </Row>
@@ -116,9 +113,9 @@ const GenerateWallet = createReactClass({
             <Row className='mt-3'>
               <Col md='6' className='mx-auto'>
                 <Jumbotron>
-                  <p className='lead text-center'>
+                  <h6 className='lead text-center mb-0'>
                     <strong> Confirm the words from the previous screen </strong>
-                  </p>
+                  </h6>
                 </Jumbotron>
               </Col>
             </Row>

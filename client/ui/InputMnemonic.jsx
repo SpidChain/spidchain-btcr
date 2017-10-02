@@ -3,7 +3,8 @@ import {
   Button,
   Col,
   Form,
-  FormGroup
+  FormGroup,
+  Row
 } from 'reactstrap'
 import InputWord from 'ui/InputWord'
 
@@ -16,10 +17,10 @@ const wordsHandler = (onWords) => (e) => {
   onWords(words)
 }
 
-const Row = ({num}) => (
-  <FormGroup row>
+const InputRow = ({num}) => (
+  <FormGroup row className='mr-0'>
     <Col xs='3'>
-      <InputWord name={'w' + (4 * num)} placeholder={4 * num + 1} />
+      <InputWord  name={'w' + (4 * num)} placeholder={4 * num + 1} />
     </Col>
     <Col xs='3'>
       <InputWord tag='input' name={'w' + (4 * num + 1)} placeholder={4 * num + 2} />
@@ -35,17 +36,19 @@ const Row = ({num}) => (
 
 const InputMnemonic = ({onBack, onWords}) => (
   <Form autoCorrect='off' autoComplete='off' onSubmit={wordsHandler(onWords)}>
-    <Row num={0} />
-    <Row num={1} />
-    <Row num={2} />
-    <Button color='danger' type='button' onClick={onBack}>
-      <span className='fa fa-arrow-left' style={{marginRight: '5px'}} />
-      Back
-    </Button>
-    <Button color='primary' type='submit' className='pull-right'>
-      Confirm
-      <span className='fa fa-arrow-right' style={{marginLeft: '5px'}} />
-    </Button>
+    <InputRow num={0} />
+    <InputRow num={1} />
+    <InputRow num={2} />
+    <div className='pt-4'>
+      <Button color='faded' type='button' onClick={onBack} className='p-2'>
+        <span className='fa fa-arrow-left mr-1' />
+        Back
+      </Button>
+      <Button color='primary' type='submit' className='float-right p-2'>
+        Confirm
+        <span className='fa fa-arrow-right ml-1' />
+      </Button>
+    </div>
   </Form>
 )
 

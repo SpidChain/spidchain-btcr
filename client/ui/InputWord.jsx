@@ -18,7 +18,7 @@ const getSuggestions = value => {
   const inputValue = value.trim().toLowerCase()
   const inputLength = inputValue.length
 
-  return inputLength === 0 || inputLength === 1
+  return inputLength < 3
     ? []
     : bip39.filter(w => w.toLowerCase().slice(0, inputLength) === inputValue
   )
@@ -57,7 +57,7 @@ const InputWord = createReactClass({
       value: this.state.value,
       onChange: this.onChange,
       name: this.props.name,
-      style:{width: '70em'}
+      style: {width: '70px'}
     }
     return (
       <Autosuggest

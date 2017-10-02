@@ -1,7 +1,7 @@
 import React from 'react'
 import {Col, Form, FormGroup} from 'reactstrap'
 
-const Row = ({num, words}) => (
+const WordsRow = ({num, words}) => (
   <FormGroup row>
     <Col xs='3'>
       <p className='form-control-static'>{words[4 * num]}</p>
@@ -19,10 +19,10 @@ const Row = ({num, words}) => (
 )
 
 const ShowMnemonic = ({words}) => (
-  <Form>
-    <Row num={0} words={words} />
-    <Row num={1} words={words} />
-    <Row num={2} words={words} />
+  <Form className='mr-0'>
+    <WordsRow num={0} words={words} />
+    <WordsRow num={1} words={words} />
+    <WordsRow num={2} words={words} />
   </Form>
 )
 
