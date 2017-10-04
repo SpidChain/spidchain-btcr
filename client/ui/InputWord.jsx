@@ -57,6 +57,7 @@ const InputWord = createReactClass({
       value: this.state.value,
       onChange: this.onChange,
       name: this.props.name,
+      autoCapitalize: 'none',
       style: {width: '70px'}
     }
     return (
@@ -67,8 +68,7 @@ const InputWord = createReactClass({
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
         renderSuggestion={renderSuggestion}
-        inputProps={inputProps}
-        autoCapitalize='none' />
+        inputProps={inputProps} />
     )
   }
 })
