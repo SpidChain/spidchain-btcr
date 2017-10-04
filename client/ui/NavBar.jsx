@@ -34,7 +34,7 @@ export default createReactClass({
 
   render () {
     return (
-      <Navbar color='faded' light toggleable='md'>
+      <Navbar color='faded' light toggleable='lg'>
         <NavbarToggler right onClick={this.toggle} />
         <NavbarBrand tag={Link} to='/'>
           <Logo height='30' width={null} />
