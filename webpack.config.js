@@ -1,5 +1,5 @@
 const Dotenv = require('dotenv-webpack')
-const {getIfUtils, removeEmpty} = require('webpack-config-utils')
+const {removeEmpty} = require('webpack-config-utils')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -8,26 +8,28 @@ const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
 const MinifyPlugin = require('babel-minify-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
-const {ifProduction, ifNotProduction} = getIfUtils(process.env.NODE_ENV)
+const isProduction = process.env.NODE_ENV === 'production'
+const isDevHot = process.env.NODE_ENV === 'dev-hot'
+const isDevCompiled = process.env.NODE_ENV === 'dev-compiled'
 
 module.exports = {
   entry: removeEmpty([
-    ifNotProduction('webpack-hot-middleware/client?reload=true'),
+    'babel-polyfill',
+    isDevHot ? 'webpack-hot-middleware/client?reload=true' : undefined,
     path.join(__dirname, 'client', 'main.jsx')
   ]),
-  devtool: ifProduction('source-map', 'eval-source-map'),
+  devtool: isProduction ? 'source-map' : 'eval-source-map',
   output: {
     path: path.join(__dirname, 'dist'),
-    publicPath: '/',
+    // publicPath: './',
     filename: 'index.js'
   },
   plugins: removeEmpty([
     new ProgressBarPlugin(),
     new Dotenv({
-      path: ifProduction(
-        path.join(__dirname, '.env'),
-        path.join(__dirname, '.env-dev')
-      )
+      path: isProduction
+       ? path.join(__dirname, '.env')
+       : path.join(__dirname, '.env-dev')
     }),
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new FaviconsWebpackPlugin({
@@ -35,22 +37,31 @@ module.exports = {
       prefix: 'icons/'
     }),
     new HtmlWebpackPlugin({
-      inject: 'head',
+      inject: 'body',
+      title: 'Spidchain',
       template: path.join(__dirname, 'client', 'index.html')
+    }),
+    new HtmlWebpackPlugin({
+      inject: 'body',
+      title: 'Spidchain',
+      filename: 'index-cordova.html',
+      template: path.join(__dirname, 'client', 'index-cordova.html')
     }),
     new ExtractTextPlugin({
       filename: 'styles.css',
-      disable: ifNotProduction(true, false)
+      disable: false // isDevHot || isDevCompiled
     }),
-    ifNotProduction(new webpack.HotModuleReplacementPlugin()),
-    ifProduction(new StyleExtHtmlWebpackPlugin({
+    isDevHot ? new webpack.HotModuleReplacementPlugin() : undefined,
+    isProduction ? new StyleExtHtmlWebpackPlugin({
       minify: true
-    })),
-    ifProduction(new webpack.LoaderOptionsPlugin({
+    })
+    : undefined,
+    isProduction ? new webpack.LoaderOptionsPlugin({
       minimize: true,
       quiet: true
-    })),
-    ifProduction(new MinifyPlugin({mangle: false}))
+    })
+    : undefined
+    // ifProduction(new MinifyPlugin({mangle: false}))
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
