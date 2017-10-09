@@ -54,8 +54,8 @@ const CreateDID = ({
       root, recoveryAddress, dispatch
     })}>
       { isDidUnconfirmed
-        ? 'Waiting confirmation'
-        : 'Create identity'
+        ? <span> Awaiting confirmation <i className='fa fa-spinner fa-spin' aria-hidden='true'></i> </span>
+        : <span> Create identity </span>
       }
     </Button>
   )
