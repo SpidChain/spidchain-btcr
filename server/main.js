@@ -19,6 +19,7 @@ const PORT = process.env.PORT
 if (!PORT) throw Error('PORT is undefined')
 const express = require('express')
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 const history = require('connect-history-api-fallback')
 const webpack = isDevHot ? require('webpack') : undefined
 const webpackDevMiddleware = isDevHot ? require('webpack-dev-middleware') : undefined
@@ -80,8 +81,12 @@ if (isProduction || isDevCompiled) {
 }
 
 // Don't remove the semicolon!
-app.use(express.static('public'));
 
+if (isDevHot || isDevCompiled) {
+  app.use(morgan('tiny'))
+}
+
+app.use(express.static('public'));
 (async () => {
   const schema = await makeDefaultSchema()
   app.use('/graphql', bodyParser.json(), graphqlExpress({schema}))
