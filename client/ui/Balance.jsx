@@ -4,7 +4,7 @@ import _ from 'lodash'
 import sb from 'satoshi-bitcoin'
 
 const Balance = ({balance}) => {
-  return <span> Bitcoins: {_.isNumber(balance) ? sb.toBitcoin(balance) : <i className='fa fa-spinner fa-spin' aria-hidden="true"></i>} </span>
+  return <span> {_.isNumber(balance) ? sb.toBitcoin(balance) : <i className='fa fa-spinner fa-spin' aria-hidden="true"></i>} BTC </span>
 }
 
 export default connect(s => s)(Balance)
