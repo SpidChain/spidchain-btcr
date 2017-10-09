@@ -14,14 +14,22 @@ const render = () => {
     </Provider>
     , document.getElementById('app'))
 }
-const main = () => {
-  console.log('Initializing cordova')
+
+const mainCordova = () => {
+  if (window.device &&
+    window.device.platform === 'iOS' &&
+    parseFloat(window.device.version) >= 7.0) {
+    document.body.classList.add('cordova-ios-7')
+  }
   render()
   // document.addEventListener('DOMContentLoaded', () => { console.log(rendering); render()})
 }
 
+const main = () => render()
+
 if (window.cordova) {
-  document.addEventListener('deviceready', main, false)
+  console.log('Initializing cordova')
+  document.addEventListener('deviceready', mainCordova, false)
 } else {
   main()
 }
