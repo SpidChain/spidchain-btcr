@@ -54,7 +54,7 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
     dispatch(getOwnClaims(did))
     NotificationManager.success('', 'Claim generated', 5000)
   } catch (e) {
-    NotificationManager.success('', 'Claim genration failed', 5000)
+    NotificationManager.error('', 'Claim genration failed', 5000)
     console.error(e)
     return
   }
