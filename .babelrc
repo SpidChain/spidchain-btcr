@@ -1,7 +1,10 @@
 {
   "presets": [
     ["env", {
-      "debug": true
+      "debug": true,
+      // "targets": {
+      //   "browsers": ["IE >= 11", "Android >= 4.2", "iOS >= 8.0.0", "Chrome >= 50", "Firefox >= 46"]
+      // }
     }],
     "react"
   ],
