@@ -14,13 +14,11 @@ import {
 } from 'reactstrap'
 import {NotificationManager} from 'react-notifications'
 import {connect} from 'react-redux'
-import uuid from 'uuid'
 
 import signClaim from 'bitcoin/signClaim'
 
 const LoginAuthorization = createReactClass({
   getInitialState: () => ({
-    formId: uuid(),
     modal: false,
     url: null
   }),
@@ -80,7 +78,6 @@ const LoginAuthorization = createReactClass({
     }
 
     try {
-      document.getElementById(this.state.formId).reset()
       const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did: this.props.did.did})
       await axios.post(url.toString(), {
         loginClaim: signedDocument,
