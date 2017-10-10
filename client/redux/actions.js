@@ -155,7 +155,7 @@ export const getClaims = () => (dispatch, getState) => dispatch({
 
 export const getMyKnowsClaims = () => (dispatch, getState) => {
   const did = getState().did.did
-  const myKnowsClaimsP = db.claims.where({subjects: did}).toArray()
+  const myKnowsClaimsP = db.claims.where({subjects: did, type: 'KNOWS'}).toArray()
   return dispatch({
     type: GET_MY_KNOWS_CLAIMS,
     payload: myKnowsClaimsP

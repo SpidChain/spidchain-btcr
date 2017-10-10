@@ -30,6 +30,7 @@ import {
   getSentRequests,
   getDid,
   getWallet,
+  getMyKnowsClaims,
   getOthersClaims,
   getOwnClaims,
   setGotCoins
@@ -130,6 +131,7 @@ const initSystem = (did, root) => {
   store.dispatch(getSentRequests())
   store.dispatch(getOwnClaims())
   store.dispatch(getOthersClaims())
+  store.dispatch(getMyKnowsClaims())
 }
 
 const CONFIRMATIONS = 1

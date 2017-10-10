@@ -8,11 +8,12 @@ import {
   Row
 } from 'reactstrap'
 import Spinner from 'react-spinkit'
+import _ from 'lodash'
 
 import Contact from 'ui/Contact'
 // import verify from 'bitcoin/verify'
 
-const Contacts = ({sentRequests}) =>
+const Contacts = ({did, myKnowsClaims}) =>
   <Container fluid>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
@@ -23,19 +24,19 @@ const Contacts = ({sentRequests}) =>
         </Jumbotron>
       </Col>
     </Row>
-    {!sentRequests || sentRequests.loading
+    {!myKnowsClaims || myKnowsClaims.loading
         ? <Spinner name='double-bounce' />
         : <Row className='mt-3'>
           <Col md='6' className='mx-auto'>
-            {sentRequests.data.length === 0
+            {myKnowsClaims.data.length === 0
                 ? <p className='text-center'> No contacts </p>
                 : <ListGroup>
-                  {sentRequests.data.map(({receiverDid, verified}) =>
-                    <Contact
-                      key={receiverDid}
-                      receiverDid={receiverDid}
-                      verified={verified}
-                    />)}
+                  {myKnowsClaims.data.map(({hash, subjects, signers}) => {
+                    const contact = subjects.filter(e => e !== did.did)
+                    const verified = _.difference(subjects, signers).length === 0
+                    return <Contact key={hash} contact={contact} verified={verified} />
+                  })
+                  }
                 </ListGroup>
             }
           </Col>
