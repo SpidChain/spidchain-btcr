@@ -5,9 +5,6 @@ import {
   Button,
   Container,
   Col,
-  Form,
-  FormGroup,
-  Input,
   Jumbotron,
   Modal,
   ModalBody,
@@ -28,28 +25,36 @@ const LoginAuthorization = createReactClass({
     url: null
   }),
 
-  onScan (e) {
-    e.preventDefault()
-    const form = e.target
-    const value = form.url.value.trim()
-    if (value === '') {
-      return
+  handleScan (err, data) {
+    if (err) {
+      switch (err.name) {
+        case 'SCAN_CANCELED':
+          console.error('The scan was canceled before a valide QR code was found')
+          return
+        default:
+          NotificationManager.error('Scanning failed', '', 5000)
+          console.error(err)
+          return
+      }
     }
-
+    console.log('Scanned: ', data)
+    window.QRScanner.pausePreview()
     this.setState({
       modal: true,
-      url: new window.URL(value)
+      url: new window.URL(data)
     })
   },
 
   close () {
+    window.QRScanner.resumePreview()
+    window.QRScanner.scan(this.handleScan)
     this.setState({
       modal: false,
       url: null
     })
   },
 
-  async sendClaims (e) {
+  async sendClaims () {
     const {url} = this.state
 
     if (!url) {
@@ -76,17 +81,26 @@ const LoginAuthorization = createReactClass({
 
     try {
       document.getElementById(this.state.formId).reset()
-      this.close()
       const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did: this.props.did.did})
       await axios.post(url.toString(), {
         loginClaim: signedDocument,
         otherClaims
       })
       NotificationManager.success('Login authorized', 'Login authorized', 5000)
+      this.close()
     } catch (e) {
       NotificationManager.error('Error', '', 5000)
       console.error(e)
     }
+  },
+
+  componentDidMount: function () {
+    window.QRScanner.show()
+    window.QRScanner.scan(this.handleScan)
+  },
+
+  componentWillUnmount: function () {
+    window.QRScanner.destroy()
   },
 
   render () {
@@ -94,7 +108,6 @@ const LoginAuthorization = createReactClass({
     const signup = url
       ? url.searchParams.get('signup') === 'true'
       : null
-
     return (
       <div>
         {url
@@ -110,7 +123,8 @@ const LoginAuthorization = createReactClass({
                       <strong>{url.hostname}</strong> is requesting you to send information about your:
                     </p>
                     <ul>
-                      <li>Name</li>
+                      <li>First Name</li>
+                      <li>Last Name</li>
                     </ul>
                   </div>
                   : <p>
@@ -131,28 +145,10 @@ const LoginAuthorization = createReactClass({
           <Row className='mt-3'>
             <Col md='6' className='mx-auto'>
               <Jumbotron>
-                <p className='lead text-center'>
-                  <strong>Insert url to authorize login</strong>
-                </p>
+                <h6 className='mb-0 lead text-center'>
+                  <strong> Scan QRcode to authorize login </strong>
+                </h6>
               </Jumbotron>
-            </Col>
-          </Row>
-          <Row className='mt-3'>
-            <Col md='6' className='mx-auto'>
-              <Form
-                id={this.state.formId}
-                autoCorrect='off'
-                autoComplete='off'
-                onSubmit={this.onScan}>
-                <FormGroup>
-                  <Input
-                    type='text'
-                    name='url'
-                    placeholder='URL'
-                    autoCapitalize='none' />
-                </FormGroup>
-                <Button type='submit' block color='primary'> Authorize login </Button>
-              </Form>
             </Col>
           </Row>
         </Container>
