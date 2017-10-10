@@ -10,9 +10,9 @@ const ContactRequests = ({receivedRequests}) => {
       <Row className='mt-3'>
         <Col md='6' className='mx-auto'>
           <Jumbotron>
-            <p className='lead text-center'>
+            <h6 className='mb-0 lead text-center'>
               <strong> Confirm your contact requests </strong>
-            </p>
+            </h6>
           </Jumbotron>
         </Col>
       </Row>

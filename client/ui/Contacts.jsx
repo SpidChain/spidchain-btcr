@@ -17,9 +17,9 @@ const Contacts = ({sentRequests}) =>
     <Row className='mt-3'>
       <Col md='6' className='mx-auto'>
         <Jumbotron>
-          <h1 className='lead text-center'>
+          <h6 className='mb-0 lead text-center'>
             <strong> Your DID contacts </strong>
-          </h1>
+          </h6>
         </Jumbotron>
       </Col>
     </Row>
