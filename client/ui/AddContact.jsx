@@ -1,11 +1,9 @@
+import createReactClass from 'create-react-class'
 import React from 'react'
+import {withRouter} from 'react-router-dom'
 import {
-  Button,
-  Container,
   Col,
-  Form,
-  FormGroup,
-  Input,
+  Container,
   Jumbotron,
   Row
 } from 'reactstrap'
@@ -32,60 +30,65 @@ const sendOwnershipRequest = gql`
   }
 }`
 
-const onSubmit = ({senderDid, dispatch}) => async e => {
-  e.preventDefault()
-  const form = e.target
-  const receiverDid = form.did.value.trim()
-  if (receiverDid === '') {
-    return
-  }
-  const nonce = getSecureRandom()
-  try {
-    const {data: {sendOwnershipRequest: {_id}}} =
-      await client.mutate({mutation: sendOwnershipRequest, variables: {senderDid, receiverDid, nonce}})
-    await db.sentRequests.add({_id, receiverDid, nonce, verified: 'false'})
-    dispatch(getSentRequests())
-    NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
-  } catch (e) {
-    NotificationManager.error(e.message, 'Message not sent', 5000)
-    console.error(e)
-    return
-  }
-  form.reset()
-}
+const AddContact = createReactClass({
+  getInitialState: () => ({
+  }),
 
-const AddContact = ({did, dispatch}) => {
-  return (
-    <Container fluid>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          <Jumbotron>
-            <p className='lead text-center'>
-              <strong>Insert a DID here, the owner will receive a confirmation request</strong>
-            </p>
-          </Jumbotron>
-        </Col>
-      </Row>
-      <Row className='mt-3'>
-        <Col md='6' className='mx-auto'>
-          <Form
-            autoCorrect='off'
-            autoComplete='off'
-            onSubmit={onSubmit({senderDid: did, dispatch})}>
-            <FormGroup>
-              <Input
-                type='text'
-                name='did'
-                maxLength='27'
-                placeholder='DID'
-                autoCapitalize='none' />
-            </FormGroup>
-            <Button type='submit' block color='primary'> Send Request </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
-  )
-}
+  componentDidMount () {
+    window.QRScanner.show()
+    window.QRScanner.scan(this.handleScan)
+  },
 
-export default connect(({did}) => did)(AddContact)
+  componentWillUnmount () {
+    window.QRScanner.destroy()
+  },
+
+  handleScan: async function (err, data) {
+    if (err) {
+      switch (err.name) {
+        case 'SCAN_CANCELED':
+          console.error('The scan was canceled before a valide QR code was found')
+          return
+        default:
+          NotificationManager.error('Scanning failed', '', 5000)
+          console.error(err)
+          return
+      }
+    }
+
+    window.QRScanner.pausePreview()
+    const receiverDid = data
+    const nonce = getSecureRandom()
+    try {
+      const {data: {sendOwnershipRequest: {_id}}} =
+        await client.mutate({mutation: sendOwnershipRequest, variables: {senderDid: this.props.did, receiverDid, nonce}})
+      await db.sentRequests.add({_id, receiverDid, nonce, verified: 'false'})
+      this.props.dispatch(getSentRequests())
+      NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
+      this.props.history.push('/')
+    } catch (e) {
+      NotificationManager.error(e.message, 'Message not sent', 5000)
+      console.error(e)
+      window.QRScanner.resumePreview()
+      window.QRScanner.scan(this.handleScan)
+    }
+  },
+
+  render () {
+    return (
+      <Container fluid>
+        <Row className='mt-3'>
+          <Col md='6' className='mx-auto'>
+            <Jumbotron>
+              <h6 className='mb-0 lead text-center'>
+                <strong> Scan QRcode to send contact request</strong>
+              </h6>
+            </Jumbotron>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
+})
+
+export default connect(({did}) => did)(withRouter(AddContact))
