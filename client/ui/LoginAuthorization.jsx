@@ -12,7 +12,9 @@ import {
   ModalHeader,
   Row
 } from 'reactstrap'
+import {withRouter} from 'react-router-dom'
 import {NotificationManager} from 'react-notifications'
+import Spinner from 'react-spinkit'
 import {connect} from 'react-redux'
 
 import signClaim from 'bitcoin/signClaim'
@@ -38,6 +40,7 @@ const LoginAuthorization = createReactClass({
     console.log('Scanned: ', data)
     window.QRScanner.pausePreview()
     this.setState({
+      awaitingAuth: false,
       modal: true,
       url: new window.URL(data)
     })
@@ -58,7 +61,6 @@ const LoginAuthorization = createReactClass({
     if (!url) {
       return
     }
-
     const signup = url.searchParams.get('signup') === 'true'
     const otherClaims = []
 
@@ -78,17 +80,20 @@ const LoginAuthorization = createReactClass({
     }
 
     try {
+      this.setState({awaitingAuth: true})
       const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did: this.props.did.did})
       await axios.post(url.toString(), {
         loginClaim: signedDocument,
         otherClaims
       })
       NotificationManager.success('Login authorized', 'Login authorized', 5000)
-      this.close()
+      this.props.history.push('/')
     } catch (e) {
+      this.setState({awaitingAuth: false})
       NotificationManager.error('Error', '', 5000)
       console.error(e)
     }
+    this.close()
   },
 
   componentDidMount: function () {
@@ -108,36 +113,42 @@ const LoginAuthorization = createReactClass({
     return (
       <div>
         {url
-          ? (
-            <Modal isOpen={this.state.modal} toggle={this.close}>
-              <ModalHeader toggle={this.close}>
-                {signup ? 'Signup' : 'Login'} to {url.hostname}
-              </ModalHeader>
-              <ModalBody>
-                {signup
-                  ? <div>
-                    <p>
-                      <strong>{url.hostname}</strong> is requesting you to send information about your:
-                    </p>
-                    <ul>
-                      <li>First Name</li>
-                      <li>Last Name</li>
-                    </ul>
-                  </div>
-                  : <p>
-                    <strong>{url.hostname}</strong> is requesting authorization to login.
-                  </p>
+            ? (
+              <Modal isOpen={this.state.modal} toggle={this.close}>
+                <ModalHeader toggle={this.close}>
+                  {signup ? 'Signup' : 'Login'} to {url.hostname}
+                </ModalHeader>
+                {this.state.awaitingAuth
+                    ? <ModalBody>
+                      <Spinner name='double-bounce' className='mx-auto' />
+                    </ModalBody>
+                    : <div>
+                      <ModalBody>
+                        {signup
+                            ? <div>
+                              <p>
+                                <strong>{url.hostname}</strong> is requesting you to send information about your:
+                              </p>
+                              <ul>
+                                <li>First Name</li>
+                                <li>Last Name</li>
+                              </ul>
+                            </div>
+                            : <p>
+                              <strong>{url.hostname}</strong> is requesting authorization to login.
+                            </p>
+                        }
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color='primary' onClick={this.sendClaims}>Accept</Button>{' '}
+                        <Button color='secondary' onClick={this.close}>Cancel</Button>
+                      </ModalFooter>
+                    </div>
                 }
-              </ModalBody>
-              <ModalFooter>
-                <Button color='primary' onClick={this.sendClaims}>Accept</Button>{' '}
-                <Button color='secondary' onClick={this.close}>Cancel</Button>
-              </ModalFooter>
-            </Modal>
-          )
-          : null
+              </Modal>
+            )
+            : null
         }
-
         <Container fluid>
           <Row className='mt-3'>
             <Col md='6' className='mx-auto'>
@@ -154,4 +165,4 @@ const LoginAuthorization = createReactClass({
   }
 })
 
-export default connect(s => s)(LoginAuthorization)
+export default connect(s => s)(withRouter(LoginAuthorization))
