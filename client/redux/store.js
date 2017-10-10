@@ -37,9 +37,9 @@ import {
 
 import {
   ownershipRequestsSub,
-  ownershipProofsSub,
   claimSignatureRequestsSub,
-  claimSignaturesSub
+  claimSignaturesSub,
+  claimsSub
 } from 'redux/subscriptions'
 
 import client from 'apollo'
@@ -123,9 +123,9 @@ store.dispatch(getDid()).then((didObj) => {
 const initSystem = (did, root) => {
   // const did = didObj.value.did
   ownershipRequestsSub(did, store.dispatch, root)
-  ownershipProofsSub(did, store.dispatch)
   claimSignatureRequestsSub(did, store.dispatch)
   claimSignaturesSub(did, store.dispatch)
+  claimsSub(did, store.dispatch)
   store.dispatch(getReceivedRequests())
   store.dispatch(getSentRequests())
   store.dispatch(getOwnClaims())

@@ -9,7 +9,7 @@ import {
 } from 'reactstrap'
 import gql from 'graphql-tag'
 import {NotificationManager} from 'react-notifications'
-import {getMyKnowsClaims} from 'redux/actions'
+import {getClaims, getMyKnowsClaims} from 'redux/actions'
 import {connect} from 'react-redux'
 
 import client from 'apollo'
@@ -119,6 +119,7 @@ const AddContact = createReactClass({
         'KNOWS',
         [senderDid]
       )
+      this.props.dispatch(getMyKnowsClaims())
       this.props.dispatch(getMyKnowsClaims())
       NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
       this.props.history.push('/')

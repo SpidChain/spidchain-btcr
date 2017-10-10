@@ -9,8 +9,8 @@ const blockcypherApi = process.env.network === 'testnet'
     : corsProxyUrl + 'https://api.blockcypher.com/v1/btc/main/'
 
 const soChainApi = process.env.network === 'testnet'
-   ? (method) => `https://chain.so/api/v2/${method}/BTCTEST/`
-   : (method) => `https://chain.so/api/v2/${method}/BTC/`
+   ? (method) => corsProxyUrl + `https://chain.so/api/v2/${method}/BTCTEST/`
+   : (method) => corsProxyUrl + `https://chain.so/api/v2/${method}/BTC/`
 
 export const getSpendingTx = async (txId, ix) => {
   // block cypher

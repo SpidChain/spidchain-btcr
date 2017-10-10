@@ -7,24 +7,10 @@ import verifyClaim from 'bitcoin/verifyClaim'
 import db from 'db'
 import {
   addClaimSignatureRequest,
-  addReceivedRequest,
-  checkOwnershipProof,
+  addKnowsClaim,
   addClaimSignature,
   addClaim
 } from 'redux/actions'
-
-// Listening on ownership proof requests
-
-const getOwnershipRequests = gql`
-  query getOwnershipRequests($receiverDid: String) {
-     getOwnershipRequests(receiverDid: $receiverDid) {
-       _id
-       claim
-       senderDid
-       nonce
-    }
-  }
-`
 
 const setReceived = gql`
   mutation setReceived($_id: String) {
@@ -42,82 +28,18 @@ const sendClaim = gql`
   }
 `
 
-const ownershipRequestsObs = (did) => client.watchQuery({
-  query: getOwnershipRequests,
-  pollInterval: 10000,
-  variables: {receiverDid: did}
-})
+// Listening on ownership proof requests
 
-export const ownershipRequestsSub = (did, dispatch, walletRoot) => ownershipRequestsObs(did).subscribe({
-  next: ({data: {getOwnershipRequests}}) => {
-    _.each(getOwnershipRequests, async ({_id, claim, senderDid, nonce}) => {
-      // TODO: fix this?
-      const n = await db.nonces.get({nonce: parseInt(nonce, 16)})
-      debugger
-      if (!_.isUndefined(n)) {
-        const claimObj = JSON.parse(claim)
-        debugger
-        // TODO: verify with did on claim
-        if (verifyClaim({signedDocument: claimObj, signerDid: senderDid})) {
-          // sign and send back
-          const rotationIx = 0
-          const controlAccount = Number(process.env.controlAccount)
-          const ownerRoot = walletRoot.derivePath("m/44'/0'")
-            .deriveHardened(controlAccount)
-            .derive(0)
-          debugger
-          const newClaim = await signClaim({claim: claimObj, ownerRoot, rotationIx, did})
-          debugger
-          await dispatch(addReceivedRequest({claim: newClaim, senderDid}))
-          await client.mutate({
-            mutation: sendClaim,
-            variables: {
-              senderDid: did,
-              receiverDid: senderDid,
-              claim: JSON.stringify(newClaim),
-              claimType: 'KNOWS',
-              subjects: [did, senderDid]
-            }
-          })
-        }
-        db.nonces.delete({nonce: n})
-      }
-      await client.mutate({
-        mutation: setReceived,
-        variables: {_id}
-      })
-    })
-  }
-})
-
-// Listening on new ownership proofs messages
-
-const getOwnershipProofs = gql`
-  query getOwnershipProofs($senderDid: String) {
-     getOwnershipProofs(senderDid: $senderDid) {
+const getOwnershipRequests = gql`
+  query getOwnershipRequests($receiverDid: String) {
+     getOwnershipRequests(receiverDid: $receiverDid) {
        _id
-       receiverDid
-       signature
+       claim
+       senderDid
+       nonce
     }
   }
 `
-const ownershipProofsObs = (did) => client.watchQuery({
-  query: getOwnershipProofs,
-  pollInterval: 10000,
-  variables: {senderDid: did}
-})
-
-export const ownershipProofsSub = (did, dispatch) => ownershipProofsObs(did).subscribe({
-  next: ({data: {getOwnershipProofs}}) => {
-    _.each(getOwnershipProofs, async ({_id, receiverDid, signature}) => {
-      await dispatch(checkOwnershipProof({_id, receiverDid, signature}))
-      await client.mutate({
-        mutation: setReceived,
-        variables: {_id}
-      })
-    })
-  }
-})
 
 // Listening on new claim signature requests
 
@@ -131,6 +53,50 @@ const getClaimSignatureRequests = gql`
     }
   }
 `
+
+const ownershipRequestsObs = (did) => client.watchQuery({
+  query: getOwnershipRequests,
+  pollInterval: 10000,
+  variables: {receiverDid: did}
+})
+
+export const ownershipRequestsSub = (did, dispatch, walletRoot) => ownershipRequestsObs(did).subscribe({
+  next: ({data: {getOwnershipRequests}}) => {
+    _.each(getOwnershipRequests, async ({_id, claim, senderDid, nonce}) => {
+      // TODO: fix this?
+      const n = await db.nonces.get({nonce: parseInt(nonce, 16)})
+      if (!_.isUndefined(n)) {
+        const claimObj = JSON.parse(claim)
+        // TODO: verify with did on claim
+        if (await verifyClaim({signedDocument: claimObj, signerDid: senderDid})) {
+          // sign and send back
+          const rotationIx = 0
+          const controlAccount = Number(process.env.controlAccount)
+          const ownerRoot = walletRoot.derivePath("m/44'/0'")
+            .deriveHardened(controlAccount)
+            .derive(0)
+          const newClaim = await signClaim({claim: claimObj, ownerRoot, rotationIx, did})
+          await dispatch(addKnowsClaim({claim: newClaim, senderDid}))
+          await client.mutate({
+            mutation: sendClaim,
+            variables: {
+              senderDid: did,
+              receiverDid: senderDid,
+              claim: JSON.stringify(newClaim),
+              claimType: 'KNOWS',
+              subjects: [did, senderDid]
+            }
+          })
+        }
+        db.nonces.delete(n.nonce)
+      }
+      await client.mutate({
+        mutation: setReceived,
+        variables: {_id}
+      })
+    })
+  }
+})
 
 const claimSignatureRequestsObs = (did) => client.watchQuery({
   query: getClaimSignatureRequests,
@@ -205,7 +171,6 @@ export const claimsSub = (did, dispatch) => claimObs(did).subscribe({
   next: ({data: {getClaims}}) => {
     _.each(getClaims, async ({_id, senderDid, claim, claimType, subjects}) => {
       const claimObj = JSON.parse(claim)
-      debugger
       await dispatch(addClaim({
         senderDid,
         claim: claimObj,

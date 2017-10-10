@@ -33,7 +33,7 @@ export const verifyClaim = async ({signedDocument, signerDid}) => {
       publicKey: ['did:btcr:' + signerDid]
     }
   })
-  const found = _.find(verifiedSigs, {publicKey: 'did:btcr:' + signerDid})
+  const found = _.find(verifiedSigs.keyResults, {publicKey: 'did:btcr:' + signerDid})
   return found
     ? found.verified
     : false

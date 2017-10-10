@@ -9,6 +9,10 @@ const ShowQRCode = createReactClass({
   getInitialState: () => ({modal: false}),
 
   toggle: function () {
+    if (this.props.onModalOpen && !this.state.modal) {
+      this.props.onModalOpen()
+    }
+
     this.setState({
       modal: !this.state.modal
     })

@@ -1,13 +1,12 @@
 import {crypto} from 'bitcoinjs-lib'
 import jsonld from 'jsonld'
-import jsigs from 'jsonld-signatures'
 
 const hashClaim = (claim) =>
-  jsonld.promises.compact(claim, jsigs.SECURITY_CONTEXT_URL)
-    .then((compacted) => {
-      delete compacted.signature
+  jsonld.promises.expand(claim)
+    .then(([expanded]) => {
+      delete expanded['https://w3id.org/security#signature']
       return jsonld.promises.normalize(
-        compacted,
+        [expanded],
         {
           algorithm: 'URDNA2015',
           format: 'application/nquads'

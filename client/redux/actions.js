@@ -13,8 +13,7 @@ import {
   GET_MY_KNOWS_CLAIMS
 } from 'redux/constants'
 import db from 'db'
-import {insertClaim, updateClaim} from 'dbUtils'
-import verifyWithOwnerKey256 from 'bitcoin/verify'
+import {insertClaim, upsertClaim} from 'dbUtils'
 import {verifyClaim} from 'bitcoin/verifyClaim'
 
 export const setGotCoins = () => {
@@ -70,7 +69,7 @@ export const getSentRequests = () => (dispatch) => {
 export const getOwnClaims = () => (dispatch, getState) => {
   // TODO improve
   const did = getState().did.did
-  const ownClaimsP = db.claims.where({subject: did}).toArray()
+  const ownClaimsP = db.claims.where({subjects: did}).toArray()
   return dispatch({
     type: GET_OWN_CLAIMS,
     payload: ownClaimsP
@@ -79,25 +78,24 @@ export const getOwnClaims = () => (dispatch, getState) => {
 
 export const getOthersClaims = () => (dispatch, getState) => {
   const did = getState().did.did
-  const othersClaimsP = db.claims.where('subject').notEqual(did).toArray()
+  const othersClaimsP = db.claims.where('subjects').notEqual(did).toArray()
   return dispatch({
     type: GET_OTHERS_CLAIMS,
     payload: othersClaimsP
   })
 }
 
-export const addReceivedRequest = ({claim, senderDid}) => (dispatch, getState) => {
+export const addKnowsClaim = ({claim, senderDid}) => (dispatch, getState) => {
   const did = getState().did.did
-  insertClaim({
-    subjects: [senderDid, did],
-    type: 'KNOWS',
-    signers: [senderDid, did],
-    requests: [],
-    claim
-  })
-    .then(() => dispatch(getClaims))
-    .then(() => dispatch(getMyKnowsClaims))
-    .catch((e) => console.error('addReceivedRequest:', e))
+  return insertClaim(
+    claim,
+    [senderDid, did],
+    'KNOWS',
+    [senderDid, did]
+  )
+    .then(() => dispatch(getClaims()))
+    .then(() => dispatch(getMyKnowsClaims()))
+    .catch((e) => console.error('addKnowsClaim:', e))
 }
 
 export const addClaimSignatureRequest = ({senderDid, claimId, claim}) => (dispatch, getState) => {
@@ -109,27 +107,6 @@ export const addClaimSignatureRequest = ({senderDid, claimId, claim}) => (dispat
     })
     .catch(e => {
       console.error('addClaimSignatureRequest:', e)
-    })
-}
-
-export const checkOwnershipProof = ({_id, receiverDid, signature}) => (dispatch) => {
-  db.sentRequests.get({receiverDid})
-    .then(({_id, nonce}) => {
-      const verified = verifyWithOwnerKey256({DID: receiverDid, msg: nonce, sig: signature})
-      return {verified, nonce}
-    })
-    .then(({verified, nonce}) => {
-      if (verified) {
-        return db.sentRequests.where('nonce').equals(nonce).modify({verified: 'true'})
-      } else {
-        return db.sentRequests.where('nonce').equals(nonce).modify({verified: 'fail'})
-      }
-    })
-    .then(() => {
-      return dispatch(getSentRequests())
-    })
-    .catch(e => {
-      console.error('addReceivedRequest:', e)
     })
 }
 
@@ -190,6 +167,6 @@ export const addClaim = ({
   claim,
   type,
   subjects
-}) => (dispatch, getState) => updateClaim(claim, subjects, type)
+}) => (dispatch, getState) => upsertClaim(claim, subjects, type)
 .then(() => dispatch(getClaims()))
 .then(() => dispatch(getMyKnowsClaims()))

@@ -113,9 +113,10 @@ const makeMessagingResolvers = async () => {
         const {ops} = await Messaging.insert({
           senderDid,
           receiverDid,
-          claim: 'CLAIM',
+          claim,
           claimType,
           subjects,
+          type: 'CLAIM',
           received: false
         })
         return prepare(ops[0])
