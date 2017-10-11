@@ -17,6 +17,7 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
   const form = e.target
   const firstname = form.firstname.value.trim()
   const lastname = form.lastname.value.trim()
+  const email = form.email.value.trim()
 
   if (firstname === '' && lastname === '') {
     return
@@ -33,6 +34,10 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
 
   if (firstname !== '') {
     claim.givenName = firstname
+  }
+
+  if (email !== '') {
+    claim.email = email
   }
 
   const walletRoot = wallet.root
@@ -92,6 +97,13 @@ const GenerateClaim = ({did, dispatch, wallet}) => (
               Last name
             </Label>
             <Input type='text' autoCapitalize='none' name='lastname' />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>
+              Email
+            </Label>
+            <Input type='text' autoCapitalize='none' name='email' />
           </FormGroup>
 
           <Button type='submit' block color='primary'>

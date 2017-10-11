@@ -130,8 +130,9 @@ const LoginAuthorization = createReactClass({
                                 <strong>{url.hostname}</strong> is requesting you to send information about your:
                               </p>
                               <ul>
-                                <li>First Name</li>
-                                <li>Last Name</li>
+                                <li> First Name </li>
+                                <li> Last Name </li>
+                                <li> Email </li>
                               </ul>
                             </div>
                             : <p>
