@@ -34,7 +34,20 @@ module.exports = {
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new FaviconsWebpackPlugin({
       logo: path.join(__dirname, 'client', 'assets', 'spidchain-icon'),
-      prefix: 'icons/'
+      prefix: 'icons/',
+      emitStats: false,
+      icons: {
+        android: false,
+        appleIcon: false,
+        appleStartup: false,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        opengraph: false,
+        twitter: false,
+        yandex: false,
+        windows: false
+      }
     }),
     new HtmlWebpackPlugin({
       inject: 'body',
@@ -60,8 +73,9 @@ module.exports = {
       minimize: true,
       quiet: true
     })
+    : undefined,
+    isProduction ? new MinifyPlugin({mangle: false})
     : undefined
-    // ifProduction(new MinifyPlugin({mangle: false}))
   ]),
   resolve: {
     modules: [path.resolve(__dirname, 'client'), 'node_modules'],
