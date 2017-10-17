@@ -18,14 +18,14 @@ import {
 } from 'reactstrap'
 import _ from 'lodash'
 
-import db from 'db'
+import {addPending} from 'dbUtils'
 import {getOwnClaims} from 'redux/actions'
 
 const sendClaimSignatureRequest = gql`
   mutation sendClaimSignatureRequest(
     $senderDid: String,
     $receiverDid: String,
-    $claimId: Int,
+    $claimId: String,
     $claim: String) {
       sendClaimSignatureRequest(
         senderDid: $senderDid,
@@ -36,16 +36,19 @@ const sendClaimSignatureRequest = gql`
   }
 }`
 
-const getDids = async () => {
-  const sent = await db.sentRequests.toArray()
-  const options = sent.map(e => ({value: e.receiverDid, label: e.receiverDid}))
-  return {options}
+const getDids = (myKnowsClaims, myDid) => {
+  return myKnowsClaims.data
+    .filter(({subjects, signers}) => _.difference(subjects, signers).length === 0)
+    .map(({subjects}) => {
+      const [contact] = subjects.filter(e => e !== myDid)
+      return {value: contact, label: contact}
+    })
 }
 
 const OwnClaim = createReactClass({
   getInitialState: () => ({
     modal: false,
-    value: undefined
+    selected: null
   }),
 
   toggle () {
@@ -78,9 +81,10 @@ const OwnClaim = createReactClass({
           claim: JSON.stringify(claim)
         }
       })
-      const signers = (await db.claims.get(claimId)).signers
-      signers.push({did: receiverDid, status: 'pending'})
-      await db.claims.update(claimId, {signers})
+      const added = await addPending(claimId, receiverDid)
+      if (!added) {
+        NotificationManager.error('Signature request already sent')
+      }
       dispatch(getOwnClaims(did.did))
       NotificationManager.success('DID: ' + receiverDid, 'Message sent', 5000)
     } catch (e) {
@@ -92,7 +96,7 @@ const OwnClaim = createReactClass({
   },
 
   render () {
-    const {claim, signers, did: {did}} = this.props
+    const {claim, signers, pending, did: {did}} = this.props
     return (
       <ListGroupItem>
         <Table>
@@ -124,42 +128,43 @@ const OwnClaim = createReactClass({
               </th>
               <td>
                 <ul style={{listStyleType: 'none'}}> {
-                  signers
-                  .filter(signer => {
-                    return signer.did !== did
-                  }).map(({did:signerDid, status}, i) => {
-                    return status === 'pending'
-                      ? <li key={i}> <Badge color='warning'> {signerDid} </Badge> </li>
-                      : <li key={i}> <Badge color='success'> {signerDid} </Badge> </li>
-                  })
+                  signers.concat(pending)
+                  .filter(signer => signer !== did)
+                  .map((signer, i) =>
+                    <li key={i}>
+                      <Badge color={i >= signers.length - 1 ? 'warning' : 'success'}>
+                        {signer}
+                      </Badge>
+                    </li>
+                  )
                 } </ul>
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-      <Button block outline color='primary' onClick={this.toggle}>Request signature</Button>
-      <Modal isOpen={this.state.modal} toggle={this.toggle}>
-        <ModalHeader toggle={this.toggle}>Request signature</ModalHeader>
-        <ModalBody>
-          <Form
-            autoCorrect='off'
-            autoComplete='off'
-            onSubmit={this.requestSignature}
-          >
-            <FormGroup>
-              <Select.Async
-                name='did'
-                placeholder='Send to...'
-                value={this.state.selected}
-                loadOptions={getDids}
-                onChange={(selected) => this.setState({selected})}
-              />
-            </FormGroup>
-            <Button type='submit' block color='primary'> Send Request </Button>
-          </Form>
-        </ModalBody>
-      </Modal>
-    </ListGroupItem>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+        <Button block outline color='primary' onClick={this.toggle}>Request signature</Button>
+        <Modal isOpen={this.state.modal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle}>Request signature</ModalHeader>
+          <ModalBody>
+            <Form
+              autoCorrect='off'
+              autoComplete='off'
+              onSubmit={this.requestSignature}
+            >
+              <FormGroup>
+                <Select
+                  name='did'
+                  placeholder='Send to...'
+                  value={this.state.selected}
+                  options={getDids(this.props.myKnowsClaims, did)}
+                  onChange={(selected) => this.setState({selected})}
+                />
+              </FormGroup>
+              <Button type='submit' block color='primary'> Send Request </Button>
+            </Form>
+          </ModalBody>
+        </Modal>
+      </ListGroupItem>
     )
   }
 })

@@ -7,7 +7,7 @@ type Message {
   senderDid: String
   receiverDid: String
   claim: String
-  claimId: Int
+  claimId: String
   claimSignature: String
   nonce: String
   signature: String
@@ -29,8 +29,8 @@ extend type Mutation {
   sendOwnershipRequest(senderDid: String, receiverDid: String, claim: String, nonce: String): Message
   sendOwnershipProof(senderDid: String, receiverDid: String, nonce: Int, signature: String): Message
   setReceived(_id: String): Message
-  sendClaimSignatureRequest(senderDid: String, receiverDid: String, claimId: Int, claim: String): Message
-  sendClaimSignature(senderDid: String, receiverDid: String, claimId: Int, claimSignature: String): Message
+  sendClaimSignatureRequest(senderDid: String, receiverDid: String, claimId: String, claim: String): Message
+  sendClaimSignature(senderDid: String, receiverDid: String, claimId: String, claimSignature: String): Message
   sendClaim(senderDid: String, receiverDid: String, claim: String, claimType: String, subjects: [String]): Message
 }
 `

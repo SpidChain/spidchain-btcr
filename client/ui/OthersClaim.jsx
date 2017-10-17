@@ -17,7 +17,7 @@ const sendClaimSignature = gql`
   mutation sendClaimSignature(
     $senderDid: String,
     $receiverDid: String,
-    $claimId: Int,
+    $claimId: String,
     $claimSignature: String) {
       sendClaimSignature(
         senderDid: $senderDid,
@@ -30,7 +30,7 @@ const sendClaimSignature = gql`
 
 const OthersClaim = createReactClass({
   async onClick (e) {
-    const {claim, claimId, subject, did: {did}, dispatch, wallet} = this.props
+    const {claim, claimId, subjects, did: {did}, dispatch, wallet} = this.props
     const walletRoot = wallet.root
     const controlAccount = Number(process.env.controlAccount)
     const ownerRoot = walletRoot.derivePath("m/44'/0'")
@@ -43,24 +43,16 @@ const OthersClaim = createReactClass({
       const claimSignatures = signedDocument['https://w3id.org/security#signature']
       console.log('Claim:', claimSignatures[1])
       const signature = claimSignatures[1]
-      /*
-    await db.claims.update({
-      subject: did,
-      signedDocument,
-      signers: [
-        {did, status: 'signed'}
-      ]
-    })
-    */
       await client.mutate({
         mutation: sendClaimSignature,
         variables: {
           senderDid: did,
           claimId,
-          receiverDid: subject,
+          receiverDid: subjects[0],
           claimSignature: JSON.stringify(signature)
         }
       })
+      await db.sigRequests.delete(claimId)
       NotificationManager.success('', 'Signature sent', 5000)
       // dispatch(getOwnClaims(did))
     } catch (e) {

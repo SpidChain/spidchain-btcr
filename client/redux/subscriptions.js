@@ -135,9 +135,8 @@ const claimSignatureObs = (did) => client.watchQuery({
 
 export const claimSignaturesSub = (did, dispatch) => claimSignatureObs(did).subscribe({
   next: ({data: {getClaimSignatures}}) => {
-    _.each(getClaimSignatures, async ({_id, senderDid, claimId, claimSignature}) => {
+    _.each(getClaimSignatures, async ({_id, claimId, claimSignature}) => {
       await dispatch(addClaimSignature({
-        senderDid,
         claimId,
         claimSignature: JSON.parse(claimSignature)
       }))

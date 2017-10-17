@@ -13,8 +13,7 @@ import {
   GET_MY_KNOWS_CLAIMS
 } from 'redux/constants'
 import db from 'db'
-import {insertClaim, upsertClaim} from 'dbUtils'
-import {verifyClaim} from 'bitcoin/verifyClaim'
+import {addSignature, insertClaim, upsertClaim} from 'dbUtils'
 
 export const setGotCoins = () => {
   return {
@@ -76,9 +75,8 @@ export const getOwnClaims = () => (dispatch, getState) => {
   })
 }
 
-export const getOthersClaims = () => (dispatch, getState) => {
-  const did = getState().did.did
-  const othersClaimsP = db.claims.where('subjects').notEqual(did).toArray()
+export const getOthersClaims = () => (dispatch) => {
+  const othersClaimsP = db.sigRequests.toArray()
   return dispatch({
     type: GET_OTHERS_CLAIMS,
     payload: othersClaimsP
@@ -98,55 +96,24 @@ export const addKnowsClaim = ({claim, senderDid}) => (dispatch, getState) => {
     .catch((e) => console.error('addKnowsClaim:', e))
 }
 
-export const addClaimSignatureRequest = ({senderDid, claimId, claim}) => (dispatch, getState) => {
-  const did = getState().did.did
-  const payload = {subject: senderDid, claimId, signedDocument: JSON.parse(claim), signers: []}
-  const claimSignatureP = db.claims.add(payload)
-    .then(() => {
-      return dispatch(getOthersClaims(did))
-    })
+export const addClaimSignatureRequest = ({senderDid, claimId, claim}) => (dispatch) => {
+  const payload = {
+    hash: claimId,
+    subjects: [senderDid],
+    signers: [],
+    signed: false,
+    claim: JSON.parse(claim)
+  }
+  return db.sigRequests.add(payload)
+    .then(() => dispatch(getOthersClaims()))
     .catch(e => {
       console.error('addClaimSignatureRequest:', e)
     })
 }
 
-export const addClaimSignature =
-  ({senderDid, claimId, claimSignature}) => (dispatch, getState) => {
-    const claimP = db.claims.get(claimId)
-    const verifyClaimP = claimP.then(({signedDocument}) => {
-      const newDocument = {
-        ...signedDocument,
-        'https://w3id.org/security#signature': claimSignature
-      }
-      const verified = verifyClaim({signedDocument: newDocument, signerDid: senderDid})
-      return verified
-    })
-    Promise.all([claimP, verifyClaimP])
-      .then(([claim, verified]) => {
-        if (verified) {
-          const {signedDocument, signers} = claim
-          const signatures = signedDocument['https://w3id.org/security#signature']
-          if (!_.isArray(signatures)) {
-            const newSignatures = [
-              signedDocument['https://w3id.org/security#signature'],
-              claimSignature
-            ]
-            signedDocument['https://w3id.org/security#signature'] = newSignatures
-          } else {
-            signedDocument['https://w3id.org/security#signature'].push(claimSignature)
-          }
-          const newSigners = _.map(signers, ({did, status}) => {
-            return did === senderDid
-              ? {did, status: 'signed'}
-              : {did, status}
-          })
-          db.claims.update(claimId, {signedDocument, signers: newSigners})
-        }
-      })
-      .then(() => {
-        return dispatch(getOwnClaims())
-      })
-  }
+export const addClaimSignature = ({claimId, claimSignature}) => (dispatch) =>
+  addSignature(claimId, claimSignature)
+    .then(() => dispatch(getOwnClaims()))
 
 export const getClaims = () => (dispatch, getState) => dispatch({
   type: GET_CLAIMS,

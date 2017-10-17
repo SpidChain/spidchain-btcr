@@ -8,7 +8,7 @@ db.version(1).stores({
   did: 'txId1',
   wallet: '++id',
   // claims: '++_id, subject, signed',
-  claims: 'hash, *subjects, type, *signers, *requests',  // claim
+  claims: 'hash, *subjects, type, *signers, *requests',  // claim, pending
   nonces: 'nonce',
   sigRequests: 'hash, *subjects, *signers, signed'  // claim
 })

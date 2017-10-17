@@ -29,8 +29,8 @@ const OwnClaims = ({ownClaims}) => (
             {ownClaims.data.length === 0
                 ? <p className='text-center'> No claims </p>
                 : <ListGroup>
-                  {ownClaims.data.map(({_id, signedDocument, signers}) =>
-                    <OwnClaim claim={signedDocument} signers={signers} claimId={_id} key={_id} />)}
+                  {ownClaims.data.filter(({type}) => type !== 'KNOWS').map(({hash, claim, signers, pending}) =>
+                    <OwnClaim claim={claim} signers={signers} pending={pending} claimId={hash} key={hash} />)}
                 </ListGroup>
             }
           </Col>

@@ -4,7 +4,7 @@ import {Button, Col, Container, Jumbotron, Form, FormGroup, Input, Label, Row} f
 import {NotificationManager} from 'react-notifications'
 
 import signClaim from 'bitcoin/signClaim'
-import db from 'db'
+import {insertClaim} from 'dbUtils'
 import {getOwnClaims} from 'redux/actions'
 
 const context = {
@@ -49,13 +49,7 @@ const handleSubmit = (did, dispatch, wallet) => async (e) => {
   const rotationIx = 0
   try {
     const signedDocument = await signClaim({claim, ownerRoot, rotationIx, did})
-    await db.claims.add({
-      subject: did,
-      signedDocument: signedDocument,
-      signers: [
-        {did, status: 'signed'}
-      ]
-    })
+    await insertClaim(signedDocument, [did], 'PERSON', [did])
     dispatch(getOwnClaims(did))
     NotificationManager.success('', 'Claim generated', 5000)
   } catch (e) {
