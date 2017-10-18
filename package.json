@@ -13,8 +13,9 @@
   ],
   "private": true,
   "scripts": {
-    "build:prod": "NODE_ENV=production webpack --progress --config webpack.config.js",
-    "build:dev": "NODE_ENV=dev-compiled webpack --progress --config webpack.config.js",
+    "build:release": "NODE_ENV=production webpack --progress --config webpack.config.js && pushd cordova && cordova-icon && cordova-splash && cordova build --release && popd",
+    "build:prod": "NODE_ENV=production webpack --progress --config webpack.config.js && pushd cordova && cordova-icon && cordova-splash && cordova build && popd",
+    "build:dev": "NODE_ENV=dev-compiled webpack --progress --config webpack.config.js && pushd cordova && cordova-icon && cordova-spash && cordova build && popd",
     "lint": "standard",
     "start": "NODE_ENV=production node server/main.js",
     "start:dev-hot": "NODE_ENV=dev-hot nodemon server/main.js",
